@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bevoac.example/contracts/scan-result.schema.json",
+  "type": "object",
+  "properties": {
+    "durationMs": { "type": ["number", "null"] },
+    "webSecurity": { "type": ["object", "null"] },
+    "microsoft_entra": { "type": ["object", "null"] },
+    "azure_infrastructure": { "type": ["object", "null"] },
+    "resourcePreflight": {
+      "type": ["object", "null"],
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "resourceLimit": { "type": ["integer", "null"], "minimum": 0 },
+        "bySubscription": { "type": "array", "items": { "type": "object" } },
+        "code": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "error": { "type": ["string", "null"] }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bevoac.example/contracts/scan-request.schema.json",
+  "type": "object",
+  "required": [
+    "version",
+    "scanId",
+    "tenantId",
+    "cloudProvider",
+    "scanProfile",
+    "modules",
+    "azure",
+    "limits",
+    "requestedAt"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "2026-06-01-kpi-modules-v6"
+    },
+    "scanId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "tenantId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "cloudProvider": {
+      "type": "string",
+      "const": "azure"
+    },
+    "scanProfile": {
+      "type": "string",
+      "enum": [
+        "web",
+        "entra",
+        "infra",
+        "full"
+      ]
+    },
+    "modules": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "web",
+          "entra",
+          "storage",
+          "vms",
+          "nsg",
+          "keyvault",
+          "logs",
+          "db",
+          "governance",
+          "appservices",
+          "finops",
+          "entra_b2b",
+          "tags",
+          "exposure_map",
+          "diagnostic_coverage",
+          "encryption_coverage",
+          "azure_rbac_exposure",
+          "private_link_coverage",
+          "policy_compliance",
+          "identity_admin_posture"
+        ]
+      },
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "azure": {
+      "type": "object",
+      "properties": {
+        "targetUrl": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "microsoftTenantId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uuid"
+        },
+        "subscriptions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "targetUrl",
+        "microsoftTenantId",
+        "subscriptions"
+      ],
+      "additionalProperties": false
+    },
+    "limits": {
+      "type": "object",
+      "properties": {
+        "planCode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "free",
+            "standard",
+            "business",
+            "payg",
+            null
+          ]
+        },
+        "billingUnits": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "quotaMonth": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date"
+        },
+        "resourceLimit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
+      },
+      "required": [
+        "planCode",
+        "billingUnits",
+        "quotaMonth",
+        "resourceLimit"
+      ],
+      "additionalProperties": false
+    },
+    "requestedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "requestId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

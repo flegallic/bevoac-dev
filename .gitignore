@@ -141,3 +141,29 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# bevoac files
+/confidential
+
+# macOS local metadata
+.DS_Store
+**/.DS_Store
+
+# Bevoac local validation outputs and backups
+/.bevoac-enterprise-hardening-backup/
+/.bevoac-iac-backup/
+/files/
+
+# Terraform local cache, state, plans and variable values
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+*.tfplan
+*.plan
+
+# Bevoac local code backups and local deployment environments
+**/.bevoac-*-backup-*/
+*.bak-*
+/bevoac-frontend-enterprise/deploy/prod.env

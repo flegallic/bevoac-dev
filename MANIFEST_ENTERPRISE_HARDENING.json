@@ -1,0 +1,61 @@
+{
+  "product": "Bevoac",
+  "target_version": "6.1.2-production-ready-enterprise-hardening",
+  "package_date": "2026-07-09",
+  "scope": [
+    "api",
+    "worker",
+    "database",
+    "documentation",
+    "multi-cloud-foundation"
+  ],
+  "runtime_provider_enabled": [
+    "azure"
+  ],
+  "provider_scaffolded_not_enabled": [
+    "aws"
+  ],
+  "mandatory_validation": [
+    "npm run check",
+    "npm test",
+    "npm run migrate-db",
+    "npm run check:enterprise-hardening",
+    "ALLOW_ENTERPRISE_RLS_APPLY=true npm run migrate-db:enterprise-rls",
+    "npm run check:tenant-isolation:enterprise",
+    "terraform validate"
+  ],
+  "commercial_claims_allowed_after_external_evidence": [
+    "enterprise-certified",
+    "pentest-validated",
+    "zero-risk tenant isolation"
+  ],
+  "rls_scope_v6_1_2": {
+    "forced_rls_tables": [
+      "api_keys",
+      "scans",
+      "scan_results",
+      "scan_attempts",
+      "scan_request_idempotency",
+      "billing_usage_ledger",
+      "billing_monthly_snapshots",
+      "outbox_events",
+      "tenant_web_targets",
+      "tenant_azure_scopes"
+    ],
+    "deferred_tables_pending_service_context_refactor": [
+      "azure_onboarding_sessions",
+      "tenant_azure_integrations"
+    ]
+  },
+  "security_routes_hardened": [
+    "/v1/scans",
+    "/v1/scans/{scanId}",
+    "/v1/scans/{scanId}/result",
+    "/v1/scans/{scanId}/pdf",
+    "/v1/billing/overview",
+    "/v1/billing/current-month/scans",
+    "/v1/onboarding/azure/start",
+    "/v1/onboarding/azure/status",
+    "/v1/onboarding/azure/verify"
+  ]
+}

@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at 80% 0%, rgba(60, 231, 196, 0.08), transparent 30rem),
+    linear-gradient(135deg, #070b12 0%, #0b111c 46%, #101826 100%);
+  color: #e5edf7;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@layer utilities {
+  .panel {
+    @apply border border-white/10 bg-white/[0.045] shadow-2xl shadow-black/20 backdrop-blur-xl;
+  }
+
+  .hairline {
+    @apply border-white/10;
+  }
+}

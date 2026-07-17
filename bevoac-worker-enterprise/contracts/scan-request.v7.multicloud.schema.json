@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bevoac.example/contracts/scan-request.v7.multicloud.schema.json",
+  "title": "Bevoac future multi-cloud scan request contract - not runtime-enabled in V6.1.2",
+  "type": "object",
+  "required": [
+    "version",
+    "scanId",
+    "tenantId",
+    "cloudProvider",
+    "scanProfile",
+    "modules",
+    "targets",
+    "limits",
+    "requestedAt"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "const": "2026-07-09-multicloud-foundation-v7"
+    },
+    "scanId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "tenantId": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "cloudProvider": {
+      "type": "string",
+      "enum": [
+        "azure",
+        "aws"
+      ]
+    },
+    "scanProfile": {
+      "type": "string",
+      "enum": [
+        "web",
+        "entra",
+        "infra",
+        "full"
+      ]
+    },
+    "modules": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "targets": {
+      "type": "object",
+      "properties": {
+        "web": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "azure": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "aws": {
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "limits": {
+      "type": "object"
+    },
+    "requestedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "requestId": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

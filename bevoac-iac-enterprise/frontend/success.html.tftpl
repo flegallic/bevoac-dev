@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>${brand_name} - Onboarding Azure</title>
+  <style>
+    body{font-family:Arial,sans-serif;max-width:900px;margin:40px auto;padding:0 20px;color:#152238;line-height:1.5;background:#f7fafc}.card{background:white;border:1px solid #d8e1ec;border-radius:16px;padding:24px;box-shadow:0 8px 20px rgba(20,40,80,.08)}code{background:#eef3f8;padding:2px 6px;border-radius:6px}.success{color:#146c2e;font-weight:700}.warning{color:#9a6a00;font-weight:700}.error{color:#9a2b2b;font-weight:700}.muted{color:#5f6f82}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Onboarding Azure</h1>
+    <p id="headline" class="muted">Analyse du resultat...</p>
+    <p>Tenant Microsoft detecte : <code id="tenant">non fourni</code></p>
+    <p>Subscriptions verifiees : <code id="subscriptionCount">0</code></p>
+    <p id="nextStep"></p>
+    <p class="muted">Le backend Bevoac n'autorise les scans infra que sur les subscriptions verifiees et inscrites dans <code>tenant_azure_scopes</code>.</p>
+    <p>Support: <a href="mailto:${support_email}">${support_email}</a></p>
+  </div>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get('status') || 'unknown';
+    const tenant = params.get('microsoftTenantId') || params.get('tenant') || 'non fourni';
+    const subscriptionCount = params.get('subscriptionCount') || '0';
+    document.getElementById('tenant').textContent = tenant;
+    document.getElementById('subscriptionCount').textContent = subscriptionCount;
+    const headline = document.getElementById('headline');
+    const nextStep = document.getElementById('nextStep');
+    if (status === 'success') {
+      headline.textContent = 'Consentement Microsoft et verification RBAC termines.';
+      headline.className = 'success';
+      nextStep.textContent = 'Le client peut lancer des scans sur les subscriptions detectees.';
+    } else if (status === 'action_required') {
+      headline.textContent = 'Consentement Microsoft termine, action RBAC requise.';
+      headline.className = 'warning';
+      nextStep.textContent = 'Attribuez Reader/Security Reader au service principal Bevoac sur les subscriptions ou management groups, puis relancez POST /v1/onboarding/azure/verify.';
+    } else {
+      headline.textContent = 'Onboarding non finalise.';
+      headline.className = 'error';
+      nextStep.textContent = 'Verifiez le consentement administrateur, la configuration redirect URI et les journaux API.';
+    }
+  </script>
+</body>
+</html>
