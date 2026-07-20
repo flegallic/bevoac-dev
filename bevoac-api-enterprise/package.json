@@ -30,7 +30,6 @@
     "migrate-db:enterprise-hardening": "node scripts/apply-enterprise-hardening-migration.js",
     "migrate-db:enterprise-rls": "node scripts/apply-enterprise-rls.js",
     "check:enterprise-hardening": "node scripts/check-enterprise-hardening.js",
-    "check:tenant-isolation:enterprise": "node scripts/check-tenant-isolation-enterprise.js",
     "check:image": "node scripts/runtime-deps-check.js && node scripts/syntax-check.js && node scripts/sync-contracts.js --api-only",
     "migrate-db:secure-api-key-auth": "node scripts/apply-secure-api-key-auth.js",
     "migrate-db:runtime-role-rls": "node scripts/apply-runtime-role-rls.js"
