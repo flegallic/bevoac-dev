@@ -1,0 +1,10 @@
+digraph G { rankdir=LR; graph [fontname="Arial", bgcolor="white", ranksep=0.65, nodesep=0.45]; node [fontname="Arial", shape=box, style="rounded,filled", fillcolor="#EAF3F8", color="#1F4E79", penwidth=1.2]; edge [fontname="Arial", color="#1F4E79", arrowsize=0.7];
+  client[label="Client / Integrateur"];
+  apim[label="Azure API Management
+path /v1 + operations proxy"];
+  key[label="Option A: Ocp-Apim-Subscription-Key
+Option B: subscription_required=false", fillcolor="#FFF2CC"];
+  api[label="Bevoac API
+Authorization: Bearer"];
+  client -> apim -> key -> api;
+}

@@ -1,0 +1,15 @@
+
+digraph G { graph [rankdir=LR, bgcolor="white", nodesep="0.35", ranksep="0.4"]; node [shape=box, style="rounded,filled", fontname="Arial", fontsize=10.5, color="#365F91", fillcolor="#D9EAF7"]; edge [color="#365F91"];
+mac [label="Mac hors VNet", fillcolor="#F4CCCC"];
+runner [label="Runner privé / VM / VPN", fillcolor="#D9EAD3"];
+exception [label="Exception POC\nouverture temporaire IP", fillcolor="#FFF2CC"];
+kv [label="Key Vault privé"];
+pg [label="PostgreSQL privé"];
+dns [label="Private DNS"];
+tf [label="terraform plan/apply"];
+mac -> kv [style=dashed, label="ForbiddenByConnection"];
+mac -> exception -> kv;
+runner -> dns -> kv;
+runner -> tf -> pg;
+runner -> tf -> kv;
+}

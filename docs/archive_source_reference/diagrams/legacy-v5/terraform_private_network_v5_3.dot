@@ -1,0 +1,4 @@
+digraph G { rankdir=LR; node [shape=box, style="rounded,filled", fontname="Arial"];
+Mac[label="Mac hors VNet", fillcolor="#FFE5E5"]; KV[label="Key Vault privé", fillcolor="#FFF7E6"]; Runner[label="Runner privé / VM / VPN", fillcolor="#DFFFE3"]; DNS[label="Private DNS"]; PG[label="PostgreSQL privé", fillcolor="#FFF7E6"]; TF[label="terraform plan/apply"]; POC[label="Exception POC:
+ouverture temporaire IP", fillcolor="#FFFBEA"];
+Mac->KV [style=dashed,label="ForbiddenByConnection"]; Runner->DNS->KV; DNS->PG; Runner->TF; TF->KV; TF->PG; POC->KV; }

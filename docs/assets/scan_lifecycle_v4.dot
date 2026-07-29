@@ -1,0 +1,16 @@
+digraph G {
+  graph [rankdir=LR, bgcolor="white", pad="0.2", nodesep="0.45", ranksep="0.65", fontname="DejaVu Sans"];
+  node [shape=box, style="rounded,filled", fillcolor="#F7F9FC", color="#496A93", fontname="DejaVu Sans", fontsize=10, margin="0.12,0.08"];
+  edge [color="#536B89", arrowsize=0.8, fontname="DejaVu Sans", fontsize=9];
+  req [label="Client\nPOST /v1/scans"];
+  auth [label="API auth\nclé API -> tenant Bevoac"];
+  guard [label="Contrôles\nallowlist tenant/subscription\nquota monthly\nlimit ressources"];
+  job [label="Scan PENDING\nService Bus job"];
+  worker [label="Worker\nmodules web/entra/infra"];
+  result [label="Résultats DB\nfindings + synthèses"];
+  pdf [label="PDF\ntoutes sévérités"];
+  billing [label="Billing\ncurrent-month/scans"];
+  req -> auth -> guard -> job -> worker -> result;
+  result -> pdf;
+  result -> billing;
+}

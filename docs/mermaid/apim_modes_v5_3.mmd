@@ -1,0 +1,12 @@
+flowchart TD
+  Client --> APIM[Azure API Management /v1]
+  APIM --> Mode{apim_subscription_required?}
+  Mode -->|true| H1[Client sends
+Ocp-Apim-Subscription-Key
++ Authorization Bearer]
+  Mode -->|false| H2[Client sends
+Authorization Bearer only]
+  H1 --> API[Bevoac API backend /v1]
+  H2 --> API
+  API --> Auth[Bevoac API key auth
+tenant derivation]

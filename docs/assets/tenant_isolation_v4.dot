@@ -1,0 +1,18 @@
+digraph G {
+  graph [rankdir=TB, bgcolor="white", pad="0.2", nodesep="0.45", ranksep="0.6", fontname="DejaVu Sans"];
+  node [shape=box, style="rounded,filled", fillcolor="#F7F9FC", color="#496A93", fontname="DejaVu Sans", fontsize=10, margin="0.12,0.08"];
+  edge [color="#536B89", arrowsize=0.8, fontname="DejaVu Sans", fontsize=9];
+  key [label="API key client\njamais un tenantId body"];
+  tenant [label="tenant Bevoac interne\ndérivé côté serveur"];
+  scopes [label="tenant_azure_scopes\nMicrosoft tenant + subscriptions autorisés"];
+  web [label="tenant_web_targets\nhosts HTTPS autorisés"];
+  scans [label="scans/results/billing\nfiltrés par tenant_id"];
+  block [label="Blocage\n403 cross-customer / target non autorisée", fillcolor="#FFF3F0", color="#B05C4D"];
+  key -> tenant;
+  tenant -> scopes;
+  tenant -> web;
+  scopes -> scans;
+  web -> scans;
+  scopes -> block [label="pas de match", style=dashed];
+  web -> block [label="pas de match", style=dashed];
+}

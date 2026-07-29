@@ -1,0 +1,11 @@
+
+digraph G { graph [rankdir=LR, bgcolor="white", nodesep="0.3", ranksep="0.35"]; node [shape=box, style="rounded,filled", fontname="Arial", fontsize=10, color="#365F91", fillcolor="#D9EAF7"]; edge [color="#365F91"];
+api [label="API\ncréation scan"];
+outbox [label="outbox_events\nPENDING / FAILED", shape=cylinder, fillcolor="#FFF2CC"];
+pub [label="Dedicated outbox publisher\nca-*-outbox\npoll + retry"];
+sb [label="Service Bus\nscan-jobs"];
+worker [label="Worker"];
+published [label="outbox_events\nPUBLISHED", shape=cylinder, fillcolor="#D9EAD3"];
+error [label="FAILED + next_attempt_at\nlast_error", fillcolor="#F4CCCC"];
+api->outbox->pub->sb->worker; pub->published; pub->error [style=dashed];
+}

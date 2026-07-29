@@ -1,0 +1,15 @@
+sequenceDiagram
+  participant Client as Admin client
+  participant API as Bevoac API
+  participant MS as Microsoft Entra
+  participant ARM as Azure Management
+  participant DB as PostgreSQL
+  Client->>API: POST /v1/onboarding/azure/start
+  API->>DB: create session + state_hash + nonce_hash
+  API-->>Client: authorizationUrl
+  Client->>MS: admin consent
+  MS->>API: GET /v1/onboarding/azure/callback?tenant&state
+  API->>API: verify HMAC, expiry, anti-replay, api_key_id
+  API->>ARM: discover subscriptions / verify RBAC
+  API->>DB: upsert tenant_azure_integrations + tenant_azure_scopes
+  API-->>Client: redirect success/action_required/error

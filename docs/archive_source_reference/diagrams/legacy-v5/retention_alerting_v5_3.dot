@@ -1,0 +1,5 @@
+digraph G { rankdir=LR; node [shape=box, style="rounded,filled", fontname="Arial"];
+Job[label="Retention Job
+Container Apps", fillcolor="#DFFFE3"]; PG[label="PostgreSQL
+retention_audit_log", shape=cylinder, fillcolor="#FFF7E6"]; Monitor[label="Azure Monitor"]; Alerts[label="DLQ / backlog / PG CPU / memory / storage"]; AG[label="Action Group"];
+Job->PG; Monitor->Alerts->AG; }

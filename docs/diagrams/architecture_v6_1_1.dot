@@ -1,0 +1,36 @@
+digraph G {
+
+  graph [rankdir=TB, bgcolor="white", pad="0.2", nodesep="0.35", ranksep="0.55"];
+  node [shape=box, style="rounded,filled", color="#6A8CAF", penwidth=1.4, fillcolor="#DDEBF7", fontname="Helvetica", fontsize=11, margin="0.11,0.08"];
+  edge [color="#4F6F8F", arrowsize=0.8, penwidth=1.2, fontname="Helvetica", fontsize=9];
+
+  client [label="Client B2B / Portail / Integrateur"];
+  apim [label="APIM optionnel
+Gateway / logs / policy
+Double-auth possible", fillcolor="#E2F0D9"];
+  api [label="API Fastify /v1
+API key -> tenant_id
+allowlists + quotas"];
+  db1 [label="PostgreSQL
+scans + idempotency
+billing RESERVED
+outbox_events", shape=cylinder, fillcolor="#FFF2CC"];
+  outbox [label="Outbox publisher dedie
+ca-*-outbox
+poll + retry", fillcolor="#E4DFEC"];
+  sb [label="Service Bus scan-jobs
+sessions tenant + DLQ", fillcolor="#FFF2CC"];
+  worker [label="Worker Container Apps
+idempotent + retry/backoff
+timeouts + KEDA"];
+  modules [label="Modules web / Entra / Azure
+KPI engine + evidenceMetadata", fillcolor="#E2F0D9"];
+  db2 [label="PostgreSQL
+scan_results + attempts
+CONSUMED / REFUNDED", shape=cylinder, fillcolor="#E2F0D9"];
+  pdf [label="JSON API + PDF
+findings / remediation / evidence
+1.6 KPI Scorecard", fillcolor="#FCE4D6"];
+  client -> apim -> api -> db1 -> outbox -> sb -> worker -> modules -> db2 -> pdf -> client;
+  client -> api [style=dashed, label="direct si APIM desactive"];
+}

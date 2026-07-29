@@ -1,0 +1,11 @@
+flowchart TD
+  Key[Bearer API key] --> Hash[hash lookup api_keys]
+  Hash --> Tenant[tenant_id derived server-side]
+  Tenant --> Reject[Reject tenantId/customerId in client body]
+  Tenant --> Web[tenant_web_targets allowlist]
+  Tenant --> Azure[tenant_azure_scopes VERIFIED]
+  Web --> Scans[(scans filtered by tenant_id)]
+  Azure --> Scans
+  Scans --> Results[(scan_results filtered by tenant_id)]
+  Other[Other tenant API key] --> OtherTenant[other tenant_id]
+  OtherTenant -. 404 .-> Scans

@@ -1,0 +1,23 @@
+sequenceDiagram
+  participant Client
+  participant API
+  participant DB
+  participant Outbox
+  participant SB as Service Bus
+  participant Worker
+  Client->>API: POST /v1/scans + API key
+  API->>API: derive tenant + validate scope
+  API->>DB: BEGIN insert scans PENDING + billing RESERVED + idempotency
+  API->>DB: insert outbox_events scan.requested
+  API->>DB: COMMIT
+  API-->>Client: 201 scanId + idempotencyKey + billingState RESERVED
+  Outbox->>DB: claim PENDING outbox
+  Outbox->>SB: publish scan.requested sessionId=tenantId
+  Outbox->>DB: mark PUBLISHED
+  Worker->>SB: accept tenant session
+  Worker->>DB: PENDING -> IN_PROGRESS + scan_attempt
+  Worker->>Worker: resource preflight + modules + retry/backoff
+  Worker->>DB: save scan_results + DONE/FAILED
+  Worker->>DB: billing CONSUMED or REFUNDED
+  Client->>API: GET /v1/scans/{scanId}
+  API-->>Client: JSON / PDF

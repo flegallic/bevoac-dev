@@ -1,0 +1,9 @@
+
+digraph G { graph [rankdir=LR, bgcolor="white", nodesep="0.35", ranksep="0.35"]; node [shape=box, style="rounded,filled", fontname="Arial", fontsize=10.5, color="#365F91", fillcolor="#D9EAF7"]; edge [color="#365F91"];
+client [label="Client / Intégrateur"];
+apim [label="Azure API Management\npath /v1 + operations proxy"];
+mode1 [label="Mode A double-auth\nOcp-Apim-Subscription-Key\n+ Authorization Bearer", fillcolor="#FFF2CC"];
+mode2 [label="Mode B Bevoac-only\nAuthorization Bearer", fillcolor="#D9EAD3"];
+api [label="Bevoac API\nAuthorization: Bearer"];
+client->apim; apim->mode1; apim->mode2; mode1->api; mode2->api;
+}

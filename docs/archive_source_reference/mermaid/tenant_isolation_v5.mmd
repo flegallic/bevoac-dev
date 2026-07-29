@@ -1,0 +1,18 @@
+flowchart TB
+  Key[API key] --> Tenant[tenant_id]
+  Tenant --> WebTargets[tenant_web_targets]
+  Tenant --> AzureScopes[tenant_azure_scopes]
+  Tenant --> Scans[scans]
+  Scans --> Results[scan_results]
+  Scans --> Attempts[scan_attempts]
+  Tenant --> Billing[billing ledger/snapshots]
+  Tenant --> Session[Service Bus sessionId=tenantId]
+  ScopesCheck{Scope autorise?}
+  WebTargets --> ScopesCheck
+  AzureScopes --> ScopesCheck
+  ScopesCheck -- non --> Reject[Reject 400/403]
+  ScopesCheck -- oui --> Quota[Quota + active scan limit]
+  Quota -- bloque --> Backpressure[TENANT_ACTIVE_SCAN_LIMIT_REACHED]
+  Quota -- ok --> Enqueue[Queue session tenant]
+  Enqueue --> Worker[Worker idempotent]
+  Worker --> Results

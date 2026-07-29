@@ -1,0 +1,7 @@
+flowchart LR
+  API[API création scan] --> OUT[(outbox_events PENDING/FAILED)]
+  OUT --> PUB[Dedicated outbox publisher<br/>ca-*-outbox]
+  PUB --> SB[Service Bus scan-jobs]
+  SB --> W[Worker]
+  PUB --> OK[(outbox_events PUBLISHED)]
+  PUB -. erreur .-> KO[FAILED + next_attempt_at]

@@ -1,0 +1,16 @@
+flowchart TD
+    Req[Requete client] --> Auth[Authorization: Bearer API key]
+    Auth --> KeyHash[hash SHA-256 de la cle]
+    KeyHash --> Tenant[tenant_id interne depuis api_keys]
+    Tenant --> RejectBody{tenantId/customerId dans body ?}
+    RejectBody -- Oui --> Deny1[400 VALIDATION_ERROR]
+    RejectBody -- Non --> Target{Type de cible}
+    Target -- Web --> WebCheck[HTTPS + host public + tenant_web_targets]
+    Target -- Azure tenant --> TenantScope[tenant_azure_scopes tenant-level CONSENTED/VERIFIED]
+    Target -- Azure subscription --> SubScope[tenant_azure_scopes subscription VERIFIED]
+    WebCheck --> Allow{autorise ?}
+    TenantScope --> Allow
+    SubScope --> Allow
+    Allow -- Non --> Deny2[403 FORBIDDEN]
+    Allow -- Oui --> Quota[quota mensuel + resource_limit]
+    Quota --> Queue[Service Bus scan-jobs]

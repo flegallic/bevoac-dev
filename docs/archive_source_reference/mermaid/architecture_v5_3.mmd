@@ -1,0 +1,24 @@
+flowchart LR
+  C[Client B2B / Integrateur] --> APIM[APIM optionnel
+Double-auth possible]
+  APIM --> API[API Fastify /v1
+Auth API key -> tenant]
+  API --> AUTH[Validation tenant
+Reject tenantId/customerId]
+  AUTH --> ALLOW[Allowlists web/Azure
+tenant_web_targets / tenant_azure_scopes]
+  ALLOW --> IDEM[Idempotency
+client_supplied ou server_generated]
+  IDEM --> DB[(PostgreSQL
+scans + ledger + outbox_events)]
+  DB --> OP[Outbox publisher dedie
+Container App ca-*-outbox]
+  OP --> SB[Service Bus scan-jobs
+Sessions tenant + DLQ]
+  SB --> W[Worker Container Apps
+scan_attempts + modules]
+  W --> RES[(scan_results
+JSON complet + hash + summary)]
+  RES --> API
+  API --> PDF[PDF findings
+remediation/evidence]

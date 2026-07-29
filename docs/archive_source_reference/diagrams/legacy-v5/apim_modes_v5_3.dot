@@ -1,0 +1,5 @@
+digraph G { rankdir=TB; node [shape=box, style="rounded,filled", fillcolor="#F8FAFC", fontname="Arial"];
+Client->APIM; APIM->Decision; Decision[label="apim_subscription_required?"]; Decision->Double[label="true:
+Ocp-Apim key + Bevoac API key"]; Decision->Single[label="false:
+Bevoac API key only"]; Double->API; Single->API; API[label="Bevoac API
+Authorization Bearer -> tenant"]; }

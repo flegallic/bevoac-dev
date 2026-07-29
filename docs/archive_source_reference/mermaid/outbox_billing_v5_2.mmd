@@ -1,0 +1,13 @@
+flowchart LR
+  POST[POST /v1/scans] --> Tx[DB transaction]
+  Tx --> Scan[scans: PENDING + billing_state RESERVED]
+  Tx --> Idem[scan_request_idempotency]
+  Tx --> Ledger1[billing_usage_ledger: scan_reserved]
+  Tx --> Outbox[outbox_events: scan.requested]
+  Outbox --> Publisher[Outbox publisher retry/backoff]
+  Publisher --> SB[Service Bus]
+  SB --> Worker[Worker]
+  Worker --> Success[DONE]
+  Worker --> Failure[FAILED]
+  Success --> Ledger2[scan_consumed + billing_state CONSUMED]
+  Failure --> Ledger3[scan_refunded + billing_state REFUNDED]

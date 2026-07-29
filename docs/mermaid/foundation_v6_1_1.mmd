@@ -1,0 +1,9 @@
+flowchart LR
+  TF[Terraform] --> AZ[Azure Control Plane]
+  AZ --> ACR[ACR]
+  AZ --> KV[Key Vault]
+  AZ --> PG[PostgreSQL]
+  AZ --> SB[Service Bus]
+  AZ --> ACA[Container Apps]
+  AZ --> APIM[APIM]
+  AZ --> MON[Monitor + Action Group]

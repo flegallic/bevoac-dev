@@ -1,0 +1,13 @@
+
+digraph G { graph [rankdir=TB, bgcolor="white", nodesep="0.3", ranksep="0.35"]; node [shape=box, style="rounded,filled", fontname="Arial", fontsize=10.5, color="#365F91", fillcolor="#D9EAF7"]; edge [color="#365F91"];
+A [label="1. POST /v1/scans\nIdempotency-Key optionnelle"];
+B [label="2. API dérive tenant\nvalide payload + allowlists"];
+C [label="3. Transaction DB\nscan PENDING + RESERVED\nidempotency + scan_reserved\noutbox scan.requested", fillcolor="#FFF2CC"];
+D [label="4. Outbox publisher dédié\npublie vers Service Bus"];
+E [label="5. Service Bus\nsessionId = tenant_id", fillcolor="#FFF2CC"];
+F [label="6. Worker\nbeginAttempt PENDING -> IN_PROGRESS"];
+G [label="7. Modules web / Entra / Azure\ntimeouts + retry/backoff"];
+H [label="8. scan_results\nsummary + hash"];
+I [label="9. DONE -> scan_consumed\nou FAILED -> scan_refunded", fillcolor="#D9EAD3"];
+A->B->C->D->E->F->G->H->I;
+}

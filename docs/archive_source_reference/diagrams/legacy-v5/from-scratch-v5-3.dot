@@ -1,0 +1,12 @@
+
+digraph G { graph [rankdir=TB, bgcolor="white", nodesep="0.3", ranksep="0.35"]; node [shape=box, style="rounded,filled", fontname="Arial", fontsize=10.5, color="#365F91", fillcolor="#D9EAF7"]; edge [color="#365F91"];
+A[label="1. Prérequis admin\naz / terraform / docker / node / jq"];
+B[label="2. Terraform bootstrap\nACR + KV + PG + SB + VNet"];
+C[label="3. Build/push images\nAPI + worker tag immutable"];
+D[label="4. Migrations DB\nnpm run migrate-db"];
+E[label="5. Terraform apps\nAPI + worker + outbox + APIM + retention"];
+F[label="6. Tenant + API key\nweb target + Azure scopes"];
+G[label="7. Tests client/admin\nauth + scans + PDF + billing"];
+H[label="8. Ops gates\nDLQ=0 + alerting + retention + load test"];
+A->B->C->D->E->F->G->H;
+}

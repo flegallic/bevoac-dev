@@ -1,0 +1,29 @@
+sequenceDiagram
+    autonumber
+    participant Client as Client API
+    participant API as API Bevoac
+    participant DB as PostgreSQL
+    participant SB as Service Bus
+    participant Worker as Worker
+    participant Azure as Azure Client
+
+    Client->>API: POST /v1/scans sans tenantId/customerId
+    API->>DB: API key -> tenant_id interne
+    API->>DB: Verifie tenant_azure_scopes / tenant_web_targets
+    API->>DB: Verifie quota mensuel et plan resource_limit
+    API->>DB: Insert scans=PENDING + ledger
+    API->>SB: scan.requested version 2026-04-28
+    API-->>Client: 201 scanId
+    SB->>Worker: message scan.requested
+    Worker->>DB: status=IN_PROGRESS
+    Worker->>Azure: Resource Graph preflight si modules infra
+    alt ressources <= limite plan
+        Worker->>Azure: Modules web / Entra / infra
+        Worker->>DB: result JSON + status DONE ou FAILED
+    else ressources > limite plan
+        Worker->>DB: status FAILED + RESOURCE_LIMIT_EXCEEDED
+    end
+    Client->>API: GET /v1/scans/{scanId}
+    API-->>Client: status + result JSON
+    Client->>API: GET /v1/scans/{scanId}/pdf
+    API-->>Client: rapport PDF

@@ -1,0 +1,10 @@
+flowchart LR
+  Mac[Mac local hors VNet] -. ForbiddenByConnection .-> KV[Key Vault public disabled]
+  Runner[Runner prive / VM admin / VPN] --> DNS[Private DNS]
+  DNS --> KV
+  DNS --> PG[PostgreSQL private endpoint]
+  Runner --> TF[terraform plan/apply]
+  TF --> KV
+  TF --> PG
+  POC[Exception POC: ouvrir KV a IP admin] --> KV
+  POC --> Close[Refermer immediatement apres apply]

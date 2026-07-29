@@ -1,0 +1,3 @@
+digraph G { rankdir=LR; node [shape=box, style="rounded,filled", fillcolor="#F8FAFC", fontname="Arial"];
+PR->CI; CI->API; CI->Worker; CI->TF; API->Gate; Worker->Gate; TF->Gate; PR[label="push / PR"]; CI[label="GitHub Actions"]; API[label="API check + tests"]; Worker[label="Worker check"]; TF[label="Terraform fmt/init/validate
+static-hardening-check"]; Gate[label="merge gate"]; }

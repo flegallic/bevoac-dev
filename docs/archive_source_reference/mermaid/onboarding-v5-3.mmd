@@ -1,0 +1,9 @@
+flowchart TB
+  A[Client start onboarding<br/>POST /v1/onboarding/azure/start]
+  B[API crée session courte<br/>state HMAC + nonce]
+  C[Microsoft Entra admin consent]
+  D[API callback<br/>verify state, expiration, anti-replay]
+  E[Vérifier RBAC subscriptions]
+  F[Upsert tenant_azure_scopes<br/>VERIFIED / NEEDS_RBAC]
+  G[Redirect success.html]
+  A-->B-->C-->D-->E-->F-->G

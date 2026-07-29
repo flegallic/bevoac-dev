@@ -1,0 +1,14 @@
+flowchart LR
+  API[API Fastify
+OUTBOX_PUBLISHER_ENABLED=false
+si publisher dedie] --> DB[(outbox_events)]
+  DB --> Claim[claimPending
+FOR UPDATE SKIP LOCKED]
+  Claim --> Pub[Container App outbox publisher
+node scripts/outbox-publisher-daemon.js]
+  Pub --> SB[Service Bus scan-jobs]
+  Pub --> OK[mark PUBLISHED]
+  Pub --> KO[mark FAILED + next_attempt_at
+exponential backoff]
+  KO --> Claim
+  SB --> Worker[Worker sessions tenant]

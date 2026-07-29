@@ -1,0 +1,22 @@
+digraph G { rankdir=TB; graph [fontname="Arial", bgcolor="white", ranksep=0.65, nodesep=0.45]; node [fontname="Arial", shape=box, style="rounded,filled", fillcolor="#EAF3F8", color="#1F4E79", penwidth=1.2]; edge [fontname="Arial", color="#1F4E79", arrowsize=0.7];
+  post[label="1. POST /v1/scans
+Idempotency-Key optionnelle"];
+  validate[label="2. API derive tenant
+valide payload + allowlists"];
+  tx[label="3. Transaction DB
+scan PENDING + RESERVED
+idempotency + scan_reserved
+outbox scan.requested", fillcolor="#FFF2CC"];
+  publish[label="4. Outbox publisher
+publie vers Service Bus"];
+  sb[label="5. Service Bus
+sessionId = tenant_id", fillcolor="#FFF2CC"];
+  worker[label="6. Worker
+beginAttempt PENDING -> IN_PROGRESS", fillcolor="#FCE4D6"];
+  modules[label="7. Modules web / Entra / Azure
+timeouts + retry/backoff"];
+  result[label="8. scan_results + summary + hash", shape=cylinder, fillcolor="#E7F2E7"];
+  final[label="9. DONE -> scan_consumed
+ou FAILED -> scan_refunded", fillcolor="#E2F0D9"];
+  post -> validate -> tx -> publish -> sb -> worker -> modules -> result -> final;
+}

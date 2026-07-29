@@ -1,0 +1,7 @@
+flowchart TB
+  APP[API / Worker / Outbox] --> LOG[Log Analytics]
+  APP --> MET[Azure Monitor metrics]
+  MET --> ALERT[Action Group]
+  RET[Container Apps Job retention] --> LOG
+  DLQ[Service Bus DLQ] --> MET
+  DLQ --> ALERT

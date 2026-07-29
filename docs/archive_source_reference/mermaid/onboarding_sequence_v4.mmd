@@ -1,0 +1,28 @@
+sequenceDiagram
+    autonumber
+    participant Admin as Admin client
+    participant Front as Frontend onboarding
+    participant API as API Bevoac
+    participant DB as PostgreSQL
+    participant MS as Microsoft Entra ID
+    participant ARM as Azure Management
+
+    Admin->>Front: Ouvre le portail onboarding
+    Front->>API: POST /v1/onboarding/azure/start + Bearer API key
+    API->>DB: Cree azure_onboarding_sessions + state_hash
+    API-->>Front: authorizationUrl Microsoft + callbackUrl
+    Front-->>Admin: Redirection vers Microsoft admin consent
+    Admin->>MS: Consentement administrateur
+    MS->>API: GET /v1/onboarding/azure/callback?tenant&admin_consent&state
+    API->>API: Verifie signature HMAC, TTL, hash DB, status STARTED
+    API->>DB: Upsert integration CONSENTED + tenant scope CONSENTED
+    API->>MS: Client credentials token pour tenant client
+    API->>ARM: GET /subscriptions
+    alt subscriptions visibles
+        API->>DB: Upsert subscription scopes VERIFIED
+        API->>DB: Integration ACTIVE, session COMPLETED
+        API-->>Front: 302 success.html?status=success
+    else aucun RBAC ou erreur Azure Management
+        API->>DB: Integration NEEDS_RBAC, session ACTION_REQUIRED
+        API-->>Front: 302 success.html?status=action_required
+    end

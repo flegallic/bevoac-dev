@@ -1,0 +1,19 @@
+sequenceDiagram
+  participant API as API
+  participant SB as Service Bus scan-jobs
+  participant W as Worker
+  participant OP as Operateur
+  API->>SB: scan.requested versioned sessionId=tenantId
+  W->>SB: accept tenant session
+  W->>W: validate schema/version
+  alt contrat invalide ou erreur non recuperable
+    W->>SB: dead-letter message
+  else traitement OK
+    W->>SB: complete message
+  end
+  OP->>SB: inspect DLQ stats
+  alt message rejouable
+    OP->>SB: dlq-replay dry-run puis replay
+  else message obsolete
+    OP->>SB: purge DLQ ou delete via portal
+  end

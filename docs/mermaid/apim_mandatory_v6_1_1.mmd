@@ -1,0 +1,7 @@
+flowchart LR
+  C[Client B2B / Integrateur] --> APIM[APIM obligatoire\nsubscription_required=true]
+  APIM --> POL[Policy gateway\nrate-limit + quota\nsize limit + correlation ID]
+  POL --> API[Bevoac API /v1\nAuthorization Bearer obligatoire]
+  API --> TENANT[Tenant derive de l API key]
+  TENANT --> SCANS[Scans / JSON / PDF]
+  C -. chemin operateur uniquement .-> BREAK[API directe break-glass]

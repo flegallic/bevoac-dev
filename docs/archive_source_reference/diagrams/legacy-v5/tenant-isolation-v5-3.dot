@@ -1,0 +1,13 @@
+
+digraph G { graph [rankdir=TB, bgcolor="white", nodesep="0.35", ranksep="0.4"]; node [shape=box, style="rounded,filled", fontname="Arial", fontsize=10.5, color="#365F91", fillcolor="#D9EAF7"]; edge [color="#365F91"];
+key [label="API key client"];
+tenant [label="tenant_id dérivé côté serveur"];
+reject [label="Rejet tenantId/customerId body", fillcolor="#F4CCCC"];
+web [label="tenant_web_targets\nhost HTTPS autorisés"];
+az [label="tenant_azure_scopes\nsubscriptions VERIFIED"];
+guards [label="Guardrails DB V5.3\nFK tenant + triggers\ntenant_isolation_violations", fillcolor="#FFF2CC"];
+data [label="scans / results / billing\nfiltrés tenant_id", fillcolor="#D9EAD3"];
+other [label="Autre tenant"];
+block [label="404 / 403\nlecture ou cible non autorisée", fillcolor="#F4CCCC"];
+key -> tenant; tenant -> reject; tenant -> web; tenant -> az; web -> guards; az -> guards; guards -> data; other -> block [style=dashed]; other -> data [style=dashed, label="interdit"];
+}

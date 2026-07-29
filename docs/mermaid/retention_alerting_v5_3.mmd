@@ -1,0 +1,16 @@
+flowchart TD
+  Job[Container Apps Job retention] --> APIIMG[API image
+node scripts/retention-sweep.js]
+  APIIMG --> PG[(PostgreSQL
+retention_audit_log)]
+  Metrics[Azure Monitor] --> DLQ[Service Bus DLQ alert
+aggregation Maximum]
+  Metrics --> Backlog[Service Bus backlog]
+  Metrics --> CPU[PostgreSQL CPU]
+  Metrics --> Mem[PostgreSQL memory]
+  Metrics --> Storage[PostgreSQL storage]
+  DLQ --> AG[Action Group]
+  Backlog --> AG
+  CPU --> AG
+  Mem --> AG
+  Storage --> AG

@@ -1,0 +1,11 @@
+flowchart TD
+  SB[Service Bus scan-jobs] --> Worker[Worker validates schema]
+  Worker -->|valid| Process[Process scan]
+  Worker -->|invalid schema/version| DLQ[Dead-letter]
+  Process -->|success| Done[DONE + completeMessage]
+  Process -->|handled failure| Failed[FAILED + scan_refunded + completeMessage]
+  Process -->|transient infra error| Retry[abandon / retry by delivery count]
+  Retry --> SB
+  DLQ --> Stats[dlq-stats]
+  DLQ --> Replay[controlled replay]
+  DLQ --> Purge[documented purge only]

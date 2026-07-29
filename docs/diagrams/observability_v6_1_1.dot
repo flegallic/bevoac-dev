@@ -1,0 +1,19 @@
+digraph G {
+
+  graph [rankdir=TB, bgcolor="white", pad="0.2", nodesep="0.35", ranksep="0.55"];
+  node [shape=box, style="rounded,filled", color="#6A8CAF", penwidth=1.4, fillcolor="#DDEBF7", fontname="Helvetica", fontsize=11, margin="0.11,0.08"];
+  edge [color="#4F6F8F", arrowsize=0.8, penwidth=1.2, fontname="Helvetica", fontsize=9];
+
+  APP [label="API / Worker / Outbox"];
+  LOG [label="Log Analytics
+logs applicatifs"];
+  MET [label="Azure Monitor metrics
+DLQ, backlog, PG CPU/memory/storage"];
+  AG [label="Action Group
+support@dotcloud.fr", fillcolor="#FFF2CC"];
+  RET [label="Container Apps Job retention
+cron + audit log", fillcolor="#E2F0D9"];
+  DLQ [label="Service Bus DLQ
+stats / replay / purge", fillcolor="#FCE4D6"];
+  APP->LOG; APP->MET; MET->AG; RET->LOG; DLQ->MET; DLQ->AG;
+}

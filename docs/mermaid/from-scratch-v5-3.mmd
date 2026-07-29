@@ -1,0 +1,8 @@
+flowchart TB
+  A[Prérequis admin] --> B[Terraform bootstrap]
+  B --> C[Build/push images]
+  C --> D[Migrations DB]
+  D --> E[Terraform apps]
+  E --> F[Tenant + API key + scopes]
+  F --> G[Tests client/admin]
+  G --> H[Ops gates]

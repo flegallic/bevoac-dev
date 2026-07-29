@@ -1,0 +1,6 @@
+flowchart LR
+  C[Client / Intégrateur] --> APIM[Azure API Management<br/>path /v1 + operations proxy]
+  APIM --> A[Mode A double-auth<br/>Ocp-Apim-Subscription-Key + Bearer]
+  APIM --> B[Mode B Bevoac-only<br/>Bearer]
+  A --> API[Bevoac API]
+  B --> API

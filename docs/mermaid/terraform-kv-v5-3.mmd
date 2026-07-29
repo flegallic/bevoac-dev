@@ -1,0 +1,6 @@
+flowchart LR
+  Mac[Mac hors VNet] -. ForbiddenByConnection .-> KV[Key Vault privé]
+  Mac --> EX[Exception POC ouverture IP temporaire] --> KV
+  Runner[Runner privé / VM / VPN] --> DNS[Private DNS] --> KV
+  Runner --> TF[terraform plan/apply] --> PG[PostgreSQL privé]
+  TF --> KV

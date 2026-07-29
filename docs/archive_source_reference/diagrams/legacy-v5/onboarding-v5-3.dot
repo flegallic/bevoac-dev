@@ -1,0 +1,11 @@
+
+digraph G { graph [rankdir=TB, bgcolor="white", nodesep="0.35", ranksep="0.4"]; node [shape=box, style="rounded,filled", fontname="Arial", fontsize=11, color="#365F91", fillcolor="#D9EAF7"]; edge [color="#365F91"];
+start [label="1. Client start onboarding\nPOST /v1/onboarding/azure/start"];
+session [label="2. API crée session courte\nstate HMAC + nonce"];
+consent [label="3. Microsoft Entra admin consent"];
+callback [label="4. API callback\nverify state, expiration, anti-replay"];
+rbac [label="5. Vérifier RBAC subscriptions"];
+scope [label="6. Upsert tenant_azure_scopes\nstatus VERIFIED / NEEDS_RBAC"];
+redirect [label="7. Redirect success.html\nsuccess / action_required / error"];
+start -> session -> consent -> callback -> rbac -> scope -> redirect;
+}

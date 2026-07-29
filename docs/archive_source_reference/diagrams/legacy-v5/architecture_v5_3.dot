@@ -1,0 +1,13 @@
+digraph G { rankdir=LR; node [shape=box, style="rounded,filled", fillcolor="#EEF5FF", fontname="Arial"];
+Client -> APIM -> API -> Auth -> Allowlists -> Idempotency -> DB -> Outbox -> ServiceBus -> Worker -> Results -> API -> PDF;
+Client [label="Client B2B / Intégrateur"]; APIM [label="APIM optionnel
+Ocp-Apim + Bevoac key"]; API [label="API Fastify /v1"]; Auth [label="Auth API key
+Tenant dérivé"]; Allowlists [label="Allowlists
+web/Azure"]; Idempotency [label="Idempotency
+server/client"]; DB [label="PostgreSQL
+scans, ledger, outbox", shape=cylinder, fillcolor="#FFF7E6"]; Outbox [label="Outbox publisher dédié
+ca-*-outbox"]; ServiceBus [label="Service Bus
+sessions + DLQ", fillcolor="#F0FFF4"]; Worker [label="Worker
+modules + retry"]; Results [label="scan_results
+JSON + hash", shape=cylinder, fillcolor="#FFF7E6"]; PDF [label="PDF findings
+remediation/evidence"]; }

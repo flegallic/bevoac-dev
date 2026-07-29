@@ -1,0 +1,23 @@
+digraph G { rankdir=TB; graph [fontname="Arial", bgcolor="white", ranksep=0.65, nodesep=0.45]; node [fontname="Arial", shape=box, style="rounded,filled", fillcolor="#EAF3F8", color="#1F4E79", penwidth=1.2]; edge [fontname="Arial", color="#1F4E79", arrowsize=0.7];
+  client[label="Client B2B / Portail / Integrateur"];
+  apim[label="APIM optionnel
+Gateway / logs / policy", fillcolor="#D9EAF7"];
+  api[label="Bevoac API Fastify /v1
+API key -> tenant_id
+validation allowlist + quota", fillcolor="#D9EAF7"];
+  outbox[label="PostgreSQL
+scans + idempotency + billing RESERVED + outbox_events", shape=cylinder, fillcolor="#E7F2E7"];
+  sb[label="Service Bus scan-jobs
+sessions tenant + DLQ", fillcolor="#FFF2CC"];
+  worker[label="Worker Container Apps
+idempotent + retry/backoff + timeouts", fillcolor="#FCE4D6"];
+  azure[label="Azure ARM / Resource Graph
+Microsoft Graph / Entra", fillcolor="#E2F0D9"];
+  results[label="PostgreSQL
+scan_results + scan_attempts
+CONSUMED / REFUNDED", shape=cylinder, fillcolor="#E7F2E7"];
+  pdf[label="JSON API + PDF borne
+finding / remediation / evidence", fillcolor="#F4CCCC"];
+  client -> apim -> api; client -> api [style=dashed,label="direct si APIM desactive"];
+  api -> outbox -> sb -> worker -> azure -> results -> pdf -> client;
+}

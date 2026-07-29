@@ -1,0 +1,9 @@
+flowchart TB
+  A[POST /v1/scans<br/>Idempotency-Key optionnelle] --> B[API dérive tenant<br/>payload + allowlists]
+  B --> C[Transaction DB<br/>PENDING + RESERVED + idempotency + scan_reserved + outbox]
+  C --> D[Outbox publisher dédié]
+  D --> E[Service Bus sessionId=tenant_id]
+  E --> F[Worker beginAttempt<br/>PENDING -> IN_PROGRESS]
+  F --> G[Modules web / Entra / Azure<br/>timeouts + retry/backoff]
+  G --> H[scan_results + summary + hash]
+  H --> I[DONE -> scan_consumed<br/>FAILED -> scan_refunded]

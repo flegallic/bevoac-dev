@@ -1,0 +1,6 @@
+digraph G { rankdir=TB; node [shape=box, style="rounded,filled", fillcolor="#F8FAFC", fontname="Arial"];
+A[label="POST /v1/scans
+API key"]; B[label="Tenant + scope validation"]; C[label="DB transaction
+scan PENDING + billing RESERVED + idempotency + outbox"]; D[label="Outbox publisher
+publish Service Bus"]; E[label="Worker accepts session"]; F[label="IN_PROGRESS + scan_attempt"]; G[label="Modules / retry/backoff / preflight"]; H[label="scan_results + DONE/FAILED"]; I[label="billing CONSUMED/REFUNDED"]; J[label="GET JSON/PDF"];
+A->B->C->D->E->F->G->H->I->J; }

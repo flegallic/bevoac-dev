@@ -1,0 +1,19 @@
+digraph G {
+  graph [rankdir=TB, bgcolor="white", pad="0.2", nodesep="0.35", ranksep="0.45", fontname="DejaVu Sans"];
+  node [shape=box, style="rounded,filled", fillcolor="#F7F9FC", color="#496A93", fontname="DejaVu Sans", fontsize=11, margin="0.14,0.08"];
+  edge [color="#536B89", arrowsize=0.8, fontname="DejaVu Sans", fontsize=9];
+  frontend [label="1. Frontend\nstart onboarding"];
+  api_start [label="2. API start\nPOST /v1/onboarding/azure/start\ncrée state HMAC + session"];
+  microsoft [label="3. Microsoft Entra ID\nAdmin consent"];
+  callback [label="4. API callback\nGET /v1/onboarding/azure/callback\nvérifie state, expiration, anti-replay, api_key_id"];
+  verify [label="5. Vérification RBAC\nAzure Management subscriptions"];
+  db [label="6. PostgreSQL\ntenant_azure_integrations\ntenant_azure_scopes"];
+  success [label="7. Frontend success.html\nsuccess / action_required / error"];
+
+  frontend -> api_start [label="Bearer API key"];
+  api_start -> microsoft [label="authorizationUrl"];
+  microsoft -> callback [label="tenant + admin_consent + state"];
+  callback -> verify [label="service principal Bevoac"];
+  verify -> db [label="allowlist alimentée"];
+  callback -> success [label="redirect final"];
+}

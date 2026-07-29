@@ -1,0 +1,6 @@
+digraph G { rankdir=LR; node [shape=box, style="rounded,filled", fillcolor="#EEF5FF", fontname="Arial"];
+API[label="API
+writes outbox only"]; DB[label="outbox_events", shape=cylinder, fillcolor="#FFF7E6"]; Pub[label="Dedicated publisher
+Container App", fillcolor="#F0FFF4"]; SB[label="Service Bus
+scan-jobs"]; Fail[label="FAILED + backoff", fillcolor="#FFE5E5"]; Worker[label="Worker"];
+API->DB; DB->Pub[label="claimPending"]; Pub->SB[label="sendMessages"]; Pub->DB[label="mark PUBLISHED"]; Pub->Fail; Fail->DB; SB->Worker; }

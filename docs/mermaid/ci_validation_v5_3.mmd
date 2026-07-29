@@ -1,0 +1,14 @@
+flowchart LR
+  PR[Push / Pull request] --> CI[GitHub Actions Bevoac validation]
+  CI --> API[npm ci/install
+npm run check
+npm test]
+  CI --> Worker[npm ci/install
+npm run check]
+  CI --> TF[terraform fmt -check
+init -backend=false
+validate
+static-hardening-check]
+  API --> Gate[Merge gate]
+  Worker --> Gate
+  TF --> Gate

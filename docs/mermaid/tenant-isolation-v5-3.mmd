@@ -1,0 +1,10 @@
+flowchart TB
+  key[API key client] --> tenant[tenant_id dérivé côté serveur]
+  tenant --> reject[Rejet tenantId/customerId body]
+  tenant --> web[tenant_web_targets]
+  tenant --> az[tenant_azure_scopes VERIFIED]
+  web --> guards[Guardrails DB V5.3<br/>FK tenant + triggers + view]
+  az --> guards
+  guards --> data[scans/results/billing filtrés tenant_id]
+  other[Autre tenant] -. interdit .-> data
+  other --> block[404/403]

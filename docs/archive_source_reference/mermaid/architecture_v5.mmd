@@ -1,0 +1,23 @@
+flowchart LR
+  Client[Client API / portail] -->|Bearer API key| API[Bevoac API Fastify]
+  API --> Auth[tenant_id derive API key]
+  API --> Idem[Idempotency-Key optionnelle<br/>client ou server-generated]
+  API --> Allow[Allowlist web/Azure]
+  API --> Quota[Quota lock + backpressure tenant]
+  API --> Contract[Contrat scan.requested<br/>version partagee]
+  API --> SB[Service Bus scan-jobs<br/>sessions tenant]
+  SB --> W[Worker Container Apps<br/>idempotent]
+  W --> Guard[SSRF/DNS guard<br/>HEAD puis GET fallback]
+  W --> Azure[Azure ARM / Resource Graph / Graph]
+  W --> Results[(PostgreSQL scan_results)]
+  W --> Attempts[(scan_attempts)]
+  API --> Scans[(PostgreSQL scans)]
+  API --> Results
+  API --> PDF[PDF borne<br/>finding/remediation/evidence]
+  API --> Billing[Billing ledger/snapshots]
+  KV[Key Vault] --> API
+  KV --> W
+  PE[Private Endpoints] --- Results
+  PE --- Scans
+  PE --- KV
+  Admin[Admin Bevoac] -->|OIDC Entra roles| API

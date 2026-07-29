@@ -1,0 +1,13 @@
+flowchart TB
+  client[Client B2B / Portail / Intégrateur]
+  apim[APIM optionnel<br/>Gateway / logs / policy]
+  api[API Fastify /v1<br/>API key -> tenant_id<br/>allowlists + quotas]
+  pg1[(PostgreSQL<br/>scans + idempotency<br/>billing RESERVED<br/>outbox_events)]
+  outbox[Outbox publisher dédié<br/>ca-*-outbox]
+  sb[Service Bus scan-jobs<br/>sessions tenant + DLQ]
+  worker[Worker Container Apps<br/>idempotent + retry/backoff + timeouts]
+  azure[Azure ARM / Resource Graph / Microsoft Graph]
+  pg2[(PostgreSQL<br/>scan_results + attempts<br/>CONSUMED / REFUNDED)]
+  pdf[JSON API + PDF borné]
+  client --> apim --> api --> pg1 --> outbox --> sb --> worker --> azure --> pg2 --> pdf --> client
+  client -. direct si APIM désactivé .-> api

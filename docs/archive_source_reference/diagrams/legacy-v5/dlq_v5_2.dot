@@ -1,0 +1,10 @@
+digraph G { rankdir=LR; graph [fontname="Arial", bgcolor="white", ranksep=0.65, nodesep=0.45]; node [fontname="Arial", shape=box, style="rounded,filled", fillcolor="#EAF3F8", color="#1F4E79", penwidth=1.2]; edge [fontname="Arial", color="#1F4E79", arrowsize=0.7];
+  sb[label="Service Bus queue scan-jobs"];
+  worker[label="Worker validate schema/version"];
+  ok[label="Process scan"];
+  bad[label="DLQ
+invalid contract", fillcolor="#F4CCCC"];
+  replay[label="Replay controle"];
+  purge[label="Purge documentee"];
+  sb -> worker; worker -> ok [label="valid"]; worker -> bad [label="invalid"]; bad -> replay; bad -> purge;
+}

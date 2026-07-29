@@ -1,0 +1,7 @@
+flowchart TD
+  Cron[Container Apps Job retention] --> Sweep[retention-sweep.js]
+  Sweep --> DB[(PostgreSQL)]
+  Sweep --> Audit[retention_audit_log]
+  Backup[PostgreSQL automated backups] --> Restore[Restore drill staging]
+  Restore --> Verify[Verify tenants/scans/results]
+  Verify --> Evidence[Backup/restore evidence for client readiness]

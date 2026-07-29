@@ -1,0 +1,28 @@
+sequenceDiagram
+  participant C as Client
+  participant A as API
+  participant DB as PostgreSQL
+  participant SB as Service Bus
+  participant W as Worker
+  C->>A: POST /v1/scans<br/>Idempotency-Key optional
+  A->>A: derive tenant from API key
+  A->>A: generate idempotency key if missing
+  A->>DB: BEGIN + lock tenant/month
+  A->>DB: validate allowlist + quota + active scans
+  A->>DB: INSERT scan PENDING or return idempotent replay
+  A->>DB: COMMIT
+  alt new scan
+    A->>SB: scan.requested versioned<br/>sessionId=tenantId
+  end
+  A-->>C: 201/200 scanId + idempotency metadata
+  W->>SB: accept tenant session
+  W->>W: validate message contract version
+  W->>DB: acquire attempt if PENDING
+  W->>DB: mark IN_PROGRESS
+  W->>W: resource preflight + module timeouts
+  W->>DB: save full result in scan_results
+  W->>DB: update result_summary + DONE/FAILED
+  W->>SB: complete message
+  C->>A: GET /v1/scans/{scanId}
+  A->>DB: tenant-filtered read
+  A-->>C: status + summary/result

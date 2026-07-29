@@ -1,0 +1,18 @@
+sequenceDiagram
+  participant Client
+  participant API
+  participant DB as PostgreSQL
+  participant OB as Outbox publisher
+  participant SB as Service Bus
+  participant Worker
+  Client->>API: POST /v1/scans Idempotency-Key optional
+  API->>DB: derive tenant, authorize target, lock quota month
+  API->>DB: insert scans PENDING, billing_state RESERVED
+  API->>DB: insert scan_reserved + idempotency + outbox event
+  OB->>SB: publish scan.requested version 2026-05-06-production-hardening-v5
+  Worker->>SB: accept tenant session
+  Worker->>DB: beginAttempt PENDING -> IN_PROGRESS
+  Worker->>Worker: run modules + retry/backoff + timeouts
+  Worker->>DB: scan_results + scan_attempts + DONE/FAILED
+  Worker->>DB: scan_consumed or scan_refunded
+  Client->>API: GET /v1/scans/{scanId} and PDF

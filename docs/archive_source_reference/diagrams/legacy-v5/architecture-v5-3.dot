@@ -1,0 +1,15 @@
+
+digraph G { graph [rankdir=TB, bgcolor="white", pad="0.2", nodesep="0.35", ranksep="0.45"]; node [shape=box, style="rounded,filled", fontname="Arial", fontsize=11, color="#365F91", fillcolor="#D9EAF7"]; edge [fontname="Arial", fontsize=9, color="#365F91"];
+client [label="Client B2B / Portail / Intégrateur", fillcolor="#EAF2F8"];
+apim [label="APIM optionnel\nGateway / logs / policy", fillcolor="#D9EAD3"];
+api [label="API Fastify /v1\nAPI key -> tenant_id\nallowlists + quotas", fillcolor="#D9EAF7"];
+pg1 [label="PostgreSQL\nscans + idempotency\nbilling RESERVED\noutbox_events", shape=cylinder, fillcolor="#FFF2CC"];
+outbox [label="Outbox publisher dédié\nca-*-outbox", fillcolor="#EADCF8"];
+sb [label="Service Bus scan-jobs\nsessions tenant + DLQ", fillcolor="#FFF2CC"];
+worker [label="Worker Container Apps\nidempotent + retry/backoff\ntimeouts", fillcolor="#FCE5CD"];
+azure [label="Azure ARM / Resource Graph\nMicrosoft Graph / Entra", fillcolor="#D9EAD3"];
+pg2 [label="PostgreSQL\nscan_results + attempts\nCONSUMED / REFUNDED", shape=cylinder, fillcolor="#D9EAD3"];
+pdf [label="JSON API + PDF borné\nfindings / remediation / evidence", fillcolor="#F4CCCC"];
+client -> apim -> api -> pg1 -> outbox -> sb -> worker -> azure -> pg2 -> pdf -> client;
+client -> api [style=dashed, label="direct si APIM désactivé"];
+}

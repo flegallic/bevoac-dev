@@ -1,0 +1,9 @@
+flowchart LR
+  Client[Client / Integrateur] --> APIM[Azure API Management]
+  APIM -->|subscription key optional by policy| API[Bevoac API]
+  APIM --> Logs[Gateway logs]
+  API --> Auth[Bevoac Bearer API key]
+  Auth --> Tenant[tenant_id]
+  API --> Rate[Backend rate limit]
+  API --> Service[Scans / Billing / Onboarding]
+  note1[Decision: documenter clairement APIM key obligatoire ou subscription_required=false]

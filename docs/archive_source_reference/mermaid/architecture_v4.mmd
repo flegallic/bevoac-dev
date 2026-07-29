@@ -1,0 +1,47 @@
+flowchart LR
+    subgraph Customer[Client / Integrateur]
+        Admin[Admin client]
+        System[Systeme client / CI]
+    end
+
+    subgraph Bevoac[Bevoac SaaS Azure France Central]
+        Front[Frontend onboarding statique]
+        API[Fastify API - control plane]
+        SB[Azure Service Bus scan-jobs]
+        Worker[Container App Worker scale-to-zero]
+        PG[(PostgreSQL Flexible Server)]
+        KV[Azure Key Vault]
+        ACR[Azure Container Registry]
+        LAW[Log Analytics]
+    end
+
+    subgraph Microsoft[Microsoft Cloud client]
+        Entra[Microsoft Entra ID]
+        ARM[Azure Resource Manager / Resource Graph]
+        Subs[Subscriptions client]
+    end
+
+    Admin --> Front
+    Front -->|POST /v1/onboarding/azure/start| API
+    API -->|URL admin consent avec state HMAC| Front
+    Admin -->|admin consent| Entra
+    Entra -->|GET /v1/onboarding/azure/callback| API
+    API -->|token client_credentials| Entra
+    API -->|liste subscriptions accessibles| ARM
+    ARM --> Subs
+    API -->|tenant_azure_integrations / scopes| PG
+
+    System -->|Bearer API key| API
+    API -->|validation tenant, allowlist, quotas| PG
+    API -->|message scan.requested| SB
+    SB --> Worker
+    Worker -->|Resource Graph preflight + modules| ARM
+    Worker -->|result JSON / status| PG
+    API -->|GET result / PDF / billing| System
+
+    API -. secrets .-> KV
+    Worker -. secrets .-> KV
+    API -. images .-> ACR
+    Worker -. images .-> ACR
+    API -. logs .-> LAW
+    Worker -. logs .-> LAW

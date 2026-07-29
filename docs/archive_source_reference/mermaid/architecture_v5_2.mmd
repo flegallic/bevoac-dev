@@ -1,0 +1,18 @@
+flowchart LR
+  Client[Client B2B / Portail / Integrateur] -->|Bearer Bevoac API key| APIM[APIM optionnel]
+  APIM --> API[Bevoac API Fastify /v1]
+  Client -->|direct si APIM desactive| API
+  API --> Auth[API key hash -> tenant_id]
+  API --> Allow[Allowlist web/Azure + validation payload]
+  API --> Idem[Idempotency key client ou server-generated]
+  API --> Billing[Billing RESERVED + quota/backpressure]
+  API --> Outbox[(PostgreSQL outbox_events)]
+  Outbox --> SB[Azure Service Bus scan-jobs sessions tenant]
+  SB --> Worker[Worker Container Apps idempotent]
+  Worker --> Web[Scanners web SSRF/DNS guard]
+  Worker --> Graph[Microsoft Graph / Entra]
+  Worker --> ARM[Azure ARM / Resource Graph]
+  Worker --> Results[(scan_results + scan_attempts)]
+  Results --> API
+  API --> PDF[PDF bounded finding/remediation/evidence]
+  Admin[Admin Bevoac OIDC] --> API

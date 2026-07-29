@@ -1,0 +1,10 @@
+
+digraph G { graph [rankdir=TB, bgcolor="white", nodesep="0.35", ranksep="0.4"]; node [shape=box, style="rounded,filled", fontname="Arial", fontsize=10.5, color="#365F91", fillcolor="#D9EAF7"]; edge [color="#365F91"];
+api [label="API / Worker / Outbox"];
+logs [label="Log Analytics\nlogs applicatifs"];
+metrics [label="Azure Monitor metrics\nDLQ, backlog, PG CPU/memory/storage"];
+alerts [label="Action Group\nalertes opérateur", fillcolor="#FFF2CC"];
+retention [label="Container Apps Job retention\ncron + audit log", fillcolor="#D9EAD3"];
+dlq [label="Service Bus DLQ\nstats / replay / purge", fillcolor="#F4CCCC"];
+api->logs; api->metrics; metrics->alerts; retention->logs; dlq->metrics; dlq->alerts;
+}

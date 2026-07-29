@@ -1,0 +1,15 @@
+digraph G { rankdir=LR; graph [fontname="Arial", bgcolor="white", ranksep=0.65, nodesep=0.45]; node [fontname="Arial", shape=box, style="rounded,filled", fillcolor="#EAF3F8", color="#1F4E79", penwidth=1.2]; edge [fontname="Arial", color="#1F4E79", arrowsize=0.7];
+  create[label="Create scan"];
+  reserved[label="scans.billing_state=RESERVED
+billing_usage_ledger=scan_reserved", fillcolor="#FFF2CC"];
+  outbox[label="outbox_events
+scan.requested"];
+  worker[label="Worker"];
+  consumed[label="DONE
+scan_consumed
+CONSUMED", fillcolor="#E2F0D9"];
+  refunded[label="FAILED
+scan_refunded
+REFUNDED", fillcolor="#F4CCCC"];
+  create -> reserved -> outbox -> worker; worker -> consumed; worker -> refunded;
+}

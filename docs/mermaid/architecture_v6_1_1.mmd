@@ -1,0 +1,16 @@
+flowchart LR
+  C[Client B2B / Integrateur] --> APIM[APIM optionnel<br/>Double-auth possible]
+  APIM --> API[API Fastify /v1<br/>Auth API key -> tenant Bevoac]
+  API --> AUTH[Validation tenant<br/>Reject tenantId/customerId]
+  AUTH --> ALLOW[Scopes autorises<br/>tenant_web_targets / tenant_azure_scopes]
+  ALLOW --> IDEM[Idempotency<br/>server_generated ou client_supplied]
+  IDEM --> BILL[Billing reservation<br/>scan_reserved + RESERVED]
+  BILL --> DB[(PostgreSQL<br/>scans + scan_results<br/>ledger + outbox_events)]
+  DB --> OP[Outbox publisher dedie<br/>Container App outbox]
+  OP --> SB[Service Bus scan-jobs<br/>Sessions tenant + DLQ]
+  SB --> W[Worker Container Apps<br/>retry/backoff + idempotence]
+  W --> MOD[Modules web / Azure / Entra<br/>KPI engine + evidence metadata]
+  MOD --> RES[(scan_results<br/>JSON complet + hash + summary)]
+  RES --> API
+  API --> JSON[JSON API<br/>summary + result + KPI scorecard]
+  API --> PDF[PDF report<br/>findings + remediation + evidence<br/>KPI Scorecard]

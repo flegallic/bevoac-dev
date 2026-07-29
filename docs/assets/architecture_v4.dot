@@ -1,0 +1,51 @@
+digraph G {
+  graph [rankdir=LR, bgcolor="white", pad="0.2", nodesep="0.55", ranksep="0.7", fontname="DejaVu Sans"];
+  node [shape=box, style="rounded,filled", fillcolor="#F7F9FC", color="#496A93", fontname="DejaVu Sans", fontsize=11, margin="0.12,0.08"];
+  edge [color="#536B89", arrowsize=0.8, fontname="DejaVu Sans", fontsize=9];
+
+  subgraph cluster_client {
+    label="Client / Intégrateur"; color="#B8C7D9"; style="rounded";
+    admin [label="Admin client"];
+    ci [label="Système client / CI"];
+  }
+
+  subgraph cluster_bevoac {
+    label="Bevoac SaaS Azure"; color="#B8C7D9"; style="rounded";
+    frontend [label="Frontend onboarding statique"];
+    api [label="Fastify API\nControl plane"];
+    sb [label="Azure Service Bus\nscan-jobs"];
+    worker [label="Container App Worker"];
+    pg [label="PostgreSQL\nsource de vérité"];
+    kv [label="Azure Key Vault\nsecrets"];
+    acr [label="Azure Container Registry"];
+    logs [label="Log Analytics\nlogs techniques"];
+  }
+
+  subgraph cluster_ms {
+    label="Microsoft / Azure client"; color="#B8C7D9"; style="rounded";
+    entra [label="Microsoft Entra ID\nAdmin consent"];
+    arm [label="Azure Management / ARM\nSubscriptions"];
+    rg [label="Azure Resource Graph\nComptage ressources"];
+  }
+
+  admin -> frontend [label="démarre onboarding"];
+  frontend -> api [label="POST /v1/onboarding/azure/start"];
+  api -> entra [label="URL admin consent signée"];
+  entra -> api [label="callback + state"];
+  api -> arm [label="liste subscriptions accessibles"];
+  api -> pg [label="tenant_azure_integrations\ntenant_azure_scopes"];
+  ci -> api [label="POST /v1/scans"];
+  api -> pg [label="quota, idempotence, isolation"];
+  api -> sb [label="job"];
+  worker -> sb [label="consume"];
+  worker -> rg [label="pré-vol ressources"];
+  worker -> arm [label="audit modules Azure"];
+  worker -> pg [label="résultats structurés"];
+  api -> pg [label="GET résultats/PDF/billing"];
+  api -> kv [label="secrets"];
+  worker -> kv [label="secrets"];
+  api -> logs;
+  worker -> logs;
+  acr -> api [style=dashed, label="images"];
+  acr -> worker [style=dashed, label="images"];
+}

@@ -1,0 +1,6 @@
+digraph G { rankdir=LR; node [shape=box, style="rounded,filled", fontname="Arial"];
+Akey[label="API key A", fillcolor="#DCEBFF"]; Bkey[label="API key B", fillcolor="#FFE5E5"]; TA[label="Tenant A context", fillcolor="#DCEBFF"]; TB[label="Tenant B context", fillcolor="#FFE5E5"]; SA[label="scans A
+results A", fillcolor="#DCEBFF"]; SB[label="scans B
+results B", fillcolor="#FFE5E5"]; Guard[label="DB guardrails
+FK tenant + triggers + view", fillcolor="#FFF7E6"];
+Akey->TA->SA; Bkey->TB->SB; Guard->SA; Guard->SB; TA->SB [style=dashed,label="404/absent"]; TB->SA [style=dashed,label="404/absent"]; }

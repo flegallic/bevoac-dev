@@ -1,0 +1,16 @@
+flowchart TD
+  K1[API key tenant A] --> TA[Tenant A context]
+  K2[API key tenant B] --> TB[Tenant B context]
+  TA --> SA[scans tenant_id=A]
+  TB --> SB[scans tenant_id=B]
+  TA --> WA[tenant_web_targets A]
+  TB --> WB[tenant_web_targets B]
+  TA --> AA[tenant_azure_scopes A]
+  TB --> AB[tenant_azure_scopes B]
+  SA --> RA[scan_results A]
+  SB --> RB[scan_results B]
+  TA -. 404 .-> RB
+  TB -. 404 .-> RA
+  Guard[DB guardrails V5.3
+FK tenant matching + triggers + tenant_isolation_violations] --> SA
+  Guard --> SB

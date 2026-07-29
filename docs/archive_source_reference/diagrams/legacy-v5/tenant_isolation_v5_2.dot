@@ -1,0 +1,15 @@
+digraph G { rankdir=TB; graph [fontname="Arial", bgcolor="white", ranksep=0.65, nodesep=0.45]; node [fontname="Arial", shape=box, style="rounded,filled", fillcolor="#EAF3F8", color="#1F4E79", penwidth=1.2]; edge [fontname="Arial", color="#1F4E79", arrowsize=0.7];
+  key[label="API key client"];
+  tenant[label="tenant_id derive cote serveur"];
+  reject[label="Rejet tenantId/customerId body", fillcolor="#F4CCCC"];
+  web[label="tenant_web_targets
+host HTTPS autorises"];
+  azure[label="tenant_azure_scopes
+subscriptions VERIFIED"];
+  scans[label="scans/resultats/billing
+filtrés tenant_id", shape=cylinder, fillcolor="#E7F2E7"];
+  other[label="Autre tenant"];
+  notfound[label="404 / 403
+lecture ou cible non autorisee", fillcolor="#F4CCCC"];
+  key -> tenant; tenant -> reject; tenant -> web; tenant -> azure; web -> scans; azure -> scans; other -> notfound; other -> scans [style=dashed,label="interdit"];
+}
