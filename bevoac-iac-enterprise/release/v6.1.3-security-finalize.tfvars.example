@@ -1,0 +1,15 @@
+# Final enterprise security phase. Apply only after the V6.1.3 workloads have
+# passed smoke tests, the API candidate owns traffic, and a private runner/VPN
+# can resolve and reach Key Vault and PostgreSQL private endpoints.
+enable_private_endpoints = true
+enable_postgres_public_access = false
+enable_db_admin_public_ip_rule = false
+service_bus_local_auth_enabled = false
+retain_legacy_servicebus_connection_secret = false
+enable_dedicated_outbox_publisher = true
+enable_dedicated_admin_api = true
+worker_min_replicas = 0
+worker_max_replicas = 8
+worker_queue_message_count = 1
+retain_legacy_broad_key_vault_roles = false
+retain_legacy_api_servicebus_sender = false

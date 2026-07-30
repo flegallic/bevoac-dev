@@ -1,0 +1,15 @@
+flowchart TB
+  CURRENT[Observed transition
+PG/KV public access enabled
+firewall /32 + ACA egress] --> PLAN[Controlled migration plan]
+  PLAN --> PE[Private endpoint subnet]
+  PE --> PG[PostgreSQL private endpoint]
+  PE --> KV[Key Vault private endpoint]
+  PG --> DNSPG[privatelink.postgres.database.azure.com]
+  KV --> DNSKV[privatelink.vaultcore.azure.net]
+  DNSPG --> VNET[VNet link]
+  DNSKV --> VNET
+  VNET --> ACA[Container Apps Environment]
+  VNET --> ADMIN[Private runner / VPN]
+  ACA --> CLOSE[Disable public access + remove firewall]
+  ADMIN --> CLOSE

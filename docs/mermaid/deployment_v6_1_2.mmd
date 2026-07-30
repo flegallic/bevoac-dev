@@ -1,0 +1,12 @@
+flowchart LR
+  GIT[Git commit + PR] --> CI[CI gates]
+  CI --> ACR[ACR immutable images]
+  ACR --> STAGE[Staging revisions 0%]
+  STAGE --> TEST[Health + auth + RLS + outbox + worker + billing]
+  TEST --> PROD0[Production candidate 0%]
+  PROD0 --> P5[5%]
+  P5 --> P25[25%]
+  P25 --> P100[100%]
+  P5 -. rollback .-> STABLE[Previous stable revision]
+  P25 -. rollback .-> STABLE
+  P100 -. rollback .-> STABLE

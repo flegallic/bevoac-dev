@@ -1,0 +1,21 @@
+digraph G {
+  graph [rankdir=LR, bgcolor="white", pad="0.3", nodesep="0.45", ranksep="0.65", fontname="Arial"];
+  node [shape=box, style="rounded,filled", fillcolor="#EAF2F8", color="#1F4E78", fontname="Arial", fontsize=10, margin="0.12,0.08"];
+  edge [color="#4F6D7A", penwidth=1.2, arrowsize=0.8, fontname="Arial", fontsize=9];
+
+  graph [rankdir=TB];
+  key [label="Bearer API key"];
+  hash [label="SHA-256"];
+  fn [label="bevoac_authenticate_api_key
+SECURITY DEFINER
+search_path=pg_catalog"];
+  tenant [label="tenantId + scopes"];
+  ctx [label="app.current_tenant_id"];
+  login [label="session_user=bevoac_api"];
+  grants [label="Explicit grants"];
+  rls [label="FORCE RLS"];
+  a [label="Tenant A rows", fillcolor="#D5F5E3"];
+  b [label="Tenant B rows", fillcolor="#FADBD8"];
+  key -> hash -> fn -> tenant -> ctx -> login -> grants -> rls -> a;
+  rls -> b [style=dashed,label="denied"];
+}

@@ -1,49 +1,75 @@
-# Procedure d'application
+# V6.1.3 application and deployment procedure
 
-## 1. Pre-requis
+## 1. Source gate
 
-- Depot Bevoac en branche de travail dediee, jamais directement sur `main`.
-- Node.js >= 20.
-- PostgreSQL de test accessible.
-- Variables `.env` API et worker disponibles.
-- Terraform installe pour les controles IaC.
-
-## 2. Sauvegarde
-
-Le script d'application cree une sauvegarde horodatee sous :
-
-```text
-.bevoac-enterprise-hardening-backup/<timestamp>/
-```
-
-Les fichiers existants ecrases y sont copies avant modification.
-
-## 3. Application
+Work from a dedicated release branch with a clean tracked worktree and an empty Git index.
 
 ```bash
-python scripts/apply_enterprise_hardening.py --repo-root /path/to/bevoac --package-root /path/to/package
+./validate_release.sh --full
 ```
 
-Options utiles :
+Do not deploy if any API, worker, PostgreSQL CI, Terraform or static-hardening gate fails.
+
+## 2. CI gate
+
+Push the reviewed release commit and require both GitHub Actions jobs to succeed:
+
+- `code-and-iac`;
+- `postgres-enterprise`.
+
+The PostgreSQL job rebuilds PostgreSQL 16 from zero, applies the eight expected migrations and validates the six real runtime logins, 15 forced-RLS tables, 29 policies and 58 exact table privileges.
+
+## 3. Staged Azure deployment
 
 ```bash
---dry-run       Affiche les operations sans modifier le depot
---force         Reapplique meme si certains marqueurs existent deja
+scripts/release/deploy_v6_1_3.sh preflight
+scripts/release/deploy_v6_1_3.sh build
+BEVOAC_APPROVE_DB_MIGRATION=YES scripts/release/deploy_v6_1_3.sh migrate-db
+scripts/release/deploy_v6_1_3.sh plan-workloads
+BEVOAC_APPROVE_WORKLOAD_APPLY=YES scripts/release/deploy_v6_1_3.sh apply-workloads
+scripts/release/deploy_v6_1_3.sh smoke-workloads
+BEVOAC_APPROVE_TRAFFIC_ROLLOUT=YES scripts/release/deploy_v6_1_3.sh rollout
 ```
 
-## 4. Validation obligatoire
+The workload phase deliberately preserves the current public-network and legacy Service Bus rollback path. It is not the final security posture.
 
-Voir `VALIDATION_MATRIX.md`.
+## 4. Security finalization
 
-## 5. Politique de merge
+Run only from a private runner, VPN or approved administrative path able to resolve and reach Key Vault and PostgreSQL private endpoints.
 
-Le merge vers `main` est interdit tant que :
+```bash
+BEVOAC_PRIVATE_RUNNER_READY=YES scripts/release/deploy_v6_1_3.sh plan-security
+BEVOAC_PRIVATE_RUNNER_READY=YES \
+BEVOAC_APPROVE_SECURITY_FINALIZE=YES \
+  scripts/release/deploy_v6_1_3.sh apply-security
+BEVOAC_PRIVATE_RUNNER_READY=YES scripts/release/deploy_v6_1_3.sh smoke-final
+```
 
-- `npm run check` API et worker est OK ;
-- `npm test` API et worker est OK ;
-- `npm run migrate-db` fonctionne sur DB vide ;
-- `npm run check:enterprise-hardening` est OK ;
-- `npm run check:tenant-isolation:enterprise` est OK si RLS stricte activee ;
-- Terraform validate est OK ;
-- la generation PDF a ete testee sur un scan DONE ;
-- une revue humaine du runbook a confirme qu'aucune information operationnelle historique n'a ete supprimee.
+This phase closes PostgreSQL and Key Vault public access, disables Service Bus local/SAS authentication, deletes the legacy Service Bus connection-string secret, removes the public API Sender role and removes API/worker vault-wide secret-reader roles.
+
+## 5. Evidence
+
+```bash
+BEVOAC_COLLECT_DB=YES scripts/release/collect_post_deploy_evidence.sh
+```
+
+Archive the Terraform plans, image digests, migration/RLS report, workload identities and database users, APIM smoke output, revision traffic, queue/DLQ, outbox backlog and final checksums.
+
+## 6. Rollback
+
+Before 100% traffic, use:
+
+```bash
+scripts/release/deploy_v6_1_3.sh rollback
+```
+
+If security finalization fails, do not improvise. Restore the approved network/RBAC variables through Terraform, retain evidence and return to the last accepted workload state.
+
+## Forbidden shortcuts
+
+- Do not reuse a V6.1.2 image tag.
+- Do not apply the blocked legacy RLS launchers.
+- Do not put `bevoacadmin` on an application workload.
+- Do not remove the transactional `outbox_events` write.
+- Do not disable Service Bus local auth before worker/outbox Managed Identity smoke tests pass.
+- Do not close Key Vault/PostgreSQL public access without a verified private administrative path.

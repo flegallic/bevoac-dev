@@ -1,0 +1,19 @@
+flowchart LR
+  PR[Pull Request] --> API[API check + tests]
+  PR --> WORKER[Worker check + tests]
+  PR --> TF[Terraform fmt + validate + static checks]
+  PR --> PG[PostgreSQL 16 ephemeral]
+  PG --> INIT[init-db.js]
+  INIT --> STD[6 standard migrations]
+  STD --> AUTH[secure API-key auth migration]
+  AUTH --> RLS[runtime-role RLS migration]
+  RLS --> DENIAL[6 real-login denial tests]
+  DENIAL --> HTTP[Fastify.inject API test]
+  DENIAL --> WH[Worker hermetic test]
+  API --> GATE{All green?}
+  WORKER --> GATE
+  TF --> GATE
+  HTTP --> GATE
+  WH --> GATE
+  GATE -->|yes| IMG[Immutable RC images]
+  GATE -->|no| STOP[Block release]

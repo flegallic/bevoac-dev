@@ -9,18 +9,18 @@ resource "azurerm_container_app" "outbox_publisher" {
 
   identity {
     type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.api.id]
+    identity_ids = [azurerm_user_assigned_identity.outbox.id]
   }
 
   registry {
     server   = azurerm_container_registry.acr.login_server
-    identity = azurerm_user_assigned_identity.api.id
+    identity = azurerm_user_assigned_identity.outbox.id
   }
 
   secret {
-    name                = "pg-password"
-    identity            = azurerm_user_assigned_identity.api.id
-    key_vault_secret_id = azurerm_key_vault_secret.pg_password.versionless_id
+    name                = "pg-outbox-password"
+    identity            = azurerm_user_assigned_identity.outbox.id
+    key_vault_secret_id = azurerm_key_vault_secret.pg_outbox_password.versionless_id
   }
 
   template {
@@ -37,6 +37,10 @@ resource "azurerm_container_app" "outbox_publisher" {
       env {
         name  = "NODE_ENV"
         value = "production"
+      }
+      env {
+        name  = "APP_RUNTIME_MODE"
+        value = "outbox"
       }
       env {
         name  = "LOG_LEVEL"
@@ -56,7 +60,7 @@ resource "azurerm_container_app" "outbox_publisher" {
       }
       env {
         name  = "PG_USER"
-        value = var.pg_admin_username
+        value = "bevoac_outbox"
       }
       env {
         name  = "PG_SSL_MODE"
@@ -64,7 +68,7 @@ resource "azurerm_container_app" "outbox_publisher" {
       }
       env {
         name        = "PG_PASSWORD"
-        secret_name = "pg-password"
+        secret_name = "pg-outbox-password"
       }
       env {
         name  = "SERVICEBUS_AUTH_MODE"
@@ -84,7 +88,7 @@ resource "azurerm_container_app" "outbox_publisher" {
       }
       env {
         name  = "AZURE_CLIENT_ID"
-        value = azurerm_user_assigned_identity.api.client_id
+        value = azurerm_user_assigned_identity.outbox.client_id
       }
       env {
         name  = "OUTBOX_PUBLISH_INTERVAL_MS"
@@ -102,34 +106,14 @@ resource "azurerm_container_app" "outbox_publisher" {
         name  = "OUTBOX_BASE_BACKOFF_SECONDS"
         value = tostring(var.outbox_base_backoff_seconds)
       }
-      env {
-        name  = "ADMIN_AUTH_MODE"
-        value = var.admin_auth_mode
-      }
-      env {
-        name  = "ADMIN_OIDC_ISSUER"
-        value = var.admin_oidc_issuer
-      }
-      env {
-        name  = "ADMIN_OIDC_AUDIENCE"
-        value = var.admin_oidc_audience
-      }
-      env {
-        name  = "ONBOARDING_STATE_SECRET"
-        value = "outbox-publisher-not-used"
-      }
-      env {
-        name  = "API_PUBLIC_BASE_URL"
-        value = local.api_public_base_url_effective
-      }
     }
   }
 
   depends_on = [
-    azurerm_role_assignment.api_acr_pull,
-    azurerm_role_assignment.api_kv_reader,
-    azurerm_role_assignment.api_sb_sender,
-    azurerm_key_vault_secret.pg_password,
-    time_sleep.wait_for_workload_roles
+    azurerm_role_assignment.outbox_acr_pull,
+    azurerm_role_assignment.outbox_pg_secret_reader,
+    azurerm_role_assignment.outbox_sb_sender,
+    azurerm_key_vault_secret.pg_outbox_password,
+    time_sleep.wait_for_dedicated_workload_roles
   ]
 }

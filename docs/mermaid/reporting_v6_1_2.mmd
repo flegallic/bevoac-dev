@@ -1,0 +1,10 @@
+flowchart TB
+  RES[(scan_results
+JSON complete + summary + hash)] --> API[API tenant-scoped]
+  RES --> KPI[KPI Scorecard]
+  API --> JSON[Explicit JSON result]
+  KPI --> PDF[Bounded PDF
+executive + findings + remediation + evidence]
+  RES --> PDF
+  JSON --> CLIENT[Client / CTO / RSSI]
+  PDF --> CLIENT

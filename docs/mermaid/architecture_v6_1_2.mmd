@@ -1,0 +1,26 @@
+flowchart LR
+  C[Client B2B / Integrateur] --> APIM[Azure API Management
+subscription + API key]
+  APIM --> API[public_api
+Fastify
+PG: bevoac_api]
+  API --> TX[(PostgreSQL
+scan + billing + idempotency + outbox)]
+  TX --> OUT[outbox runtime
+PG: bevoac_outbox
+MI: Service Bus Sender]
+  OUT --> SB[Service Bus scan-jobs
+sessions + DLQ]
+  SB --> W[worker
+PG: bevoac_worker
+MI: Service Bus Receiver]
+  W --> MOD[Modules web / Entra / Azure]
+  MOD --> TX
+  API --> JSON[JSON / PDF]
+  ADMIN[admin_api
+OIDC
+PG: bevoac_admin_api] --> TX
+  RET[retention job
+PG: bevoac_retention] --> TX
+  OP[operator
+PG: bevoac_operator] --> TX

@@ -1,0 +1,12 @@
+# Compatibility phase: deploy V6.1.3 workloads while preserving the current
+# network and Service Bus rollback path. Supply real immutable image references
+# and revision suffixes through a private, untracked tfvars file.
+enable_dedicated_outbox_publisher = true
+enable_dedicated_admin_api = true
+service_bus_local_auth_enabled = true
+retain_legacy_servicebus_connection_secret = true
+worker_min_replicas = 0
+worker_max_replicas = 8
+worker_queue_message_count = 1
+retain_legacy_broad_key_vault_roles = true
+retain_legacy_api_servicebus_sender = true

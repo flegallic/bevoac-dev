@@ -1,6 +1,6 @@
 {
   "name": "bevoac-api-enterprise",
-  "version": "6.1.2-production-ready",
+  "version": "6.1.3-production-ready",
   "description": "Enterprise SaaS control plane API for audit scan orchestration, tenant management, and billing governance.",
   "type": "commonjs",
   "main": "src/server.js",
@@ -12,7 +12,6 @@
     "migrate-db": "node scripts/migrate-db.js",
     "outbox-publisher": "node scripts/outbox-publisher.js",
     "init-db": "node scripts/init-db.js",
-    "init-db:prod-hardening": "node scripts/init-db.production-hardening.js",
     "retention-sweep": "node scripts/retention-sweep.js",
     "check-db": "node scripts/check-db.js",
     "create-tenant": "node scripts/create-tenant.js",
@@ -25,14 +24,13 @@
     "check:tenant-isolation": "node scripts/check-tenant-isolation.js",
     "backfill:billing": "node scripts/backfill-final-billing-state.js",
     "backfill:billing:dry-run": "node scripts/backfill-final-billing-state.js --dry-run",
-    "migrate-db:rls": "node scripts/apply-rls-migration.js",
-    "check:rls": "node scripts/check-rls.js",
-    "migrate-db:enterprise-hardening": "node scripts/apply-enterprise-hardening-migration.js",
-    "migrate-db:enterprise-rls": "node scripts/apply-enterprise-rls.js",
+    "check:rls": "node scripts/verify-runtime-db-structure.js",
     "check:enterprise-hardening": "node scripts/check-enterprise-hardening.js",
     "check:image": "node scripts/runtime-deps-check.js && node scripts/syntax-check.js && node scripts/sync-contracts.js --api-only",
     "migrate-db:secure-api-key-auth": "node scripts/apply-secure-api-key-auth.js",
-    "migrate-db:runtime-role-rls": "node scripts/apply-runtime-role-rls.js"
+    "migrate-db:runtime-role-rls": "node scripts/apply-runtime-role-rls.js",
+    "sync-db:runtime-roles": "node scripts/sync-runtime-db-roles.js",
+    "check-db:runtime-boundary": "node scripts/verify-runtime-db-structure.js"
   },
   "engines": {
     "node": ">=24 <25"

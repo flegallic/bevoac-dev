@@ -30,11 +30,14 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "container_apps_egre
 }
 
 resource "azurerm_servicebus_namespace" "sb" {
-  name                = "sb-${local.name_suffix}"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  sku                 = "Standard"
-  tags                = local.common_tags
+  name                          = "sb-${local.name_suffix}"
+  location                      = azurerm_resource_group.rg.location
+  resource_group_name           = azurerm_resource_group.rg.name
+  sku                           = "Standard"
+  local_auth_enabled            = var.service_bus_local_auth_enabled
+  public_network_access_enabled = true
+  minimum_tls_version           = "1.2"
+  tags                          = local.common_tags
 }
 
 resource "azurerm_servicebus_queue" "scan_jobs" {
@@ -46,19 +49,24 @@ resource "azurerm_servicebus_queue" "scan_jobs" {
   dead_lettering_on_message_expiration = true
 }
 
+# Temporary rollback compatibility only. V6.1.3 workloads never consume this
+# secret. The security-finalize phase sets the variable to false and removes it.
 data "azurerm_servicebus_namespace_authorization_rule" "root" {
+  count        = var.retain_legacy_servicebus_connection_secret ? 1 : 0
   name         = "RootManageSharedAccessKey"
   namespace_id = azurerm_servicebus_namespace.sb.id
 }
 
 resource "azurerm_key_vault_secret" "servicebus_connection_string" {
+  count        = var.retain_legacy_servicebus_connection_secret ? 1 : 0
   name         = "servicebus-connection-string"
-  value        = data.azurerm_servicebus_namespace_authorization_rule.root.primary_connection_string
+  value        = data.azurerm_servicebus_namespace_authorization_rule.root[0].primary_connection_string
   key_vault_id = azurerm_key_vault.kv.id
   depends_on   = [time_sleep.wait_for_kv_rbac]
 }
 
 resource "azurerm_role_assignment" "api_sb_sender" {
+  count                = var.retain_legacy_api_servicebus_sender ? 1 : 0
   scope                = azurerm_servicebus_namespace.sb.id
   role_definition_name = "Azure Service Bus Data Sender"
   principal_id         = azurerm_user_assigned_identity.api.principal_id

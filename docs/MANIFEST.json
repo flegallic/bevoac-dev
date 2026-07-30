@@ -1,29 +1,425 @@
 {
-  "runbook": "Runbook_Bevoac_V5_2_Production_Ready_Ultime.docx",
-  "comparison": "Comparatif_Runbooks_Bevoac_V4_2_V5_1_V5_2.docx",
-  "mermaid_files": [
-    "architecture_v5_2.mmd",
-    "onboarding_v5_2.mmd",
-    "scan_lifecycle_v5_2.mmd",
-    "tenant_isolation_v5_2.mmd",
-    "outbox_billing_v5_2.mmd",
-    "dlq_operations_v5_2.mmd",
-    "apim_v5_2.mmd",
-    "retention_backup_v5_2.mmd"
+  "baseline": "Bevoac V6.1.2-R3 documentation / V6.1.3 application release",
+  "generated_at_utc": "2026-07-29T00:00:00Z",
+  "application_version": "6.1.3-production-ready",
+  "canonical_runbook": "docs/operations/Runbook_Bevoac_V6_1_2_Production_Enterprise_Ready_R3.docx",
+  "canonical_from_scratch": "docs/operations/Guide_From_Scratch_Bevoac_V6_1_2_R3.docx",
+  "release_deployment_guide": "docs/operations/Bevoac_V6_1_3_Enterprise_Release_Deployment_Guide.docx",
+  "files": [
+    {
+      "path": "docs/README.md",
+      "sha256": "6a94e8d63444e9a519294522e0b50765f0a511d52b17dfaea1b126e84915b288",
+      "size": 1671
+    },
+    {
+      "path": "docs/TRACEABILITY.md",
+      "sha256": "1385870a70ec7d47d7c127f765d9b8514269af39c3c769238418650ba4ed1f55",
+      "size": 1702
+    },
+    {
+      "path": "docs/architecture/ADR-006-runtime-identities-and-provider-boundary.md",
+      "sha256": "3e2d15ed15cdfe0573b0333a3d8ee0fa76cd3c5ab09aea748cc877194a29c929",
+      "size": 2251
+    },
+    {
+      "path": "docs/client/client-presentation-safe-v6-1-2.md",
+      "sha256": "6def4e7fe6a60eb914507febe617e2c152aab6e00ab3271dee48c470309dd2db",
+      "size": 630
+    },
+    {
+      "path": "docs/commercial/market-positioning-sourced.md",
+      "sha256": "3dc6bc188df3abe1d73e7f3182d5a584b8c5196cbe71e2aaf48298c9a3e4a0c7",
+      "size": 3534
+    },
+    {
+      "path": "docs/commercial/pricing-model-v6-1-2.md",
+      "sha256": "f87151d5d287d62b2b16ab042f7118f429e3b449dd111c9c4f274f6c038ca275",
+      "size": 395
+    },
+    {
+      "path": "docs/diagrams/apim_modes_v6_1_2.dot",
+      "sha256": "102414645d1b4b66b9f6fd9b1f7214dc9ffae1828bde569b5bbc6e1375b41648",
+      "size": 859
+    },
+    {
+      "path": "docs/diagrams/apim_modes_v6_1_2.png",
+      "sha256": "6c4218ca1778a1bfe165ae2c0c6bfa5102a64f94ef6dd3bfa52e7206556da36e",
+      "size": 39134
+    },
+    {
+      "path": "docs/diagrams/architecture_v6_1_2.dot",
+      "sha256": "80a39ad883e27b3c72697e7d4e323c244a5b3df90a2f2b218b8f7fedf2ea756a",
+      "size": 1201
+    },
+    {
+      "path": "docs/diagrams/architecture_v6_1_2.png",
+      "sha256": "9a04b4d779a7430ebef9c610a65f975398c95d671e5a0e2bbc7c265c8a436d4c",
+      "size": 78891
+    },
+    {
+      "path": "docs/diagrams/ci_validation_v6_1_2.dot",
+      "sha256": "d720dcd9d2de90563a7cb965be3649acf2266cbaa2bc40ea79bb50436afac686",
+      "size": 1075
+    },
+    {
+      "path": "docs/diagrams/ci_validation_v6_1_2.png",
+      "sha256": "b16a38e0252ece209b574f5cc82dc6d6aa243c5b95d1e9a327b527e2c8fad499",
+      "size": 74224
+    },
+    {
+      "path": "docs/diagrams/deployment_v6_1_2.dot",
+      "sha256": "9eb6f940c8550f9475196e0f534e90317b3f1eaef5e61fcd94e0666f6e6cd497",
+      "size": 916
+    },
+    {
+      "path": "docs/diagrams/deployment_v6_1_2.png",
+      "sha256": "defe96f8c77c0faecd6e5575fc80491eefec1473f8f8332f0edf82b02343d7ea",
+      "size": 37209
+    },
+    {
+      "path": "docs/diagrams/observability_v6_1_2.dot",
+      "sha256": "05b375d335955baba2cefc5f844aeb2ad4c3548c289967ae5624c80f099831d5",
+      "size": 835
+    },
+    {
+      "path": "docs/diagrams/observability_v6_1_2.png",
+      "sha256": "7fe03735828e14a54d22a879846ef9e3e343c64ed29c661593ddafc3a0e12b0b",
+      "size": 38967
+    },
+    {
+      "path": "docs/diagrams/onboarding_azure_v6_1_2.dot",
+      "sha256": "24054ffc22e130e8384a4ec3ebb8b8ae5fd73757573db27337d78b61248f0198",
+      "size": 783
+    },
+    {
+      "path": "docs/diagrams/onboarding_azure_v6_1_2.png",
+      "sha256": "ae2a17d954f59c1ba55b57c56bc7bb236ae41d74be965ace86e09df00437e639",
+      "size": 32214
+    },
+    {
+      "path": "docs/diagrams/outbox_publisher_v6_1_2.dot",
+      "sha256": "866e1705e471ee8ef358e56b3864c0061cca168ef1a775e4daa17edafc84e3ac",
+      "size": 906
+    },
+    {
+      "path": "docs/diagrams/outbox_publisher_v6_1_2.png",
+      "sha256": "5afe4bdf7e4d769891748d44d8c14001e5fdfa68d3029235abd7e3ed6fff9175",
+      "size": 37136
+    },
+    {
+      "path": "docs/diagrams/reporting_v6_1_2.dot",
+      "sha256": "b21034a43c30566b7f4e41d93d57492a4a6d786aa6039f2d31993c834eab6d0e",
+      "size": 751
+    },
+    {
+      "path": "docs/diagrams/reporting_v6_1_2.png",
+      "sha256": "a814245da45e15e11819e3fdaaa7846b368358e9703fb54c2ea28f582aea080f",
+      "size": 33192
+    },
+    {
+      "path": "docs/diagrams/runtime_roles_v6_1_2.dot",
+      "sha256": "9532f9aedc303c72c4f23f622f1a8315d91b63cf72da80ff22c8c83b8b830cb1",
+      "size": 1000
+    },
+    {
+      "path": "docs/diagrams/runtime_roles_v6_1_2.png",
+      "sha256": "99a4e42d00b59a455fe37e8c999afec6b80444d351b2035ec34dbd188498cdb1",
+      "size": 60613
+    },
+    {
+      "path": "docs/diagrams/scan_lifecycle_v6_1_2.dot",
+      "sha256": "5ab5ad93ec7d3832a9e42d567068b6a7ae47b117d52b27a8f9c89f6ea24d9520",
+      "size": 1184
+    },
+    {
+      "path": "docs/diagrams/scan_lifecycle_v6_1_2.png",
+      "sha256": "1c9376d9dbe0c6a5d0e74494950f98749e8549d2e3d90a4b457338101e598a0a",
+      "size": 63832
+    },
+    {
+      "path": "docs/diagrams/tenant_isolation_v6_1_2.dot",
+      "sha256": "45332c635d2793e23cc8fccfb4e002d684fe8e25f842557f80bfb862507f23c0",
+      "size": 891
+    },
+    {
+      "path": "docs/diagrams/tenant_isolation_v6_1_2.png",
+      "sha256": "85d9366f0c14a39902d1f23f574799deadbde1e6384b604e54accab01b0c9b70",
+      "size": 38923
+    },
+    {
+      "path": "docs/diagrams/terraform_keyvault_v6_1_2.dot",
+      "sha256": "89315e3750fda2e25c27464384e8dda3684700da696d037f87a41e87fd18e276",
+      "size": 830
+    },
+    {
+      "path": "docs/diagrams/terraform_keyvault_v6_1_2.png",
+      "sha256": "23575c6ed6fb7f94382d133f3c43df5d30267a38d2e432dce2833635d0324ade",
+      "size": 43067
+    },
+    {
+      "path": "docs/diagrams/terraform_private_network_v6_1_2.dot",
+      "sha256": "621660c9d3467847fd38408579fcc60a25c953f346f291478440c0e69fa54916",
+      "size": 997
+    },
+    {
+      "path": "docs/diagrams/terraform_private_network_v6_1_2.png",
+      "sha256": "98f307515b810e14de66639e7627adfddd01e14d055b26b69c5619d4467d54b3",
+      "size": 55651
+    },
+    {
+      "path": "docs/mermaid/apim_modes_v6_1_2.mmd",
+      "sha256": "045447f797be859cac606fffece5f20a830a0718a066d98ab4edc45a6390a52e",
+      "size": 352
+    },
+    {
+      "path": "docs/mermaid/architecture_v6_1_2.mmd",
+      "sha256": "e4621dbee6b811c116df68ca70f4d755d808746e7ac8b57b31c43d43bbac4f3b",
+      "size": 619
+    },
+    {
+      "path": "docs/mermaid/ci_validation_v6_1_2.mmd",
+      "sha256": "d1acabfd0ec091f2bec15d483475e5d610c8c685a621055ed81db1358b6c08da",
+      "size": 631
+    },
+    {
+      "path": "docs/mermaid/deployment_v6_1_2.mmd",
+      "sha256": "d2abfe302ec842042d6decc30eafa7284cd957ae18cd47b1c425d20bdb372c06",
+      "size": 405
+    },
+    {
+      "path": "docs/mermaid/from_scratch_v6_1_2.mmd",
+      "sha256": "9441ed560a33cce1e4bc886723081c492a4380ea822d819edd3ea5490f75c195",
+      "size": 601
+    },
+    {
+      "path": "docs/mermaid/observability_v6_1_2.mmd",
+      "sha256": "1c570828ed56894fbb62136fe009dd010462dc746fb3a848c03b7c32392ceb4d",
+      "size": 381
+    },
+    {
+      "path": "docs/mermaid/onboarding_azure_v6_1_2.mmd",
+      "sha256": "da84f560b9a50d54f733966626c4dc5ab08085fd4243006807d6ff5f3555577f",
+      "size": 406
+    },
+    {
+      "path": "docs/mermaid/outbox_publisher_v6_1_2.mmd",
+      "sha256": "a272c4b6bd58ee173cb27b01d7ed438bdea62f998a541bd7b06cbdaa5d746c1a",
+      "size": 331
+    },
+    {
+      "path": "docs/mermaid/reporting_v6_1_2.mmd",
+      "sha256": "986dcdc0a0754d8780f76d10aef7522a9898e1265116e592b3eb3a6fcaaa1d58",
+      "size": 302
+    },
+    {
+      "path": "docs/mermaid/retention_alerting_v6_1_2.mmd",
+      "sha256": "807e4a2fb6de296577ebb9a1c3e63dc0b75f94f1f5a7cdb4dc41c28b5c713d32",
+      "size": 339
+    },
+    {
+      "path": "docs/mermaid/runtime_roles_v6_1_2.mmd",
+      "sha256": "a32de9f8647a00bb443096fb109b4d0b2b3caa39e36f816aaa4a58eb72ddb765",
+      "size": 488
+    },
+    {
+      "path": "docs/mermaid/scan_lifecycle_v6_1_2.mmd",
+      "sha256": "a3494953540e16acce52dd62e364715e7b7a8a1f90378565d47d4c7c37ab67b8",
+      "size": 615
+    },
+    {
+      "path": "docs/mermaid/security_proof_strategy_v6_1_2.mmd",
+      "sha256": "25b7f7352e58d393466211c391f6a2700dbb8933bd194442306fdfed80f7c5c0",
+      "size": 366
+    },
+    {
+      "path": "docs/mermaid/tenant_isolation_v6_1_2.mmd",
+      "sha256": "6cf8c057b12b7ba0c5807cd5615a37e5979bcbf4ef04377282c18d0d4fce1a1a",
+      "size": 481
+    },
+    {
+      "path": "docs/mermaid/terraform_keyvault_v6_1_2.mmd",
+      "sha256": "83bcc70a5c56ace8bee9821f2189e027bdf37161ea68bcccf8b0911719357a1f",
+      "size": 425
+    },
+    {
+      "path": "docs/mermaid/terraform_private_network_v6_1_2.mmd",
+      "sha256": "c154709d915ea58d2384e49a0ddb91901c35be0a86303774bba26d28ec018d00",
+      "size": 560
+    },
+    {
+      "path": "docs/multicloud/MULTICLOUD_READINESS_V6_1_3.md",
+      "sha256": "b22397fc2312b64ea16b46f2f26d99eef95aa1728646686b90bcea52abc456dd",
+      "size": 1965
+    },
+    {
+      "path": "docs/operations/Bevoac_V6_1_3_Enterprise_Release_Deployment_Guide.docx",
+      "sha256": "e26122ce283b561a910dab08b10eeda776543320dfd9438ae5db78575307efd6",
+      "size": 45028
+    },
+    {
+      "path": "docs/operations/Guide_From_Scratch_Bevoac_V6_1_2_R3.docx",
+      "sha256": "6d503100caf26de1901f1391215d82b1828bee11aecffcb25c3028b633911309",
+      "size": 819702
+    },
+    {
+      "path": "docs/operations/NOTICE_Obsolescence_Runbook_Enterprise_Hardened_V6_1_2.docx",
+      "sha256": "2087c6bf6d0dc3bbbc9a819e75a0ff9abcb9234e9e0b2568cf494ec2ba990a13",
+      "size": 40503
+    },
+    {
+      "path": "docs/operations/RELEASE_NOTES_V6_1_3.md",
+      "sha256": "5cc378faef77ef28545c8f4321589c973ffb6ac1e35f733388f13b4f3390c4c1",
+      "size": 2975
+    },
+    {
+      "path": "docs/operations/Runbook_Bevoac_V6_1_2_Production_Enterprise_Ready_R3.docx",
+      "sha256": "6729acfa5d52dd14840176817b2b26e687fb51217f275055c951666467e9864a",
+      "size": 2330963
+    },
+    {
+      "path": "docs/operations/apim-v6-1-2.md",
+      "sha256": "43a61bf91703e1d68c6470f3b6b8d7cdb4d444c54f75ade355547f40fa180054",
+      "size": 880
+    },
+    {
+      "path": "docs/operations/azure-monitor-v6-1-2.md",
+      "sha256": "e7e7dbf5c7670b0a9a5778e5447064b91a080417b260e3e7e5c449e2a0d2e4cb",
+      "size": 803
+    },
+    {
+      "path": "docs/operations/ci-release-lock-v6-1-2.md",
+      "sha256": "44f6ec1ade45c132a041453007b5304a4bcd6e048160d44d8fa1428d545b4669",
+      "size": 970
+    },
+    {
+      "path": "docs/operations/document-inventory-v6-1-2.md",
+      "sha256": "d7b196b2354f4a8d23879f29f99681ea1d5c08ddf59b9cba9bf42a6cde8d9611",
+      "size": 563
+    },
+    {
+      "path": "docs/operations/from-scratch-v6-1-2.md",
+      "sha256": "62da773f9c2c5e7e08109775fa537ef0e28999d501b9158335c39e9239e86d31",
+      "size": 2603
+    },
+    {
+      "path": "docs/operations/legacy-docs-migration-v6-1-2.md",
+      "sha256": "55fc4d98aa17f566b958a4043bbcdfc1ecf0361958c5873d2bc3454e0a6d1975",
+      "size": 669
+    },
+    {
+      "path": "docs/operations/load-test-multitenant-v6-1-2.md",
+      "sha256": "74d6b031e93dde4a87eb6da4085b7e10f92054b0bab590137ce5ceb3a609279c",
+      "size": 752
+    },
+    {
+      "path": "docs/operations/outbox-publisher-v6-1-2.md",
+      "sha256": "cbe4a4f2c69b5cd62c868fb1472d10c1913d77b3a0a5dd37d095573ed7c73941",
+      "size": 964
+    },
+    {
+      "path": "docs/operations/postgres-backup-restore-v6-1-2.md",
+      "sha256": "fe51e561381022c71112d799507b372367bc298f6b44f05558d2a2269c839c7e",
+      "size": 637
+    },
+    {
+      "path": "docs/operations/postgres-runtime-role-rls-v6-1-2.md",
+      "sha256": "478e0ce3612902d9ae2f4d3c9536c457c93fb40969ecbe334f66c6f3504f8146",
+      "size": 1272
+    },
+    {
+      "path": "docs/operations/production-acceptance-v6-1-2.md",
+      "sha256": "1ca2d69068324695f2e20c265b40a1a25755a11f2066381b82315bfd0dd87be8",
+      "size": 611
+    },
+    {
+      "path": "docs/operations/release-evidence-v6-1-2.md",
+      "sha256": "6e8a31ea36d5525cf999a591f6eb13812d61b77143c360f20659e25543512187",
+      "size": 489
+    },
+    {
+      "path": "docs/operations/retention-policy-v6-1-2.md",
+      "sha256": "16c2b04840226d0c5f303cdb5dc524599ff19ca181cbadea3a27bd1df5e752dc",
+      "size": 546
+    },
+    {
+      "path": "docs/operations/tenant-isolation-v6-1-2.md",
+      "sha256": "0807c6e4d9a6bdd295ace3edae0a4b8b912dc2070698e518387949927227e842",
+      "size": 627
+    },
+    {
+      "path": "docs/operations/terraform-private-network-v6-1-2.md",
+      "sha256": "afdb59bdf42601a4ae1fe5e0537ea7cdb8c33f74f4871edb2deff578d40b3788",
+      "size": 742
+    },
+    {
+      "path": "docs/operations/validation-go-v6-1-2.md",
+      "sha256": "0b924ace3e71705aadc50fb4e067e5d82566d7706586d67963fcb0c7f2acde8c",
+      "size": 723
+    },
+    {
+      "path": "docs/pitch/Bevoac_Executive_Summary_example.pdf",
+      "sha256": "60272ce75252571b9ef9f0cf44429d9b2fcdb7b75a01009b7bb26a5b2809f5ae",
+      "size": 108663
+    },
+    {
+      "path": "docs/pitch/Bevoac_Pitch_Client_demo.pptx",
+      "sha256": "6d9eea1da7347d7a656b5b3d7a19bda2c55fc0e63dc1b3c3d63caf65d93e8527",
+      "size": 661398
+    },
+    {
+      "path": "docs/pitch/Pitch_client.md",
+      "sha256": "f6ce72c698541fe7ece822f1c660924c2a9ea664a03dba664cc6df06dd2c9938",
+      "size": 2657
+    },
+    {
+      "path": "docs/pitch/Pitch_partenaire.md",
+      "sha256": "de3b2fbc9b40379787990cca61c5b3889b93fb1e5b8d0d6d89319733ac9df468",
+      "size": 2962
+    },
+    {
+      "path": "docs/technical/api-contract-v6-1-2.md",
+      "sha256": "30365ceec5d8e3dcb196541a05b4e9ea1c00f6853e36983bc69cd4479aa2fa13",
+      "size": 825
+    },
+    {
+      "path": "docs/technical/architecture-v6-1-2.md",
+      "sha256": "28886dee09f7d3bcf7f2631d93848d770205fe95773ec02c17d55522ab4c4b68",
+      "size": 690
+    },
+    {
+      "path": "docs/technical/data-model-v6-1-2.md",
+      "sha256": "6f7b43bf54763d708b3f9486a6acbfacf3f29ca3982e68be4e46e7158eadbf8a",
+      "size": 682
+    },
+    {
+      "path": "docs/technical/infrastructure-azure-v6-1-2.md",
+      "sha256": "6ab80600613765b11ee3167bbe173d5c2ad80860ed2857652567d96801d23819",
+      "size": 612
+    },
+    {
+      "path": "docs/technical/reporting-json-pdf-v6-1-2.md",
+      "sha256": "02c92699dbc909a28814e00c8f0135301225706ed48f6cb5626111e6c7985dd0",
+      "size": 454
+    },
+    {
+      "path": "docs/technical/security-model-v6-1-2.md",
+      "sha256": "67d557b58e37c1df3e4d3ccdb543ea04a64da55c76908c8116e0b59ba153893e",
+      "size": 583
+    },
+    {
+      "path": "docs/technical/versioning-and-status-v6-1-2.md",
+      "sha256": "f5a951fe76c27439a5698ce4d7562f4cfc9f7fffea654e81ac026f6f5577d713",
+      "size": 1078
+    },
+    {
+      "path": "docs/technical/worker-v6-1-2.md",
+      "sha256": "b1318b25fe3bd906661136e1ae1b68acafe0653d5e3998374670ca258f82e942",
+      "size": 592
+    }
   ],
-  "diagrams": [
-    "architecture_v5_2.png",
-    "onboarding_v5_2.png",
-    "scan_lifecycle_v5_2.png",
-    "tenant_isolation_v5_2.png",
-    "outbox_billing_v5_2.png",
-    "dlq_v5_2.png",
-    "apim_v5_2.png",
-    "retention_backup_v5_2.png"
-  ],
-  "sources": [
-    "Runbook_Bevoac_V4_2_Production_Ready.docx",
-    "Runbook_Bevoac_V5_Production_Ready_Complet.source.docx",
-    "Runbook_Bevoac_V5_2_Production_Ready_Complet.docx"
+  "notes": [
+    "Historical documents are preserved under docs/archive and docs/archive_source_reference and are excluded from the active baseline.",
+    "Azure is the only runtime-enabled provider in V6.1.3; AWS and GCP remain fail-closed.",
+    "Live enterprise status requires the deployment and evidence gates supplied with the release."
   ]
 }

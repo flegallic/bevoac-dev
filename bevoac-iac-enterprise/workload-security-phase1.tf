@@ -1,9 +1,5 @@
-# Phase 1: dedicated workload identities and PostgreSQL secrets.
-#
-# This phase is additive only:
-# - existing Container Apps are not changed;
-# - existing broad Key Vault assignments remain temporarily;
-# - no production workload uses these new passwords yet.
+# Dedicated workload identities, PostgreSQL secrets and secret-scoped RBAC.
+# V6.1.3 wires every runtime to these resources and removes broad workload vault access.
 
 resource "azurerm_user_assigned_identity" "outbox" {
   name                = "id-${local.name_suffix}-outbox"
@@ -123,15 +119,8 @@ resource "azurerm_role_assignment" "api_onboarding_secret_reader" {
   skip_service_principal_aad_check = true
 }
 
-resource "azurerm_role_assignment" "api_legacy_admin_secret_reader" {
-  scope                            = azurerm_key_vault_secret.admin_api_secret.resource_versionless_id
-  role_definition_name             = "Key Vault Secrets User"
-  principal_id                     = azurerm_user_assigned_identity.api.principal_id
-  principal_type                   = "ServicePrincipal"
-  skip_service_principal_aad_check = true
-}
 
-# Worker: runtime password, Microsoft credential and KEDA scaler secret.
+# Worker: runtime password and Microsoft credential. Service Bus uses managed identity; no SAS/KEDA secret.
 resource "azurerm_role_assignment" "worker_pg_secret_reader" {
   scope                            = azurerm_key_vault_secret.pg_worker_password.resource_versionless_id
   role_definition_name             = "Key Vault Secrets User"
@@ -148,13 +137,6 @@ resource "azurerm_role_assignment" "worker_microsoft_secret_reader" {
   skip_service_principal_aad_check = true
 }
 
-resource "azurerm_role_assignment" "worker_servicebus_secret_reader" {
-  scope                            = azurerm_key_vault_secret.servicebus_connection_string.resource_versionless_id
-  role_definition_name             = "Key Vault Secrets User"
-  principal_id                     = azurerm_user_assigned_identity.worker.principal_id
-  principal_type                   = "ServicePrincipal"
-  skip_service_principal_aad_check = true
-}
 
 # Dedicated outbox identity.
 resource "azurerm_role_assignment" "outbox_pg_secret_reader" {
@@ -222,10 +204,8 @@ resource "time_sleep" "wait_for_dedicated_workload_roles" {
     azurerm_role_assignment.api_pg_secret_reader,
     azurerm_role_assignment.api_microsoft_secret_reader,
     azurerm_role_assignment.api_onboarding_secret_reader,
-    azurerm_role_assignment.api_legacy_admin_secret_reader,
     azurerm_role_assignment.worker_pg_secret_reader,
     azurerm_role_assignment.worker_microsoft_secret_reader,
-    azurerm_role_assignment.worker_servicebus_secret_reader,
     azurerm_role_assignment.outbox_pg_secret_reader,
     azurerm_role_assignment.outbox_acr_pull,
     azurerm_role_assignment.outbox_sb_sender,

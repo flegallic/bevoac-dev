@@ -1,0 +1,20 @@
+digraph G {
+  graph [rankdir=LR, bgcolor="white", pad="0.3", nodesep="0.45", ranksep="0.65", fontname="Arial"];
+  node [shape=box, style="rounded,filled", fillcolor="#EAF2F8", color="#1F4E78", fontname="Arial", fontsize=10, margin="0.12,0.08"];
+  edge [color="#4F6D7A", penwidth=1.2, arrowsize=0.8, fontname="Arial", fontsize=9];
+
+  pr [label="Pull Request"];
+  api [label="API check + 44+ tests"];
+  worker [label="Worker check + tests"];
+  tf [label="Terraform fmt + validate"];
+  pg [label="PostgreSQL 16 ephemere", shape=cylinder, fillcolor="#FCF3CF"];
+  mig [label="init + 6 standard + auth + RLS"];
+  deny [label="6 real-login denial tests"];
+  http [label="Fastify.inject"];
+  wh [label="Worker hermetic test"];
+  gate [label="All green?", shape=diamond, fillcolor="#D5F5E3"];
+  img [label="Immutable RC images", fillcolor="#D5F5E3"];
+  stop [label="Block release", fillcolor="#FADBD8"];
+  pr -> api -> gate; pr -> worker -> gate; pr -> tf -> gate; pr -> pg -> mig -> deny -> http -> gate; deny -> wh -> gate;
+  gate -> img [label="yes"]; gate -> stop [label="no"];
+}

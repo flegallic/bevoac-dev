@@ -1,0 +1,35 @@
+digraph G {
+  graph [rankdir=LR, bgcolor="white", pad="0.3", nodesep="0.45", ranksep="0.65", fontname="Arial"];
+  node [shape=box, style="rounded,filled", fillcolor="#EAF2F8", color="#1F4E78", fontname="Arial", fontsize=10, margin="0.12,0.08"];
+  edge [color="#4F6D7A", penwidth=1.2, arrowsize=0.8, fontname="Arial", fontsize=9];
+
+  client [label="Client B2B / Integrateur", fillcolor="#FDEBD0"];
+  apim [label="Azure API Management
+subscription + API key"];
+  api [label="public_api
+PG: bevoac_api
+no Service Bus secret"];
+  pg [label="PostgreSQL
+scan + billing + idempotency + outbox", shape=cylinder, fillcolor="#FCF3CF"];
+  outbox [label="outbox runtime
+PG: bevoac_outbox
+MI: Sender"];
+  sb [label="Service Bus scan-jobs
+sessions + DLQ", fillcolor="#D5F5E3"];
+  worker [label="worker
+PG: bevoac_worker
+MI: Receiver"];
+  modules [label="Web / Entra / Azure modules"];
+  admin [label="admin_api
+OIDC
+PG: bevoac_admin_api"];
+  retention [label="retention job
+PG: bevoac_retention"];
+  operator [label="operator
+PG: bevoac_operator"];
+  client -> apim -> api -> pg -> outbox -> sb -> worker -> modules -> pg;
+  api -> client [label="JSON / PDF"];
+  admin -> pg;
+  retention -> pg;
+  operator -> pg;
+}

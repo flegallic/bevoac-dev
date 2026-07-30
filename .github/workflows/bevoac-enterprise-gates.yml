@@ -1,0 +1,73 @@
+name: Bevoac enterprise gates
+
+on:
+  pull_request:
+  push:
+    branches: [main, 'hardening/**', 'release/**']
+
+permissions:
+  contents: read
+
+jobs:
+  code-and-iac:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: |
+            bevoac-api-enterprise/package-lock.json
+            bevoac-worker-enterprise/package-lock.json
+      - name: API dependencies and gates
+        working-directory: bevoac-api-enterprise
+        run: npm ci && npm run check && npm test
+      - name: Worker dependencies and gates
+        working-directory: bevoac-worker-enterprise
+        run: npm ci && npm run check && npm test
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
+        with:
+          terraform_version: 1.14.7
+      - name: Terraform format and validate
+        working-directory: bevoac-iac-enterprise
+        run: |
+          terraform fmt -check -recursive
+          terraform init -backend=false
+          terraform validate
+          bash scripts/static-hardening-check.sh
+
+  postgres-enterprise:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Install runtime dependencies
+        run: |
+          (cd bevoac-api-enterprise && npm ci)
+          (cd bevoac-worker-enterprise && npm ci)
+      - name: PostgreSQL, RLS and application integration gate
+        env:
+          PGHOST: 127.0.0.1
+          PGPORT: 5432
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        run: bash scripts/ci/postgres-enterprise-gate.sh

@@ -1,0 +1,11 @@
+flowchart LR
+  API[public_api
+no Service Bus secret] --> TX[DB transaction]
+  TX --> SCAN[(scans)]
+  TX --> EVT[(outbox_events PENDING)]
+  EVT --> OUT[outbox runtime
+SELECT + UPDATE]
+  OUT --> SB[Service Bus Sender]
+  SB --> W[worker Receiver]
+  OUT --> PUB[(outbox_events PUBLISHED)]
+  OUT --> FAIL[(FAILED + attempts + backoff)]

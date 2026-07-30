@@ -1,0 +1,16 @@
+digraph G {
+  graph [rankdir=LR, bgcolor="white", pad="0.3", nodesep="0.45", ranksep="0.65", fontname="Arial"];
+  node [shape=box, style="rounded,filled", fillcolor="#EAF2F8", color="#1F4E78", fontname="Arial", fontsize=10, margin="0.12,0.08"];
+  edge [color="#4F6D7A", penwidth=1.2, arrowsize=0.8, fontname="Arial", fontsize=9];
+
+  api [label="API 5xx / latency"];
+  out [label="Outbox backlog age / failures"];
+  worker [label="Worker errors / attempts"];
+  sb [label="Service Bus active / DLQ"];
+  pg [label="PostgreSQL CPU / memory / storage"];
+  law [label="Log Analytics"];
+  mon [label="Azure Monitor"];
+  ag [label="Action Group / incident", fillcolor="#FADBD8"];
+  runbook [label="Runbook + rollback", fillcolor="#D5F5E3"];
+  api -> law; out -> law; worker -> law; sb -> mon; pg -> mon; law -> ag; mon -> ag; ag -> runbook;
+}

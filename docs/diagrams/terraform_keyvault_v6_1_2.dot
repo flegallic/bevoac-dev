@@ -1,0 +1,14 @@
+digraph G {
+  graph [rankdir=LR, bgcolor="white", pad="0.3", nodesep="0.45", ranksep="0.65", fontname="Arial"];
+  node [shape=box, style="rounded,filled", fillcolor="#EAF2F8", color="#1F4E78", fontname="Arial", fontsize=10, margin="0.12,0.08"];
+  edge [color="#4F6D7A", penwidth=1.2, arrowsize=0.8, fontname="Arial", fontsize=9];
+  kv [label="Key Vault", fillcolor="#FCF3CF"];
+  api [label="API scoped secrets"];
+  worker [label="Worker scoped secrets"];
+  outbox [label="Outbox pg-outbox"];
+  retention [label="Retention pg-retention"];
+  admin [label="Admin API pg-admin-api"];
+  operator [label="Operator pg-operator"];
+  wide [label="Vault-wide Secrets User\nto remove when unnecessary", fillcolor="#FADBD8"];
+  kv -> api; kv -> worker; kv -> outbox; kv -> retention; kv -> admin; kv -> operator; wide -> kv [style=dashed];
+}
