@@ -1,0 +1,13 @@
+digraph G {
+  graph [rankdir=LR, bgcolor="white", pad="0.3", nodesep="0.45", ranksep="0.65", fontname="Arial"];
+  node [shape=box, style="rounded,filled", fillcolor="#EAF2F8", color="#1F4E78", fontname="Arial", fontsize=10, margin="0.12,0.08"];
+  edge [color="#4F6D7A", penwidth=1.2, arrowsize=0.8, fontname="Arial", fontsize=9];
+  client [label="Client / Integrateur", fillcolor="#FDEBD0"];
+  apim [label="Azure API Management"];
+  mode [label="Subscription required?", shape=diamond];
+  double [label="Double auth\nSubscription key + Bearer"];
+  single [label="Bevoac API key only\nexception documentee"];
+  api [label="public_api"];
+  direct [label="Direct ACA\nbreak-glass restricted", fillcolor="#FADBD8"];
+  client -> apim -> mode; mode -> double [label="yes"]; mode -> single [label="no"]; double -> api; single -> api; direct -> api [style=dashed];
+}

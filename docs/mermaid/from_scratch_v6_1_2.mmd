@@ -1,0 +1,16 @@
+flowchart TB
+  A[Admin preflight
+Git + Azure + Terraform + Node 24] --> B[Terraform bootstrap
+deploy_container_apps=false]
+  B --> C[ACR + PG + KV + SB + VNet + APIM]
+  C --> D[Build immutable API/worker images]
+  D --> E[Create 6 PostgreSQL runtime roles]
+  E --> F[init-db.js]
+  F --> G[migrate-db.js
+6 standard migrations]
+  G --> H[secure auth migration]
+  H --> I[runtime-role RLS migration]
+  I --> J[Deploy public_api + admin_api + outbox + worker + retention]
+  J --> K[Staging denial + functional tests]
+  K --> L[Traffic 0% -> 5% -> 25% -> 100%]
+  L --> M[Evidence + documentation baseline]

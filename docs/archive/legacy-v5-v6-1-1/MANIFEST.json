@@ -1,0 +1,29 @@
+{
+  "runbook": "Runbook_Bevoac_V5_2_Production_Ready_Ultime.docx",
+  "comparison": "Comparatif_Runbooks_Bevoac_V4_2_V5_1_V5_2.docx",
+  "mermaid_files": [
+    "architecture_v5_2.mmd",
+    "onboarding_v5_2.mmd",
+    "scan_lifecycle_v5_2.mmd",
+    "tenant_isolation_v5_2.mmd",
+    "outbox_billing_v5_2.mmd",
+    "dlq_operations_v5_2.mmd",
+    "apim_v5_2.mmd",
+    "retention_backup_v5_2.mmd"
+  ],
+  "diagrams": [
+    "architecture_v5_2.png",
+    "onboarding_v5_2.png",
+    "scan_lifecycle_v5_2.png",
+    "tenant_isolation_v5_2.png",
+    "outbox_billing_v5_2.png",
+    "dlq_v5_2.png",
+    "apim_v5_2.png",
+    "retention_backup_v5_2.png"
+  ],
+  "sources": [
+    "Runbook_Bevoac_V4_2_Production_Ready.docx",
+    "Runbook_Bevoac_V5_Production_Ready_Complet.source.docx",
+    "Runbook_Bevoac_V5_2_Production_Ready_Complet.docx"
+  ]
+}

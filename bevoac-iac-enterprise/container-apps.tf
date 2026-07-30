@@ -1,6 +1,7 @@
 locals {
   api_env_plain = [
     { name = "NODE_ENV", value = "production" },
+    { name = "APP_RUNTIME_MODE", value = "public_api" },
     { name = "HOST", value = "0.0.0.0" },
     { name = "PORT", value = "8080" },
     { name = "LOG_LEVEL", value = "info" },
@@ -21,23 +22,11 @@ locals {
     { name = "PG_HOST", value = azurerm_postgresql_flexible_server.postgres.fqdn },
     { name = "PG_PORT", value = "5432" },
     { name = "PG_DATABASE", value = "postgres" },
-    { name = "PG_USER", value = var.pg_admin_username },
+    { name = "PG_USER", value = "bevoac_api" },
     { name = "PG_SSL_MODE", value = "verify-full" },
-    { name = "SERVICEBUS_AUTH_MODE", value = "managed_identity" },
-    { name = "SERVICEBUS_FQ_NAMESPACE", value = "${azurerm_servicebus_namespace.sb.name}.servicebus.windows.net" },
-    { name = "SERVICEBUS_QUEUE_NAME", value = azurerm_servicebus_queue.scan_jobs.name },
-    { name = "SERVICEBUS_SESSIONS_ENABLED", value = tostring(var.enable_service_bus_sessions) },
-    { name = "OUTBOX_PUBLISHER_ENABLED", value = tostring(!var.enable_dedicated_outbox_publisher) },
-    { name = "OUTBOX_IMMEDIATE_PUBLISH_AFTER_REQUEST", value = tostring(!var.enable_dedicated_outbox_publisher) },
-    { name = "OUTBOX_PUBLISH_INTERVAL_MS", value = tostring(var.outbox_publish_interval_ms) },
-    { name = "OUTBOX_PUBLISH_BATCH_SIZE", value = tostring(var.outbox_publish_batch_size) },
-    { name = "OUTBOX_MAX_ATTEMPTS", value = tostring(var.outbox_max_attempts) },
-    { name = "OUTBOX_BASE_BACKOFF_SECONDS", value = tostring(var.outbox_base_backoff_seconds) },
+    { name = "OUTBOX_PUBLISHER_ENABLED", value = "false" },
+    { name = "OUTBOX_IMMEDIATE_PUBLISH_AFTER_REQUEST", value = "false" },
     { name = "AZURE_CLIENT_ID", value = azurerm_user_assigned_identity.api.client_id },
-    { name = "ADMIN_AUTH_MODE", value = var.admin_auth_mode },
-    { name = "ADMIN_OIDC_ISSUER", value = var.admin_oidc_issuer },
-    { name = "ADMIN_OIDC_AUDIENCE", value = var.admin_oidc_audience },
-    { name = "ADMIN_OIDC_REQUIRED_ROLES", value = var.admin_oidc_required_roles },
     { name = "MICROSOFT_CLIENT_ID", value = var.microsoft_client_id },
     { name = "MICROSOFT_ADMIN_CONSENT_SCOPE", value = "https://graph.microsoft.com/.default" },
     { name = "API_PUBLIC_BASE_URL", value = local.api_public_base_url_effective },
@@ -49,8 +38,7 @@ locals {
   ]
 
   api_env_secret = [
-    { name = "PG_PASSWORD", secret_name = "pg-password" },
-    { name = "ADMIN_API_SECRET", secret_name = "admin-api-secret" },
+    { name = "PG_PASSWORD", secret_name = "pg-api-password" },
     { name = "MICROSOFT_CLIENT_SECRET", secret_name = "microsoft-client-secret" },
     { name = "ONBOARDING_STATE_SECRET", secret_name = "onboarding-state-secret" }
   ]
@@ -67,12 +55,6 @@ locals {
     { name = "SERVICEBUS_FQ_NAMESPACE", value = "${azurerm_servicebus_namespace.sb.name}.servicebus.windows.net" },
     { name = "SERVICEBUS_QUEUE_NAME", value = azurerm_servicebus_queue.scan_jobs.name },
     { name = "SERVICEBUS_SESSIONS_ENABLED", value = tostring(var.enable_service_bus_sessions) },
-    { name = "OUTBOX_PUBLISHER_ENABLED", value = tostring(!var.enable_dedicated_outbox_publisher) },
-    { name = "OUTBOX_IMMEDIATE_PUBLISH_AFTER_REQUEST", value = tostring(!var.enable_dedicated_outbox_publisher) },
-    { name = "OUTBOX_PUBLISH_INTERVAL_MS", value = tostring(var.outbox_publish_interval_ms) },
-    { name = "OUTBOX_PUBLISH_BATCH_SIZE", value = tostring(var.outbox_publish_batch_size) },
-    { name = "OUTBOX_MAX_ATTEMPTS", value = tostring(var.outbox_max_attempts) },
-    { name = "OUTBOX_BASE_BACKOFF_SECONDS", value = tostring(var.outbox_base_backoff_seconds) },
     { name = "MAX_CONCURRENT_TENANT_SESSIONS", value = tostring(var.max_concurrent_tenant_sessions) },
     { name = "MAX_RESULT_JSON_BYTES", value = tostring(var.max_result_json_bytes) },
     { name = "RESULT_COMPRESSION_THRESHOLD_BYTES", value = "524288" },
@@ -89,12 +71,12 @@ locals {
     { name = "PG_HOST", value = azurerm_postgresql_flexible_server.postgres.fqdn },
     { name = "PG_PORT", value = "5432" },
     { name = "PG_DATABASE", value = "postgres" },
-    { name = "PG_USER", value = var.pg_admin_username },
+    { name = "PG_USER", value = "bevoac_worker" },
     { name = "PG_SSL_MODE", value = "verify-full" }
   ]
 
   worker_env_secret = [
-    { name = "PG_PASSWORD", secret_name = "pg-password" },
+    { name = "PG_PASSWORD", secret_name = "pg-worker-password" },
     { name = "MICROSOFT_CLIENT_SECRET", secret_name = "microsoft-client-secret" }
   ]
 }
@@ -136,14 +118,9 @@ resource "azurerm_container_app" "api" {
   }
 
   secret {
-    name                = "pg-password"
+    name                = "pg-api-password"
     identity            = azurerm_user_assigned_identity.api.id
-    key_vault_secret_id = azurerm_key_vault_secret.pg_password.versionless_id
-  }
-  secret {
-    name                = "admin-api-secret"
-    identity            = azurerm_user_assigned_identity.api.id
-    key_vault_secret_id = azurerm_key_vault_secret.admin_api_secret.versionless_id
+    key_vault_secret_id = azurerm_key_vault_secret.pg_api_password.versionless_id
   }
   secret {
     name                = "microsoft-client-secret"
@@ -160,16 +137,41 @@ resource "azurerm_container_app" "api" {
     external_enabled = true
     target_port      = 8080
     transport        = "auto"
-    traffic_weight {
-      percentage      = 100
-      latest_revision = false
-      revision_suffix = "0000001"
+
+    # Bootstrap: route to latest only when there is no stable revision yet.
+    dynamic "traffic_weight" {
+      for_each = var.api_stable_revision_suffix == "" ? [1] : []
+      content {
+        percentage      = 100
+        latest_revision = true
+      }
+    }
+
+    # Release: keep the known stable revision at 100 percent.
+    dynamic "traffic_weight" {
+      for_each = var.api_stable_revision_suffix != "" ? [1] : []
+      content {
+        percentage      = 100
+        latest_revision = false
+        revision_suffix = var.api_stable_revision_suffix
+      }
+    }
+
+    # Release: create the candidate at zero percent until the rollout gate.
+    dynamic "traffic_weight" {
+      for_each = var.api_stable_revision_suffix != "" && var.api_revision_suffix != var.api_stable_revision_suffix ? [1] : []
+      content {
+        percentage      = 0
+        latest_revision = false
+        revision_suffix = var.api_revision_suffix
+      }
     }
   }
 
   template {
-    min_replicas = 1
-    max_replicas = 5
+    revision_suffix = var.api_revision_suffix != "" ? var.api_revision_suffix : null
+    min_replicas    = 1
+    max_replicas    = 5
 
     container {
       name   = "api"
@@ -197,14 +199,15 @@ resource "azurerm_container_app" "api" {
 
   depends_on = [
     azurerm_role_assignment.api_acr_pull,
-    azurerm_role_assignment.api_kv_reader,
-    azurerm_role_assignment.api_sb_sender,
-    time_sleep.wait_for_workload_roles,
-    azurerm_key_vault_secret.pg_password,
-    azurerm_key_vault_secret.admin_api_secret,
+    azurerm_role_assignment.api_pg_secret_reader,
+    azurerm_role_assignment.api_microsoft_secret_reader,
+    azurerm_role_assignment.api_onboarding_secret_reader,
+    time_sleep.wait_for_dedicated_workload_roles,
+    azurerm_key_vault_secret.pg_api_password,
     azurerm_key_vault_secret.microsoft_client_secret,
     azurerm_key_vault_secret.onboarding_state_secret
   ]
+
 }
 
 resource "azurerm_container_app" "worker" {
@@ -227,36 +230,30 @@ resource "azurerm_container_app" "worker" {
   }
 
   secret {
-    name                = "pg-password"
+    name                = "pg-worker-password"
     identity            = azurerm_user_assigned_identity.worker.id
-    key_vault_secret_id = azurerm_key_vault_secret.pg_password.versionless_id
+    key_vault_secret_id = azurerm_key_vault_secret.pg_worker_password.versionless_id
   }
   secret {
     name                = "microsoft-client-secret"
     identity            = azurerm_user_assigned_identity.worker.id
     key_vault_secret_id = azurerm_key_vault_secret.microsoft_client_secret.versionless_id
   }
-  secret {
-    name                = "servicebus-connection-string"
-    identity            = azurerm_user_assigned_identity.worker.id
-    key_vault_secret_id = azurerm_key_vault_secret.servicebus_connection_string.versionless_id
-  }
 
   template {
-    min_replicas = 0
-    max_replicas = 8
+    # Scale directly from Service Bus with the worker user-assigned identity.
+    # No SAS connection string is stored in the Container App or used by KEDA.
+    min_replicas = var.worker_min_replicas
+    max_replicas = var.worker_max_replicas
 
     custom_scale_rule {
       name             = "servicebus-queue-scale"
       custom_rule_type = "azure-servicebus"
+      identity_id      = azurerm_user_assigned_identity.worker.id
       metadata = {
         namespace    = azurerm_servicebus_namespace.sb.name
         queueName    = azurerm_servicebus_queue.scan_jobs.name
-        messageCount = "1"
-      }
-      authentication {
-        secret_name       = "servicebus-connection-string"
-        trigger_parameter = "connection"
+        messageCount = tostring(var.worker_queue_message_count)
       }
     }
 
@@ -286,11 +283,11 @@ resource "azurerm_container_app" "worker" {
 
   depends_on = [
     azurerm_role_assignment.worker_acr_pull,
-    azurerm_role_assignment.worker_kv_reader,
+    azurerm_role_assignment.worker_pg_secret_reader,
+    azurerm_role_assignment.worker_microsoft_secret_reader,
     azurerm_role_assignment.worker_sb_receiver,
-    time_sleep.wait_for_workload_roles,
-    azurerm_key_vault_secret.pg_password,
-    azurerm_key_vault_secret.microsoft_client_secret,
-    azurerm_key_vault_secret.servicebus_connection_string
+    time_sleep.wait_for_dedicated_workload_roles,
+    azurerm_key_vault_secret.pg_worker_password,
+    azurerm_key_vault_secret.microsoft_client_secret
   ]
 }

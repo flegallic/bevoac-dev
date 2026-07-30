@@ -1,0 +1,18 @@
+digraph G {
+  graph [rankdir=LR, bgcolor="white", pad="0.3", nodesep="0.45", ranksep="0.65", fontname="Arial"];
+  node [shape=box, style="rounded,filled", fillcolor="#EAF2F8", color="#1F4E78", fontname="Arial", fontsize=10, margin="0.12,0.08"];
+  edge [color="#4F6D7A", penwidth=1.2, arrowsize=0.8, fontname="Arial", fontsize=9];
+
+  git [label="Git commit + PR"];
+  ci [label="CI gates"];
+  acr [label="ACR immutable images"];
+  stage [label="Staging revision 0%"];
+  test [label="Auth + RLS + outbox + worker + billing"];
+  p0 [label="Prod candidate 0%"];
+  p5 [label="5%"];
+  p25 [label="25%"];
+  p100 [label="100%", fillcolor="#D5F5E3"];
+  stable [label="Previous stable revision", fillcolor="#FDEBD0"];
+  git -> ci -> acr -> stage -> test -> p0 -> p5 -> p25 -> p100;
+  p5 -> stable [style=dashed,label="rollback"]; p25 -> stable [style=dashed,label="rollback"]; p100 -> stable [style=dashed,label="rollback"];
+}

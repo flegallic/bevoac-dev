@@ -1,0 +1,20 @@
+flowchart TB
+  API[bevoac_api
+tenant-scoped] --> DB[(PostgreSQL)]
+  W[bevoac_worker
+tenant-scoped] --> DB
+  O[bevoac_outbox
+global outbox only] --> DB
+  R[bevoac_retention
+global purge bounded] --> DB
+  A[bevoac_admin_api
+global billing bounded] --> DB
+  P[bevoac_operator
+provisioning bounded] --> DB
+  DB --> RLS[15 tables FORCE RLS
+29 policies
+58 privileges]
+  RLS --> AUTH[session_user + app.current_tenant_id]
+  AUTH --> DENY[No BYPASSRLS
+No role memberships
+No app.service_context]

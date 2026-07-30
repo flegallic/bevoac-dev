@@ -35,6 +35,11 @@ resource "azurerm_key_vault" "kv" {
   rbac_authorization_enabled    = true
   public_network_access_enabled = !var.enable_private_endpoints
   tags                          = local.common_tags
+
+  network_acls {
+    bypass         = "None"
+    default_action = var.enable_private_endpoints ? "Deny" : "Allow"
+  }
 }
 
 resource "azurerm_role_assignment" "current_kv_admin" {
@@ -100,20 +105,25 @@ resource "azurerm_role_assignment" "worker_acr_pull" {
   principal_id         = azurerm_user_assigned_identity.worker.principal_id
 }
 
+
 resource "azurerm_role_assignment" "api_kv_reader" {
+  count                = var.retain_legacy_broad_key_vault_roles ? 1 : 0
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Secrets User"
   principal_id         = azurerm_user_assigned_identity.api.principal_id
 }
 
 resource "azurerm_role_assignment" "worker_kv_reader" {
+  count                = var.retain_legacy_broad_key_vault_roles ? 1 : 0
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Secrets User"
   principal_id         = azurerm_user_assigned_identity.worker.principal_id
 }
 
 resource "time_sleep" "wait_for_workload_roles" {
+  count           = (var.retain_legacy_broad_key_vault_roles || var.retain_legacy_api_servicebus_sender) ? 1 : 0
   create_duration = "45s"
+
   depends_on = [
     azurerm_role_assignment.api_acr_pull,
     azurerm_role_assignment.worker_acr_pull,

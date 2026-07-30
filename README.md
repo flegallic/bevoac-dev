@@ -1,74 +1,62 @@
-# Bevoac V6.1.2 - Enterprise hardening/refactoring package
+# Bevoac V6.1.3 — Enterprise release baseline
 
-Ce package est un lot de durcissement et de refactoring pour Bevoac V6.1.2. Il vise a faire passer le socle actuel d'un **pilote B2B avance / production controlee Azure-first** vers une base beaucoup plus credible pour une production enterprise.
+Bevoac is an Azure-first B2B SaaS control plane for security-audit orchestration. This repository contains the public API, asynchronous worker, transactional outbox publisher, retention job, isolated administration API, Azure infrastructure as code, database migrations, security gates and the canonical operations documentation.
 
-## Positionnement honnete du package
+## Release scope
 
-Ce package corrige des ecarts concrets observes dans le depot :
+V6.1.3 turns the V6.1.2 runtime-role model into a deployable release without changing the public `/v1` API or the active `scan.requested` contract.
 
-- incoherence de baseline DB avec le runtime billing/outbox/result-store ;
-- exposition du JSON complet par defaut sur `GET /v1/scans/:scanId` ;
-- absence de scopes fonctionnels sur les API keys ;
-- RLS presente mais non cablee proprement au contexte applicatif ;
-- collector de findings duplique et incomplet ;
-- besoin d'une base multi-cloud avant le chantier AWS ;
-- documentation V6.1.2 a stabiliser.
+Main outcomes:
 
-Il ne pretend pas fournir a lui seul une certification externe, un pentest externe valide, ou une garantie mathematique "zero-risk". Ces mentions ne doivent etre utilisees commercialement qu'apres execution d'un pentest independant, preuves RLS runtime, revue IAM/IaC, SCA/SBOM et validation de charge.
+- PostgreSQL identity per workload: `bevoac_api`, `bevoac_worker`, `bevoac_outbox`, `bevoac_retention`, `bevoac_admin_api` and `bevoac_operator`;
+- forced row-level security bound to the real PostgreSQL `session_user`;
+- no mutable `app.service_context` runtime path;
+- public API separated from Service Bus publication;
+- dedicated Managed Identities and secret-scoped Key Vault access;
+- Managed Identity authentication for Service Bus sender, receiver and queue scaler;
+- staged migration followed by explicit security finalization;
+- PostgreSQL 16 ephemeral CI and real API/worker integration tests;
+- fail-closed provider boundary preparing AWS and GCP without advertising either as runtime-enabled.
 
-## Contenu
+## Canonical entry points
 
-- `files/` : fichiers a copier dans le depot Bevoac.
-- `scripts/apply_enterprise_hardening.py` : applique le lot de facon idempotente avec sauvegarde locale.
-- `scripts/validate_package.py` : verifie l'integrite du package et la syntaxe JS des fichiers fournis.
-- `docs/` : documentation corrigee et complete a installer dans le depot.
+- Deployment: [`APPLY.md`](APPLY.md)
+- Validation: [`VALIDATION_MATRIX.md`](VALIDATION_MATRIX.md)
+- Changelog: [`CHANGELOG_V6_1_3.md`](CHANGELOG_V6_1_3.md)
+- Runbook: `docs/operations/Runbook_Bevoac_V6_1_2_Production_Enterprise_Ready_R3.docx`
+- From scratch: `docs/operations/Guide_From_Scratch_Bevoac_V6_1_2_R3.docx`
+- V6.1.3 deployment guide: `docs/operations/Bevoac_V6_1_3_Enterprise_Release_Deployment_Guide.docx`
+- Multi-cloud boundary: `docs/multicloud/MULTICLOUD_READINESS_V6_1_3.md`
 
-## Application rapide
+## Local release validation
 
-Depuis la racine du depot Bevoac :
-
-```bash
-python /chemin/vers/bevoac_enterprise_grade_v6_1_2_patch/scripts/apply_enterprise_hardening.py --repo-root . --package-root /chemin/vers/bevoac_enterprise_grade_v6_1_2_patch
-```
-
-Puis executer les validations :
-
-```bash
-cd bevoac-api-enterprise
-npm install
-npm run check
-npm test
-npm run migrate-db
-npm run check:enterprise-hardening
-
-cd ../bevoac-worker-enterprise
-npm install
-npm run check
-npm test
-
-cd ../bevoac-iac-enterprise
-terraform fmt -recursive
-terraform init -backend=false
-terraform validate
-bash scripts/static-hardening-check.sh
-```
-
-Pour activer la RLS enterprise stricte apres validation sur environnement non-production :
+Node.js 24 and Terraform 1.14.7 are required.
 
 ```bash
-cd bevoac-api-enterprise
-ALLOW_ENTERPRISE_RLS_APPLY=true npm run migrate-db:enterprise-rls
-npm run check:tenant-isolation:enterprise
+./validate_release.sh --full
 ```
 
-## Fichiers principaux remplaces ou ajoutes
+The full validation installs exact lockfile dependencies, runs API and worker checks/tests, validates every JavaScript/Bash/JSON source, initializes Terraform without a backend, validates the IaC and executes the static hardening gate.
 
-- API : `src/routes/scans.js`, `src/services/scan-service.js`, `src/services/result-store.js`, `src/services/billing-service.js`, `src/services/outbox-service.js`, `src/plugins/auth-api-key.js`.
-- API new libs : `db-context.js`, `findings-collector.js`, `api-scopes.js`, `cloud-provider-contract.js`, `error-sanitizer.js`.
-- DB : migration enterprise baseline + migration RLS stricte optionnelle.
-- Worker : `src/services/scan-store.js`, `src/lib/db-context.js`, `src/lib/findings-collector.js`, provider registry AWS scaffold.
-- Docs : runbook enterprise hardened, architecture, security model, multi-cloud AWS foundation, validation matrix.
+## Azure deployment
 
-## Point cle AWS
+The release is deployed in two controlled phases:
 
-Le package **prepare** AWS par une abstraction provider et un contrat cible, mais ne force pas l'activation runtime AWS tant que le scanner AWS n'est pas implemente et teste. C'est volontaire : accepter `cloudProvider=aws` sans worker AWS fonctionnel serait une regression production.
+1. **Workload migration** — new images, dedicated database users and Managed Identities, while legacy rollback access remains temporarily available.
+2. **Security finalization** — private Key Vault/PostgreSQL, Service Bus local authentication disabled, legacy Service Bus secret removed, broad workload RBAC removed.
+
+Use only:
+
+```bash
+scripts/release/deploy_v6_1_3.sh help
+```
+
+No production claim is valid until CI, database, Azure identity, network, APIM, smoke, traffic rollout and evidence gates are green.
+
+## Multi-cloud status
+
+Azure is the only runtime-enabled provider. AWS and GCP are declared behind a versioned provider boundary and fail closed. The next AWS chantier can implement STS AssumeRole, discovery, preflight and scanners without redesigning tenant isolation, billing, outbox, persistence or reporting.
+
+## Claims
+
+This repository is designed as an enterprise release baseline. It is not an independent certification, a penetration-test report or a guarantee of zero residual risk. Environment-specific acceptance remains mandatory before the term “enterprise-ready production baseline” is used.

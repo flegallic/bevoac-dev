@@ -1,0 +1,9 @@
+flowchart LR
+  JOB[Retention Container Apps Job
+PG: bevoac_retention] --> T[(tenant-scoped data)]
+  JOB --> AUDIT[(retention_audit_log)]
+  JOB --> LOG[Log Analytics]
+  LOG --> ALERT[Failure / duration / affected rows alerts]
+  POLICY[Plan + contract retention] --> JOB
+  RESTORE[Restore drill] --> GOV[Governance evidence]
+  AUDIT --> GOV

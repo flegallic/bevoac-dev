@@ -1,0 +1,27 @@
+digraph G {
+  graph [rankdir=LR, bgcolor="white", pad="0.3", nodesep="0.45", ranksep="0.65", fontname="Arial"];
+  node [shape=box, style="rounded,filled", fillcolor="#EAF2F8", color="#1F4E78", fontname="Arial", fontsize=10, margin="0.12,0.08"];
+  edge [color="#4F6D7A", penwidth=1.2, arrowsize=0.8, fontname="Arial", fontsize=9];
+
+  api [label="bevoac_api
+tenant-scoped"];
+  worker [label="bevoac_worker
+tenant-scoped"];
+  outbox [label="bevoac_outbox
+outbox global borne"];
+  retention [label="bevoac_retention
+purge globale bornee"];
+  admin [label="bevoac_admin_api
+billing global borne"];
+  operator [label="bevoac_operator
+provisioning borne"];
+  pg [label="PostgreSQL", shape=cylinder, fillcolor="#FCF3CF"];
+  rls [label="15 FORCE RLS
+29 policies
+58 privileges", fillcolor="#D5F5E3"];
+  deny [label="NOINHERIT / NOBYPASSRLS
+0 membership
+no app.service_context", fillcolor="#FADBD8"];
+  api -> pg; worker -> pg; outbox -> pg; retention -> pg; admin -> pg; operator -> pg;
+  pg -> rls -> deny;
+}

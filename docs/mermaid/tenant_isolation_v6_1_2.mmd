@@ -1,0 +1,14 @@
+flowchart TB
+  K[Bearer API key] --> H[SHA-256]
+  H --> F[bevoac_authenticate_api_key
+SECURITY DEFINER
+search_path pg_catalog]
+  F --> T[tenantId + scopes]
+  T --> CTX[set app.current_tenant_id]
+  CTX --> LOGIN[session_user = bevoac_api]
+  LOGIN --> GRANT[Explicit table grants]
+  GRANT --> RLS[FORCE RLS policies]
+  RLS --> A[Tenant A rows]
+  RLS -. denied .-> B[Tenant B rows]
+  DIRECT[Direct api_keys SELECT] -. denied .-> GRANT
+  ELEV[SET ROLE bevoacadmin] -. denied .-> LOGIN

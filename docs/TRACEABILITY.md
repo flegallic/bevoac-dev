@@ -1,25 +1,42 @@
-# Traceabilite du runbook Bevoac V5.2 ultime
+# Traçabilité V6.1.2-R3 / V6.1.3
 
-## Sources consolidees
-- Runbook_Bevoac_V4_2_Production_Ready.docx
-- Runbook_Bevoac_V5_Production_Ready_Complet.source.docx
-- Runbook_Bevoac_V5_2_Production_Ready_Complet.docx
+## Source
 
-## Decisions de consolidation
-- Restaurer la granularite operationnelle V4.2.
-- Conserver les ajouts V5.1: Service Bus sessions, scan_results, OIDC admin, DLQ, private endpoints, mermaid sources.
-- Integrer les corrections V5.2 confirmees: idempotency server-generated, transactional outbox, migrations versionnees, billing reserved/consumed/refunded, retry/backoff, retention job, alerting, APIM optionnel, workflow CI.
-- Reintroduire des schemas visuels et les sources Mermaid correspondantes.
-- Ajouter un troubleshooting issu des erreurs rencontrees pendant la recette: Key Vault ForbiddenByConnection, APIM 404 operations, APIM subscription key, Service Bus namespace FQDN, alert DLQ aggregation, retention HCL, billingState nested.
+| Référence | Portée | Statut |
+|---|---|---|
+| `f01945f...` | baseline runtime-role hardening | historique validé |
+| `f37c066` | suppression de `app.service_context` | poussé et testé |
+| `d542684381c0120f6b9e95e02bc97c1cce355712` | documentation R3 / source export V6.1.2 | baseline d’entrée V6.1.3 |
+| V6.1.3 | runtime/IaC/CI/provider boundary | release candidate à accepter |
 
-## Artefacts
-- Runbook_Bevoac_V5_2_Production_Ready_Ultime.docx
-- Comparatif_Runbooks_Bevoac_V4_2_V5_1_V5_2.docx
-- docs/mermaid/*.mmd
-- docs/diagrams/*.png
-- sources/*.docx
+## Preuve PostgreSQL jetable
 
-## Verification locale effectuee
-- Generation DOCX OK.
-- Rendu DOCX -> PNG/PDF OK via LibreOffice headless.
-- Inspection visuelle contact sheet OK, pas de page blanche ou schema coupe dans la version finale.
+| Contrôle | Résultat |
+|---|---:|
+| PostgreSQL | 16.14 |
+| Migrations | 8 |
+| Tables publiques | 16 |
+| Tables RLS forcées | 15 |
+| Policies | 29 |
+| Privilèges unitaires | 58 |
+| Couples rôle/table | 29 |
+| Logins réels testés | 6 |
+| Memberships runtime | 0 |
+| Données temporaires persistantes | 0 |
+
+Cette preuve démontre le modèle. V6.1.3 la rejoue en CI et exige la même structure sur PostgreSQL Azure avant promotion.
+
+## Refactoring V6.1.3
+
+- API/worker versionnés `6.1.3-production-ready`;
+- identité PostgreSQL par workload;
+- outbox et rétention sur identités dédiées;
+- administration dans un runtime interne;
+- scaler Service Bus worker par Managed Identity;
+- migration en deux phases pour préserver le rollback;
+- intégrations API/worker sur PostgreSQL réel sans appels cloud;
+- adapter provider V1, AWS/GCP fail-closed.
+
+## Preuve live requise
+
+L’état enterprise n’est validé qu’après archivage des éléments suivants : commit et digests d’images, plans Terraform, huit migrations, six utilisateurs réellement câblés, identités/RBAC, Key Vault/PostgreSQL privés, Service Bus local auth désactivé, APIM, santé candidat, trafic 5/25/100, rollback, backlog/DLQ et smoke métier.

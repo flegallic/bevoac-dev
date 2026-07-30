@@ -1,6 +1,6 @@
 # AWS provider scaffold
 
-This directory is intentionally not wired to runtime in V6.1.2 enterprise hardening.
+This directory is intentionally not wired to runtime in V6.1.3 enterprise release.
 
 Mandatory implementation gates before enabling `cloudProvider=aws`:
 

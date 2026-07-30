@@ -1,0 +1,9 @@
+flowchart TB
+  CODE[Implemented in code] --> UNIT[Unit/static tests]
+  UNIT --> PG[Validated on disposable PostgreSQL]
+  PG --> GIT[Pushed to GitHub]
+  GIT --> CI[To industrialize in CI]
+  CI --> STAGE[To validate in staging]
+  STAGE --> PROD[To deploy in production]
+  PROD --> EVID[Operational evidence]
+  EVID --> CLAIM[Enterprise claim only if all gates closed]

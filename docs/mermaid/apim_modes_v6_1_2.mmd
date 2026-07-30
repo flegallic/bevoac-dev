@@ -1,0 +1,12 @@
+flowchart LR
+  C[Client / Integrateur] --> APIM[APIM]
+  APIM --> S{Subscription required?}
+  S -->|yes| D[Double auth
+Ocp-Apim-Subscription-Key
++ Authorization Bearer]
+  S -->|no, exception| B[Bevoac API key only]
+  D --> API[public_api]
+  B --> API
+  API --> PG[(PostgreSQL)]
+  BREAK[Direct ACA access
+operator break-glass only] -. restricted .-> API

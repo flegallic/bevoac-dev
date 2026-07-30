@@ -1,0 +1,13 @@
+flowchart TB
+  A[POST onboarding start
+API key + scope] --> B[Create short session
+state HMAC + nonce]
+  B --> C[Microsoft admin consent]
+  C --> D[Callback API
+state + expiry + anti replay]
+  D --> E[Verify Microsoft tenant]
+  E --> F[Verify Azure RBAC and subscriptions]
+  F --> G[Upsert integration + scopes
+ACTIVE / VERIFIED / NEEDS_RBAC]
+  G --> H[Redirect frontend
+success / action_required / error]

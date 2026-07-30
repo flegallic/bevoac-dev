@@ -1,0 +1,14 @@
+flowchart LR
+  KV[Key Vault] --> APISEC[API scoped secrets
+pg-api + onboarding + Microsoft]
+  KV --> WSEC[Worker scoped secrets
+pg-worker + Microsoft]
+  KV --> OSEC[Outbox scoped secret
+pg-outbox]
+  KV --> RSEC[Retention scoped secret
+pg-retention]
+  KV --> ASEC[Admin API scoped secret
+pg-admin-api]
+  KV --> OPSEC[Operator scoped secret
+pg-operator]
+  WIDE[Vault-wide Secrets User] -. remove when no longer required .-> KV

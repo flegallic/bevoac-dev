@@ -1,0 +1,25 @@
+digraph G {
+  graph [rankdir=LR, bgcolor="white", pad="0.3", nodesep="0.45", ranksep="0.65", fontname="Arial"];
+  node [shape=box, style="rounded,filled", fillcolor="#EAF2F8", color="#1F4E78", fontname="Arial", fontsize=10, margin="0.12,0.08"];
+  edge [color="#4F6D7A", penwidth=1.2, arrowsize=0.8, fontname="Arial", fontsize=9];
+
+  graph [rankdir=TB];
+  post [label="POST /v1/scans"];
+  auth [label="Authenticate key
+derive tenant + scopes"];
+  valid [label="Validate payload + allowlists + quota"];
+  tx [label="DB transaction
+PENDING + RESERVED + idempotency + outbox", fillcolor="#FCF3CF"];
+  out [label="Outbox publishes"];
+  sb [label="Service Bus session"];
+  begin [label="Worker beginAttempt
+IN_PROGRESS"];
+  modules [label="Modules + timeouts + retry"];
+  result [label="scan_results + summary + SHA256 + KPI"];
+  done [label="DONE + CONSUMED", fillcolor="#D5F5E3"];
+  fail [label="FAILED + REFUNDED", fillcolor="#FADBD8"];
+  client [label="Client JSON / PDF", fillcolor="#FDEBD0"];
+  post -> auth -> valid -> tx -> out -> sb -> begin -> modules -> result;
+  result -> done [label="success"]; result -> fail [label="controlled failure"];
+  done -> client; fail -> client;
+}

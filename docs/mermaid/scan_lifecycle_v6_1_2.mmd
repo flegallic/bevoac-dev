@@ -1,0 +1,20 @@
+flowchart TB
+  A[POST /v1/scans] --> B[Authenticate key
+derive tenant + scopes]
+  B --> C[Validate payload + allowlists + quota]
+  C --> D[Single DB transaction
+scan PENDING + billing RESERVED
+idempotency + outbox event]
+  D --> E[outbox runtime publishes]
+  E --> F[Service Bus session tenant]
+  F --> G[worker beginAttempt
+PENDING -> IN_PROGRESS]
+  G --> H[Web / Entra / Azure modules
+timeouts + retry + resource preflight]
+  H --> I[scan_results
+summary + SHA256 + KPI]
+  I --> J{Result}
+  J -->|success| K[DONE + CONSUMED]
+  J -->|controlled failure| L[FAILED + REFUNDED]
+  K --> M[Client JSON / PDF]
+  L --> M

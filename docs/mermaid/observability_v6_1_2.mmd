@@ -1,0 +1,10 @@
+flowchart LR
+  API[API logs/metrics] --> LAW[Log Analytics]
+  OUT[Outbox logs + backlog age] --> LAW
+  W[Worker logs + scan_attempts] --> LAW
+  SB[Service Bus active + DLQ] --> MON[Azure Monitor]
+  PG[PostgreSQL CPU/memory/storage] --> MON
+  ACA[Container Apps revisions/5xx] --> MON
+  LAW --> ALERT[Action Group / incident]
+  MON --> ALERT
+  ALERT --> RUNBOOK[Runbook + rollback]
