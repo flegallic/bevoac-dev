@@ -33,12 +33,21 @@ resource "azurerm_key_vault" "kv" {
   purge_protection_enabled      = true
   soft_delete_retention_days    = 90
   rbac_authorization_enabled    = true
-  public_network_access_enabled = !var.enable_private_endpoints
+  public_network_access_enabled = var.key_vault_public_network_access_enabled
   tags                          = local.common_tags
 
   network_acls {
-    bypass         = "None"
-    default_action = var.enable_private_endpoints ? "Deny" : "Allow"
+    bypass                     = var.key_vault_network_bypass
+    default_action             = var.key_vault_network_default_action
+    ip_rules                   = var.key_vault_ip_rules
+    virtual_network_subnet_ids = var.key_vault_virtual_network_subnet_ids
+  }
+
+  lifecycle {
+    precondition {
+      condition     = var.key_vault_public_network_access_enabled || var.key_vault_network_default_action == "Deny"
+      error_message = "Key Vault public network access can be disabled only with a default Deny network ACL."
+    }
   }
 }
 

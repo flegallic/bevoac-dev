@@ -8,8 +8,11 @@ resource "azurerm_container_app" "outbox_publisher" {
   tags                         = local.common_tags
 
   identity {
-    type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.outbox.id]
+    type = "UserAssigned"
+    identity_ids = concat(
+      [azurerm_user_assigned_identity.outbox.id],
+      var.retain_legacy_containerapp_rollback_compatibility ? [azurerm_user_assigned_identity.api.id] : [],
+    )
   }
 
   registry {
@@ -17,6 +20,14 @@ resource "azurerm_container_app" "outbox_publisher" {
     identity = azurerm_user_assigned_identity.outbox.id
   }
 
+  dynamic "secret" {
+    for_each = var.retain_legacy_containerapp_rollback_compatibility ? [1] : []
+    content {
+      name                = "pg-password"
+      identity            = azurerm_user_assigned_identity.api.id
+      key_vault_secret_id = azurerm_key_vault_secret.pg_password.versionless_id
+    }
+  }
   secret {
     name                = "pg-outbox-password"
     identity            = azurerm_user_assigned_identity.outbox.id
@@ -109,10 +120,20 @@ resource "azurerm_container_app" "outbox_publisher" {
     }
   }
 
+  lifecycle {
+    precondition {
+      condition     = !var.retain_legacy_containerapp_rollback_compatibility || var.retain_legacy_broad_key_vault_roles
+      error_message = "Outbox rollback compatibility requires the legacy API Key Vault role."
+    }
+  }
+
   depends_on = [
     azurerm_role_assignment.outbox_acr_pull,
     azurerm_role_assignment.outbox_pg_secret_reader,
     azurerm_role_assignment.outbox_sb_sender,
+    azurerm_role_assignment.api_kv_reader,
+    time_sleep.wait_for_workload_roles,
+    azurerm_key_vault_secret.pg_password,
     azurerm_key_vault_secret.pg_outbox_password,
     time_sleep.wait_for_dedicated_workload_roles
   ]

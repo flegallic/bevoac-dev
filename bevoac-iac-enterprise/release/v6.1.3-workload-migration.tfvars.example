@@ -6,6 +6,8 @@ enable_dedicated_admin_api = true
 service_bus_local_auth_enabled = true
 retain_legacy_servicebus_connection_secret = true
 retain_legacy_api_admin_secret_reader = true
+retain_legacy_containerapp_rollback_compatibility = true
+# Key Vault public network and ACL values are snapshotted from live Azure by the release runner.
 worker_min_replicas = 0
 worker_max_replicas = 8
 worker_queue_message_count = 1

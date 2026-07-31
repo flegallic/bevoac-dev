@@ -10,8 +10,11 @@ resource "azurerm_container_app_job" "retention" {
   tags                         = local.common_tags
 
   identity {
-    type         = "UserAssigned"
-    identity_ids = [azurerm_user_assigned_identity.retention.id]
+    type = "UserAssigned"
+    identity_ids = concat(
+      [azurerm_user_assigned_identity.retention.id],
+      var.retain_legacy_containerapp_rollback_compatibility ? [azurerm_user_assigned_identity.api.id] : [],
+    )
   }
 
   registry {
@@ -19,6 +22,14 @@ resource "azurerm_container_app_job" "retention" {
     identity = azurerm_user_assigned_identity.retention.id
   }
 
+  dynamic "secret" {
+    for_each = var.retain_legacy_containerapp_rollback_compatibility ? [1] : []
+    content {
+      name                = "pg-password"
+      identity            = azurerm_user_assigned_identity.api.id
+      key_vault_secret_id = azurerm_key_vault_secret.pg_password.versionless_id
+    }
+  }
   secret {
     name                = "pg-retention-password"
     identity            = azurerm_user_assigned_identity.retention.id
@@ -102,9 +113,19 @@ resource "azurerm_container_app_job" "retention" {
     }
   }
 
+  lifecycle {
+    precondition {
+      condition     = !var.retain_legacy_containerapp_rollback_compatibility || var.retain_legacy_broad_key_vault_roles
+      error_message = "Retention rollback compatibility requires the legacy API Key Vault role."
+    }
+  }
+
   depends_on = [
     azurerm_role_assignment.retention_acr_pull,
     azurerm_role_assignment.retention_pg_secret_reader,
+    azurerm_role_assignment.api_kv_reader,
+    time_sleep.wait_for_workload_roles,
+    azurerm_key_vault_secret.pg_password,
     azurerm_key_vault_secret.pg_retention_password,
     time_sleep.wait_for_dedicated_workload_roles
   ]

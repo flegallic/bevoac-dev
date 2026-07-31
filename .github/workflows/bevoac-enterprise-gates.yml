@@ -3,7 +3,7 @@ name: Bevoac enterprise gates
 on:
   pull_request:
   push:
-    branches: [main, 'hardening/**', 'release/**']
+    branches: [main, 'hardening/**', 'release/**', 'hotfix/**']
 
 permissions:
   contents: read
