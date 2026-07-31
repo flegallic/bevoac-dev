@@ -117,6 +117,22 @@ resource "azurerm_container_app" "api" {
     identity = azurerm_user_assigned_identity.api.id
   }
 
+  dynamic "secret" {
+    for_each = var.retain_legacy_containerapp_rollback_compatibility ? [1] : []
+    content {
+      name                = "pg-password"
+      identity            = azurerm_user_assigned_identity.api.id
+      key_vault_secret_id = azurerm_key_vault_secret.pg_password.versionless_id
+    }
+  }
+  dynamic "secret" {
+    for_each = var.retain_legacy_containerapp_rollback_compatibility && var.retain_legacy_api_admin_secret_reader ? [1] : []
+    content {
+      name                = "admin-api-secret"
+      identity            = azurerm_user_assigned_identity.api.id
+      key_vault_secret_id = azurerm_key_vault_secret.admin_api_secret.versionless_id
+    }
+  }
   secret {
     name                = "pg-api-password"
     identity            = azurerm_user_assigned_identity.api.id
@@ -197,12 +213,25 @@ resource "azurerm_container_app" "api" {
     }
   }
 
+  lifecycle {
+    precondition {
+      condition = !var.retain_legacy_containerapp_rollback_compatibility || (
+        var.retain_legacy_broad_key_vault_roles && var.retain_legacy_api_admin_secret_reader
+      )
+      error_message = "API rollback compatibility requires the legacy broad Key Vault role and admin-api-secret reader."
+    }
+  }
+
   depends_on = [
     azurerm_role_assignment.api_acr_pull,
     azurerm_role_assignment.api_pg_secret_reader,
     azurerm_role_assignment.api_microsoft_secret_reader,
     azurerm_role_assignment.api_onboarding_secret_reader,
+    azurerm_role_assignment.api_kv_reader,
+    time_sleep.wait_for_workload_roles,
     time_sleep.wait_for_dedicated_workload_roles,
+    azurerm_key_vault_secret.pg_password,
+    azurerm_key_vault_secret.admin_api_secret,
     azurerm_key_vault_secret.pg_api_password,
     azurerm_key_vault_secret.microsoft_client_secret,
     azurerm_key_vault_secret.onboarding_state_secret
@@ -229,6 +258,22 @@ resource "azurerm_container_app" "worker" {
     identity = azurerm_user_assigned_identity.worker.id
   }
 
+  dynamic "secret" {
+    for_each = var.retain_legacy_containerapp_rollback_compatibility ? [1] : []
+    content {
+      name                = "pg-password"
+      identity            = azurerm_user_assigned_identity.worker.id
+      key_vault_secret_id = azurerm_key_vault_secret.pg_password.versionless_id
+    }
+  }
+  dynamic "secret" {
+    for_each = var.retain_legacy_containerapp_rollback_compatibility && var.retain_legacy_servicebus_connection_secret ? [1] : []
+    content {
+      name                = "servicebus-connection-string"
+      identity            = azurerm_user_assigned_identity.worker.id
+      key_vault_secret_id = azurerm_key_vault_secret.servicebus_connection_string[0].versionless_id
+    }
+  }
   secret {
     name                = "pg-worker-password"
     identity            = azurerm_user_assigned_identity.worker.id
@@ -281,12 +326,25 @@ resource "azurerm_container_app" "worker" {
     }
   }
 
+  lifecycle {
+    precondition {
+      condition = !var.retain_legacy_containerapp_rollback_compatibility || (
+        var.retain_legacy_broad_key_vault_roles && var.retain_legacy_servicebus_connection_secret
+      )
+      error_message = "Worker rollback compatibility requires the legacy broad Key Vault role and Service Bus connection secret."
+    }
+  }
+
   depends_on = [
     azurerm_role_assignment.worker_acr_pull,
     azurerm_role_assignment.worker_pg_secret_reader,
     azurerm_role_assignment.worker_microsoft_secret_reader,
     azurerm_role_assignment.worker_sb_receiver,
+    azurerm_role_assignment.worker_kv_reader,
+    time_sleep.wait_for_workload_roles,
     time_sleep.wait_for_dedicated_workload_roles,
+    azurerm_key_vault_secret.pg_password,
+    azurerm_key_vault_secret.servicebus_connection_string,
     azurerm_key_vault_secret.pg_worker_password,
     azurerm_key_vault_secret.microsoft_client_secret
   ]

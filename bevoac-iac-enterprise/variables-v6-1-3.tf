@@ -61,6 +61,52 @@ variable "retain_legacy_api_admin_secret_reader" {
   default     = true
 }
 
+variable "retain_legacy_containerapp_rollback_compatibility" {
+  description = "Keep legacy pg-password references and legacy workload identities at Container Apps application scope until old revisions are retired. Set false only in the security-finalize phase."
+  type        = bool
+  default     = true
+}
+
+variable "key_vault_public_network_access_enabled" {
+  description = "Key Vault public network state. Defaults preserve the pre-V6.1.3 public posture; the release runner snapshots live Azure for workload migration and disables it during private-endpoint finalization."
+  type        = bool
+  default     = true
+}
+
+variable "key_vault_network_bypass" {
+  description = "Key Vault network ACL bypass value. The release runner snapshots the live value during workload migration and sets None for security finalization."
+  type        = string
+  default     = "None"
+
+  validation {
+    condition     = contains(["None", "AzureServices"], var.key_vault_network_bypass)
+    error_message = "key_vault_network_bypass must be None or AzureServices."
+  }
+}
+
+variable "key_vault_network_default_action" {
+  description = "Key Vault network ACL default action. Defaults preserve the pre-V6.1.3 public posture; the release runner snapshots live Azure for workload migration and sets Deny for security finalization."
+  type        = string
+  default     = "Allow"
+
+  validation {
+    condition     = contains(["Allow", "Deny"], var.key_vault_network_default_action)
+    error_message = "key_vault_network_default_action must be Allow or Deny."
+  }
+}
+
+variable "key_vault_ip_rules" {
+  description = "Key Vault public IP rules preserved during workload migration and cleared during private-endpoint finalization."
+  type        = set(string)
+  default     = []
+}
+
+variable "key_vault_virtual_network_subnet_ids" {
+  description = "Key Vault virtual network ACL rules preserved during workload migration and cleared during private-endpoint finalization."
+  type        = set(string)
+  default     = []
+}
+
 variable "api_revision_suffix" {
   description = "Unique suffix for the candidate public API revision. The gated deployment script sets this value for production releases."
   type        = string
