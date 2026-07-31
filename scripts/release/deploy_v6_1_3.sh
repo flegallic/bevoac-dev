@@ -206,20 +206,20 @@ load_db_secrets() {
   PG_HOST="$POSTGRES_FQDN"; PG_PORT=5432; PG_DATABASE=postgres; PG_USER="$(terraform -chdir="$IAC" output -raw pg_admin_username 2>/dev/null || echo bevoacadmin)"
   PG_PASSWORD="$(kv_secret pg-password)"
   PG_SSL_MODE=verify-full
-  BEVOAC_API_PASSWORD="$(kv_secret pg-api-password)"
-  BEVOAC_WORKER_PASSWORD="$(kv_secret pg-worker-password)"
-  BEVOAC_OUTBOX_PASSWORD="$(kv_secret pg-outbox-password)"
-  BEVOAC_RETENTION_PASSWORD="$(kv_secret pg-retention-password)"
-  BEVOAC_ADMIN_API_PASSWORD="$(kv_secret pg-admin-api-password)"
-  BEVOAC_OPERATOR_PASSWORD="$(kv_secret pg-operator-password)"
+  PG_API_PASSWORD="$(kv_secret pg-api-password)"
+  PG_WORKER_PASSWORD="$(kv_secret pg-worker-password)"
+  PG_OUTBOX_PASSWORD="$(kv_secret pg-outbox-password)"
+  PG_RETENTION_PASSWORD="$(kv_secret pg-retention-password)"
+  PG_ADMIN_API_PASSWORD="$(kv_secret pg-admin-api-password)"
+  PG_OPERATOR_PASSWORD="$(kv_secret pg-operator-password)"
   export PG_HOST PG_PORT PG_DATABASE PG_USER PG_PASSWORD PG_SSL_MODE
-  export BEVOAC_API_PASSWORD BEVOAC_WORKER_PASSWORD BEVOAC_OUTBOX_PASSWORD
-  export BEVOAC_RETENTION_PASSWORD BEVOAC_ADMIN_API_PASSWORD BEVOAC_OPERATOR_PASSWORD
+  export PG_API_PASSWORD PG_WORKER_PASSWORD PG_OUTBOX_PASSWORD
+  export PG_RETENTION_PASSWORD PG_ADMIN_API_PASSWORD PG_OPERATOR_PASSWORD
 }
 
 clear_db_secrets() {
-  unset PG_PASSWORD BEVOAC_API_PASSWORD BEVOAC_WORKER_PASSWORD BEVOAC_OUTBOX_PASSWORD
-  unset BEVOAC_RETENTION_PASSWORD BEVOAC_ADMIN_API_PASSWORD BEVOAC_OPERATOR_PASSWORD
+  unset PG_PASSWORD PG_API_PASSWORD PG_WORKER_PASSWORD PG_OUTBOX_PASSWORD
+  unset PG_RETENTION_PASSWORD PG_ADMIN_API_PASSWORD PG_OPERATOR_PASSWORD
 }
 
 verify_db_boundary() { (cd "$API"; npm run check-db:runtime-boundary); }
@@ -228,7 +228,7 @@ migrate_db() {
   context; outputs
   [ "${BEVOAC_APPROVE_DB_MIGRATION:-}" = "YES" ] || { echo "BLOCKED: BEVOAC_APPROVE_DB_MIGRATION=YES is required" >&2; exit 1; }
   load_db_secrets; trap clear_db_secrets EXIT
-  (cd "$API"; ALLOW_RUNTIME_ROLE_PASSWORD_SYNC=true npm run sync-db:runtime-roles; npm run migrate-db; ALLOW_SECURE_API_KEY_AUTH_APPLY=true npm run migrate-db:secure-api-key-auth; ALLOW_ENTERPRISE_RUNTIME_RLS_APPLY=true npm run migrate-db:runtime-role-rls; npm run check-db:runtime-boundary)
+  (cd "$API"; ALLOW_RUNTIME_ROLE_SYNC=true npm run sync-db:runtime-roles; npm run migrate-db; ALLOW_SECURE_API_KEY_AUTH_APPLY=true npm run migrate-db:secure-api-key-auth; ALLOW_ENTERPRISE_RUNTIME_RLS_APPLY=true npm run migrate-db:runtime-role-rls; npm run check-db:runtime-boundary)
   echo "MIGRATION_OK=true"
 }
 

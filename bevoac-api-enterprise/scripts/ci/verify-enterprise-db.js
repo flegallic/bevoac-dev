@@ -2,6 +2,9 @@
 'use strict';
 
 const { Client } = require('pg');
+const {
+  classifyRuntimeRoleMemberships
+} = require('../lib/runtime-role-memberships');
 
 const host = process.env.CI_PG_HOST || '127.0.0.1';
 const port = Number(process.env.CI_PG_PORT || 5432);
@@ -143,14 +146,7 @@ async function verifyAdminState() {
             AND c.relkind = 'r'
             AND c.relforcerowsecurity
         ) AS rls_forced,
-        (
-          SELECT count(*)::int
-          FROM pg_auth_members memberships
-          JOIN pg_roles granted ON granted.oid = memberships.roleid
-          JOIN pg_roles member ON member.oid = memberships.member
-          WHERE granted.rolname LIKE 'bevoac_%'
-             OR member.rolname LIKE 'bevoac_%'
-        ) AS memberships
+        1 AS boundary_version
     `);
 
     const row = summary.rows[0];
@@ -158,7 +154,36 @@ async function verifyAdminState() {
     assert(row.policies === 29, `Expected 29 policies, got ${row.policies}`);
     assert(row.rls_enabled === 15, `Expected 15 RLS tables, got ${row.rls_enabled}`);
     assert(row.rls_forced === 15, `Expected 15 forced RLS tables, got ${row.rls_forced}`);
-    assert(row.memberships === 0, `Expected zero runtime role memberships, got ${row.memberships}`);
+
+    const runtimeRoles = [
+      'bevoac_api', 'bevoac_worker', 'bevoac_outbox',
+      'bevoac_retention', 'bevoac_admin_api', 'bevoac_operator'
+    ];
+    const memberships = await client.query(`
+      SELECT granted.rolname AS granted_role,
+             member.rolname AS member_role,
+             grantor.rolname AS grantor_role,
+             grantor.rolsuper AS grantor_superuser,
+             membership.admin_option,
+             membership.inherit_option,
+             membership.set_option
+      FROM pg_auth_members membership
+      JOIN pg_roles granted ON granted.oid = membership.roleid
+      JOIN pg_roles member ON member.oid = membership.member
+      JOIN pg_roles grantor ON grantor.oid = membership.grantor
+      WHERE granted.rolname = ANY($1::text[])
+         OR member.rolname = ANY($1::text[])
+      ORDER BY granted.rolname, member.rolname, grantor.rolname
+    `, [runtimeRoles]);
+    const membershipBoundary = classifyRuntimeRoleMemberships(
+      memberships.rows,
+      runtimeRoles,
+      'bevoacadmin'
+    );
+    assert(membershipBoundary.safeAdministrative.length === 6,
+      `Expected six PostgreSQL 16 administrative memberships, got ${membershipBoundary.safeAdministrative.length}`);
+    assert(membershipBoundary.unsafe.length === 0,
+      `Unexpected runtime role memberships: ${JSON.stringify(membershipBoundary.unsafe)}`);
 
     const roles = await client.query(`
       SELECT rolname, rolcanlogin, rolinherit, rolsuper,

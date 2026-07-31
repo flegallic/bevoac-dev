@@ -23,6 +23,8 @@ test('runtime database verifier is read-only and wired to npm', () => {
   );
   assert.match(runner, /Verifier must run as bevoacadmin/);
   assert.match(runner, /ENTERPRISE_RUNTIME_DB_STRUCTURE_OK/);
+  assert.match(runner, /classifyRuntimeRoleMemberships/);
+  assert.match(runner, /unsafeRoleMemberships/);
 });
 
 test('runtime database expectations match the validated enterprise boundary', () => {
