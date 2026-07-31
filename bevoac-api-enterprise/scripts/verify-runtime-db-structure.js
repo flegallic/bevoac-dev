@@ -8,6 +8,9 @@ const {
   EXPECTED_RLS_TABLES,
   RUNTIME_ROLES
 } = require('./lib/enterprise-db-expectations');
+const {
+  classifyRuntimeRoleMemberships
+} = require('./lib/runtime-role-memberships');
 
 function required(name) {
   const value = String(process.env[name] || '').trim();
@@ -87,15 +90,33 @@ async function main() {
     }
 
     const memberships = await client.query(`
-      SELECT count(*)::int AS count
+      SELECT granted.rolname AS granted_role,
+             member.rolname AS member_role,
+             grantor.rolname AS grantor_role,
+             grantor.rolsuper AS grantor_superuser,
+             membership.admin_option,
+             membership.inherit_option,
+             membership.set_option
       FROM pg_auth_members membership
       JOIN pg_roles granted ON granted.oid = membership.roleid
       JOIN pg_roles member ON member.oid = membership.member
+      JOIN pg_roles grantor ON grantor.oid = membership.grantor
       WHERE granted.rolname = ANY($1::text[])
          OR member.rolname = ANY($1::text[])
+      ORDER BY granted.rolname, member.rolname, grantor.rolname
     `, [RUNTIME_ROLES]);
-    assert(memberships.rows[0].count === 0,
-      `Expected no runtime role membership, got ${memberships.rows[0].count}`);
+    const membershipBoundary = classifyRuntimeRoleMemberships(
+      memberships.rows,
+      RUNTIME_ROLES,
+      current.session_user
+    );
+    assert(membershipBoundary.unsafe.length === 0,
+      `Unexpected runtime role memberships: ${JSON.stringify(membershipBoundary.unsafe)}`);
+    const administrativeRoles = new Set(
+      membershipBoundary.safeAdministrative.map((row) => row.granted_role)
+    );
+    assert(administrativeRoles.size === membershipBoundary.safeAdministrative.length,
+      'Duplicate administrative runtime role memberships detected');
 
     const rls = await client.query(`
       SELECT c.relname AS table_name,
@@ -190,7 +211,9 @@ async function main() {
       serverVersion: current.server_version,
       migrations: migrationSet.size,
       runtimeRoles: roles.rowCount,
-      roleMemberships: memberships.rows[0].count,
+      roleMemberships: memberships.rowCount,
+      administrativeRoleMemberships: membershipBoundary.safeAdministrative.length,
+      unsafeRoleMemberships: membershipBoundary.unsafe.length,
       rlsEnabledAndForced: rls.rowCount,
       policies: policyCount.rows[0].count,
       grants: actualGrants.size,
