@@ -22,3 +22,13 @@ moved {
   from = time_sleep.wait_for_workload_roles
   to   = time_sleep.wait_for_workload_roles[0]
 }
+
+moved {
+  from = azurerm_role_assignment.api_legacy_admin_secret_reader
+  to   = azurerm_role_assignment.api_legacy_admin_secret_reader[0]
+}
+
+moved {
+  from = azurerm_role_assignment.worker_servicebus_secret_reader
+  to   = azurerm_role_assignment.worker_servicebus_secret_reader[0]
+}

@@ -55,6 +55,12 @@ variable "retain_legacy_servicebus_connection_secret" {
   default     = true
 }
 
+variable "retain_legacy_api_admin_secret_reader" {
+  description = "Keep the public API legacy access to admin-api-secret during rollback-compatible cutover. Set false only after the dedicated admin API is validated and legacy API revisions are no longer rollback candidates."
+  type        = bool
+  default     = true
+}
+
 variable "api_revision_suffix" {
   description = "Unique suffix for the candidate public API revision. The gated deployment script sets this value for production releases."
   type        = string

@@ -122,6 +122,7 @@ if phase == 'workloads':
     data.update({
         'service_bus_local_auth_enabled': True,
         'retain_legacy_servicebus_connection_secret': True,
+        'retain_legacy_api_admin_secret_reader': True,
         'retain_legacy_broad_key_vault_roles': True,
         'retain_legacy_api_servicebus_sender': True,
     })
@@ -132,6 +133,7 @@ elif phase == 'security':
         'enable_db_admin_public_ip_rule': False,
         'service_bus_local_auth_enabled': False,
         'retain_legacy_servicebus_connection_secret': False,
+        'retain_legacy_api_admin_secret_reader': False,
         'retain_legacy_broad_key_vault_roles': False,
         'retain_legacy_api_servicebus_sender': False,
     })
@@ -376,7 +378,7 @@ plan_security() {
   destructive="$(jq -r '.resource_changes[]? | select(.change.actions | index("delete")) | .address' "$SECURITY_PLAN.json" | sort -u)"
   if [ -n "$destructive" ]; then
     local unexpected
-    unexpected="$(printf '%s\n' "$destructive" | grep -Ev '^(azurerm_key_vault_secret\.servicebus_connection_string\[0\]|azurerm_postgresql_flexible_server_firewall_rule\.(admin_ip|container_apps_egress)\[0\]|azurerm_role_assignment\.(api_kv_reader|worker_kv_reader|api_sb_sender)\[0\]|time_sleep\.wait_for_workload_roles\[0\])$' || true)"
+    unexpected="$(printf '%s\n' "$destructive" | grep -Ev '^(azurerm_key_vault_secret\.servicebus_connection_string\[0\]|azurerm_postgresql_flexible_server_firewall_rule\.(admin_ip|container_apps_egress)\[0\]|azurerm_role_assignment\.(api_kv_reader|worker_kv_reader|api_sb_sender|api_legacy_admin_secret_reader|worker_servicebus_secret_reader)\[0\]|time_sleep\.wait_for_workload_roles\[0\])$' || true)"
     [ -z "$unexpected" ] || { echo "BLOCKED: security plan has unapproved deletions:" >&2; printf '%s\n' "$unexpected" >&2; exit 1; }
   fi
   echo "SECURITY_PLAN_OK=true"
@@ -400,13 +402,17 @@ verify_legacy_rbac_removed() {
   kv_id="$(az keyvault show -g "$RESOURCE_GROUP" -n "$KEY_VAULT" --query id -o tsv)"
   sb_id="$(az servicebus namespace show -g "$RESOURCE_GROUP" -n "$SB_NAMESPACE" --query id -o tsv)"
 
-  local api_kv worker_kv api_sender
+  local api_kv worker_kv api_sender api_admin_secret worker_servicebus_secret
   api_kv="$(az role assignment list --assignee-object-id "$api_principal" --scope "$kv_id" --all --query "[?scope=='$kv_id' && roleDefinitionName=='Key Vault Secrets User'] | length(@)" -o tsv)"
   worker_kv="$(az role assignment list --assignee-object-id "$worker_principal" --scope "$kv_id" --all --query "[?scope=='$kv_id' && roleDefinitionName=='Key Vault Secrets User'] | length(@)" -o tsv)"
+  api_admin_secret="$(az role assignment list --assignee-object-id "$api_principal" --all --query "[?scope=='$kv_id/secrets/admin-api-secret' && roleDefinitionName=='Key Vault Secrets User'] | length(@)" -o tsv)"
+  worker_servicebus_secret="$(az role assignment list --assignee-object-id "$worker_principal" --all --query "[?scope=='$kv_id/secrets/servicebus-connection-string' && roleDefinitionName=='Key Vault Secrets User'] | length(@)" -o tsv)"
   api_sender="$(az role assignment list --assignee-object-id "$api_principal" --scope "$sb_id" --all --query "[?scope=='$sb_id' && roleDefinitionName=='Azure Service Bus Data Sender'] | length(@)" -o tsv)"
 
   [ "$api_kv" = "0" ] || { echo "BLOCKED: API still has a vault-wide Key Vault Secrets User assignment" >&2; return 1; }
   [ "$worker_kv" = "0" ] || { echo "BLOCKED: worker still has a vault-wide Key Vault Secrets User assignment" >&2; return 1; }
+  [ "$api_admin_secret" = "0" ] || { echo "BLOCKED: public API still reads admin-api-secret" >&2; return 1; }
+  [ "$worker_servicebus_secret" = "0" ] || { echo "BLOCKED: worker still reads the legacy Service Bus connection secret" >&2; return 1; }
   [ "$api_sender" = "0" ] || { echo "BLOCKED: public API still has Service Bus Sender" >&2; return 1; }
 }
 

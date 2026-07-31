@@ -119,6 +119,15 @@ resource "azurerm_role_assignment" "api_onboarding_secret_reader" {
   skip_service_principal_aad_check = true
 }
 
+# Rollback compatibility for legacy API revisions. Removed only during security finalization.
+resource "azurerm_role_assignment" "api_legacy_admin_secret_reader" {
+  count                            = var.retain_legacy_api_admin_secret_reader ? 1 : 0
+  scope                            = azurerm_key_vault_secret.admin_api_secret.resource_versionless_id
+  role_definition_name             = "Key Vault Secrets User"
+  principal_id                     = azurerm_user_assigned_identity.api.principal_id
+  principal_type                   = "ServicePrincipal"
+  skip_service_principal_aad_check = true
+}
 
 # Worker: runtime password and Microsoft credential. Service Bus uses managed identity; no SAS/KEDA secret.
 resource "azurerm_role_assignment" "worker_pg_secret_reader" {
@@ -137,6 +146,15 @@ resource "azurerm_role_assignment" "worker_microsoft_secret_reader" {
   skip_service_principal_aad_check = true
 }
 
+# Rollback compatibility for legacy worker revisions. Removed with the legacy Service Bus secret.
+resource "azurerm_role_assignment" "worker_servicebus_secret_reader" {
+  count                            = var.retain_legacy_servicebus_connection_secret ? 1 : 0
+  scope                            = azurerm_key_vault_secret.servicebus_connection_string[0].resource_versionless_id
+  role_definition_name             = "Key Vault Secrets User"
+  principal_id                     = azurerm_user_assigned_identity.worker.principal_id
+  principal_type                   = "ServicePrincipal"
+  skip_service_principal_aad_check = true
+}
 
 # Dedicated outbox identity.
 resource "azurerm_role_assignment" "outbox_pg_secret_reader" {
@@ -204,8 +222,10 @@ resource "time_sleep" "wait_for_dedicated_workload_roles" {
     azurerm_role_assignment.api_pg_secret_reader,
     azurerm_role_assignment.api_microsoft_secret_reader,
     azurerm_role_assignment.api_onboarding_secret_reader,
+    azurerm_role_assignment.api_legacy_admin_secret_reader,
     azurerm_role_assignment.worker_pg_secret_reader,
     azurerm_role_assignment.worker_microsoft_secret_reader,
+    azurerm_role_assignment.worker_servicebus_secret_reader,
     azurerm_role_assignment.outbox_pg_secret_reader,
     azurerm_role_assignment.outbox_acr_pull,
     azurerm_role_assignment.outbox_sb_sender,
