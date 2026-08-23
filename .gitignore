@@ -167,3 +167,10 @@ vite.config.ts.timestamp-*
 **/.bevoac-*-backup-*/
 *.bak-*
 /bevoac-frontend-enterprise/deploy/prod.env
+
+# Local V6.2 validation evidence (generated, not source)
+/artifacts/
+
+# Python cache
+__pycache__/
+*.py[cod]

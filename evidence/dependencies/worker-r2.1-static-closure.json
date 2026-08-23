@@ -1,0 +1,29 @@
+{
+  "revision": "R2.1",
+  "transport": "arm-rest-2024-04-01",
+  "originalAuditVulnerablePackages": [
+    "@azure/arm-resourcegraph",
+    "@azure/ms-rest-azure-js",
+    "@azure/ms-rest-js",
+    "fast-uri",
+    "uuid"
+  ],
+  "finalLock": {
+    "packageCount": 174,
+    "absent": {
+      "@azure/arm-resourcegraph": true,
+      "@azure/ms-rest-azure-js": true,
+      "@azure/ms-rest-js": true,
+      "uuid": true
+    },
+    "fast-uri": [
+      "3.1.5"
+    ],
+    "fast-xml-parser": [
+      "5.10.1"
+    ]
+  },
+  "knownFindingClosure": true,
+  "liveFinalNpmAuditExecuted": false,
+  "reason": "Final worker npm audit requires registry access and Node.js 24; no result is fabricated."
+}

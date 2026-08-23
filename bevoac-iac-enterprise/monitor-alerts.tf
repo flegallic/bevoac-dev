@@ -1,5 +1,5 @@
 resource "azurerm_monitor_metric_alert" "servicebus_deadletter" {
-  count               = var.monitor_action_group_id != "" ? 1 : 0
+  count               = local.monitor_action_group_id_effective != "" ? 1 : 0
   name                = "alert-${local.name_suffix}-servicebus-dlq"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_servicebus_namespace.sb.id]
@@ -22,13 +22,13 @@ resource "azurerm_monitor_metric_alert" "servicebus_deadletter" {
     }
   }
   action {
-    action_group_id = var.monitor_action_group_id
+    action_group_id = local.monitor_action_group_id_effective
   }
   tags = local.common_tags
 }
 
 resource "azurerm_monitor_metric_alert" "servicebus_active_backlog" {
-  count               = var.monitor_action_group_id != "" ? 1 : 0
+  count               = local.monitor_action_group_id_effective != "" ? 1 : 0
   name                = "alert-${local.name_suffix}-servicebus-backlog"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_servicebus_namespace.sb.id]
@@ -51,13 +51,13 @@ resource "azurerm_monitor_metric_alert" "servicebus_active_backlog" {
     }
   }
   action {
-    action_group_id = var.monitor_action_group_id
+    action_group_id = local.monitor_action_group_id_effective
   }
   tags = local.common_tags
 }
 
 resource "azurerm_monitor_metric_alert" "postgres_cpu" {
-  count               = var.monitor_action_group_id != "" ? 1 : 0
+  count               = local.monitor_action_group_id_effective != "" ? 1 : 0
   name                = "alert-${local.name_suffix}-postgres-cpu"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_postgresql_flexible_server.postgres.id]
@@ -75,13 +75,13 @@ resource "azurerm_monitor_metric_alert" "postgres_cpu" {
     threshold        = 80
   }
   action {
-    action_group_id = var.monitor_action_group_id
+    action_group_id = local.monitor_action_group_id_effective
   }
   tags = local.common_tags
 }
 
 resource "azurerm_monitor_metric_alert" "postgres_memory" {
-  count               = var.monitor_action_group_id != "" ? 1 : 0
+  count               = local.monitor_action_group_id_effective != "" ? 1 : 0
   name                = "alert-${local.name_suffix}-postgres-memory"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_postgresql_flexible_server.postgres.id]
@@ -99,13 +99,13 @@ resource "azurerm_monitor_metric_alert" "postgres_memory" {
     threshold        = 85
   }
   action {
-    action_group_id = var.monitor_action_group_id
+    action_group_id = local.monitor_action_group_id_effective
   }
   tags = local.common_tags
 }
 
 resource "azurerm_monitor_metric_alert" "postgres_storage" {
-  count               = var.monitor_action_group_id != "" ? 1 : 0
+  count               = local.monitor_action_group_id_effective != "" ? 1 : 0
   name                = "alert-${local.name_suffix}-postgres-storage"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_postgresql_flexible_server.postgres.id]
@@ -123,7 +123,7 @@ resource "azurerm_monitor_metric_alert" "postgres_storage" {
     threshold        = 80
   }
   action {
-    action_group_id = var.monitor_action_group_id
+    action_group_id = local.monitor_action_group_id_effective
   }
   tags = local.common_tags
 }

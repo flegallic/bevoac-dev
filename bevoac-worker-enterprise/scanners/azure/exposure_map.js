@@ -7,6 +7,7 @@ const { auditDb } = require('./db');
 const { auditAppServices } = require('./appservices');
 const { auditVMs } = require('./vms');
 const { riskCountKpi, buildModuleEvidenceMetadata } = require('../../src/lib/kpi-engine');
+const { throwIfAborted } = require('../../src/lib/abort');
 
 const MODULE_NAME = 'exposure_map';
 
@@ -25,15 +26,16 @@ function sampleFrom(result, path, limit = 10) {
   return Array.isArray(current) ? current.slice(0, limit) : [];
 }
 
-async function auditExposureMap(subscriptions, credential) {
+async function auditExposureMap(subscriptions, credential, options = {}) {
   const startTime = Date.now();
+  throwIfAborted(options.signal, 'Azure exposure map');
   const [storage, nsg, keyvault, db, appservices, vms] = await Promise.all([
-    settle('storage', () => auditStorage(subscriptions, credential)),
-    settle('nsg', () => auditNsg(subscriptions, credential)),
-    settle('keyvault', () => auditKeyVault(subscriptions, credential)),
-    settle('db', () => auditDb(subscriptions, credential)),
-    settle('appservices', () => auditAppServices(subscriptions, credential)),
-    settle('vms', () => auditVMs(subscriptions, credential))
+    settle('storage', () => auditStorage(subscriptions, credential, options)),
+    settle('nsg', () => auditNsg(subscriptions, credential, options)),
+    settle('keyvault', () => auditKeyVault(subscriptions, credential, options)),
+    settle('db', () => auditDb(subscriptions, credential, options)),
+    settle('appservices', () => auditAppServices(subscriptions, credential, options)),
+    settle('vms', () => auditVMs(subscriptions, credential, options))
   ]);
 
   const modules = { storage: storage.result, nsg: nsg.result, keyvault: keyvault.result, db: db.result, appservices: appservices.result, vms: vms.result };
@@ -61,8 +63,18 @@ async function auditExposureMap(subscriptions, credential) {
     moduleSnapshots: modules
   };
 
+  const partialModuleNames = Object.entries(modules)
+    .filter(([, moduleResult]) => {
+      const status = String(moduleResult?.executionStatus || moduleResult?.status || '').toUpperCase();
+      const partialErrors = Array.isArray(moduleResult?.details?.partialErrors)
+        ? moduleResult.details.partialErrors.length
+        : 0;
+      return ['FAILED', 'PARTIAL', 'WARNING'].includes(status) || partialErrors > 0;
+    })
+    .map(([moduleName]) => moduleName);
+
   const result = {
-    status: 'SUCCESS',
+    status: partialModuleNames.length > 0 ? 'PARTIAL' : 'SUCCESS',
     duration_ms: Date.now() - startTime,
     summary: {
       publicStorageCount,
@@ -73,7 +85,8 @@ async function auditExposureMap(subscriptions, credential) {
       permissiveNsgCount,
       appHttpCount,
       totalExposureSignals,
-      partialErrorsCount: Object.values(modules).filter((moduleResult) => moduleResult?.status === 'FAILED').length
+      partialErrorsCount: partialModuleNames.length,
+      partialModules: partialModuleNames
     },
     details,
     checks: [],
@@ -119,7 +132,6 @@ async function auditExposureMap(subscriptions, credential) {
     });
   }
 
-  if (result.summary.partialErrorsCount > 0 && totalExposureSignals === 0) result.status = 'WARNING';
   result.evidenceMetadata = buildModuleEvidenceMetadata(MODULE_NAME, result, ['Multiple Azure resource types']);
   return result;
 }

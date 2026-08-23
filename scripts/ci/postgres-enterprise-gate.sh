@@ -25,7 +25,7 @@ REVOKE ALL ON DATABASE bevoac_ci FROM PUBLIC;
 GRANT CONNECT ON DATABASE bevoac_ci TO bevoacadmin;
 SQL
 
-export PG_HOST="$PGHOST" PG_PORT="$PGPORT" PG_DATABASE="$CI_DATABASE" PG_USER="bevoacadmin" PG_PASSWORD="ci_bevoacadmin_password" PG_SSL_MODE="disable" NODE_ENV="production"
+export PG_HOST="$PGHOST" PG_PORT="$PGPORT" PG_DATABASE="$CI_DATABASE" PG_USER="bevoacadmin" PG_PASSWORD="ci_bevoacadmin_password" PG_SSL_MODE="disable" NODE_ENV="test"
 export PG_API_PASSWORD="ci_api_password"
 export PG_WORKER_PASSWORD="ci_worker_password"
 export PG_OUTBOX_PASSWORD="ci_outbox_password"
@@ -128,7 +128,7 @@ BEGIN
   WHERE granted.rolname IN ('bevoac_api','bevoac_worker','bevoac_outbox','bevoac_retention','bevoac_admin_api','bevoac_operator')
      OR member.rolname IN ('bevoac_api','bevoac_worker','bevoac_outbox','bevoac_retention','bevoac_admin_api','bevoac_operator');
   SELECT count(*) INTO grant_count FROM information_schema.role_table_grants WHERE table_schema='public' AND grantee IN ('bevoac_api','bevoac_worker','bevoac_outbox','bevoac_retention','bevoac_admin_api','bevoac_operator');
-  IF migration_count <> 8 OR enabled_count <> 15 OR forced_count <> 15 OR policy_count <> 29 OR hardened_roles <> 6 OR safe_membership_count <> 6 OR unsafe_membership_count <> 0 OR grant_count <> 58 THEN
+  IF migration_count <> 9 OR enabled_count <> 15 OR forced_count <> 15 OR policy_count <> 29 OR hardened_roles <> 6 OR safe_membership_count <> 6 OR unsafe_membership_count <> 0 OR grant_count <> 58 THEN
     RAISE EXCEPTION 'Enterprise DB gate failed: migrations %, enabled %, forced %, policies %, roles %, safe memberships %, unsafe memberships %, grants %', migration_count, enabled_count, forced_count, policy_count, hardened_roles, safe_membership_count, unsafe_membership_count, grant_count;
   END IF;
 END $$;

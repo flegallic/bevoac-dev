@@ -2,7 +2,6 @@
 const required = [
   '@azure/identity',
   '@azure/service-bus',
-  '@azure/arm-resourcegraph',
   '@azure/arm-storage',
   '@azure/arm-network',
   '@azure/arm-compute',
@@ -19,7 +18,7 @@ for (const dep of required) {
 
 if (missing.length) {
   console.error(`[ERROR] Missing worker runtime dependencies: ${missing.join(', ')}`);
-  console.error('Run npm install with Node 20 LTS before starting the worker.');
+  console.error('Run npm ci with Node.js 24 before starting the worker.');
   process.exit(1);
 }
 console.log(`Worker runtime dependency check OK (${required.length} modules).`);

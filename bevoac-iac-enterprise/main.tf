@@ -39,7 +39,7 @@ resource "azurerm_key_vault" "kv" {
   network_acls {
     bypass                     = var.key_vault_network_bypass
     default_action             = var.key_vault_network_default_action
-    ip_rules                   = var.key_vault_ip_rules
+    ip_rules                   = local.key_vault_ip_rules_effective
     virtual_network_subnet_ids = var.key_vault_virtual_network_subnet_ids
   }
 

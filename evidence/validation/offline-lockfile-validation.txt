@@ -1,0 +1,24 @@
+MODE=OFFLINE_LOCKFILE_CONSISTENCY
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'bevoac-api-enterprise@6.2.0-client-ready-controlled-production',
+npm warn EBADENGINE   required: { node: '>=24 <25' },
+npm warn EBADENGINE   current: { node: 'v22.16.0', npm: '10.9.2' }
+npm warn EBADENGINE }
+
+up to date in 205ms
+LOCKFILE_COMPONENT=bevoac-api-enterprise
+LOCKFILE_SHA256=c2601cdca95b724711b380b646f6efdab798c2a8cd7bd49dfe436f12f1fa3a2c
+LOCKFILE_CONSISTENT=true
+LOCKFILE_MODIFIED=false
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'bevoac-worker-enterprise@6.2.0-client-ready-controlled-production',
+npm warn EBADENGINE   required: { node: '>=24 <25' },
+npm warn EBADENGINE   current: { node: 'v22.16.0', npm: '10.9.2' }
+npm warn EBADENGINE }
+
+up to date in 207ms
+LOCKFILE_COMPONENT=bevoac-worker-enterprise
+LOCKFILE_SHA256=75630bb7d4f358f9d8197dbc5137fef3086ca8643cbea6eb869cfb66e81a671d
+LOCKFILE_CONSISTENT=true
+LOCKFILE_MODIFIED=false
+OFFLINE_LOCKFILE_CONSISTENCY_OK=true

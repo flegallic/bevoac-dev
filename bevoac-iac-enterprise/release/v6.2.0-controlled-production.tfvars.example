@@ -1,0 +1,58 @@
+# Bevoac V6.2.0 controlled-production profile.
+# Copy to a protected operator file, replace placeholders, review the complete
+# Terraform plan and never commit real addresses or credentials.
+
+environment              = "prod"
+release_security_profile = "controlled_production"
+
+# V7 private networking is deliberately deferred.
+
+# Legacy static onboarding helper is not a production portal and is disabled.
+deploy_onboarding_frontend = false
+
+enable_private_endpoints      = false
+enable_postgres_public_access = true
+
+# Optional temporary workstation rule. Prefer false outside a maintenance window.
+enable_db_admin_public_ip_rule = false
+db_admin_public_ip             = "203.0.113.10"
+
+# Key Vault remains publicly addressable but default-deny and restricted to the
+# fixed Container Apps NAT egress IP. Add a temporary operator IP only through a
+# reviewed Change Record.
+key_vault_public_network_access_enabled = true
+key_vault_network_default_action        = "Deny"
+key_vault_network_bypass                = "None"
+key_vault_allow_container_apps_egress   = true
+key_vault_ip_rules                      = []
+
+# Managed Identity only. Legacy rollback resources must already be retired.
+service_bus_local_auth_enabled                  = false
+retain_legacy_servicebus_connection_secret      = false
+retain_legacy_api_servicebus_sender             = false
+retain_legacy_containerapp_rollback_compatibility = false
+retain_legacy_broad_key_vault_roles             = false
+retain_legacy_api_admin_secret_reader           = false
+
+# APIM is the public B2B gateway and authenticates to the public backend using a
+# separate rotatable boundary credential until V7 makes the backend private.
+enable_apim_gateway          = true
+apim_subscription_required   = true
+enable_apim_backend_boundary = true
+
+# Monitoring is a release gate.
+require_production_monitoring   = true
+enable_monitoring_diagnostics   = true
+enable_baseline_activity_alerts = true
+monitor_notification_email      = "operations@example.invalid"
+
+# Runtime/API images must be immutable digests, not mutable tags.
+api_image      = "acr.example.invalid/bevoac-api-enterprise@sha256:REPLACE"
+worker_image   = "acr.example.invalid/bevoac-worker-enterprise@sha256:REPLACE"
+admin_api_image = "acr.example.invalid/bevoac-api-enterprise@sha256:REPLACE"
+
+# Dedicated admin API OIDC boundary.
+admin_oidc_issuer         = "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0"
+admin_oidc_audience       = "api://REPLACE"
+admin_oidc_tenant_id      = "00000000-0000-0000-0000-000000000000"
+admin_oidc_required_roles = "Bevoac.Admin"

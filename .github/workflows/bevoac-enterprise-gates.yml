@@ -8,16 +8,45 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: enterprise-gates-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '24'
+
 jobs:
-  code-and-iac:
+  source-policy:
+    name: Source, secrets and documentation policy
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Source security gate
+        run: bash scripts/ci/source-security-gate.sh
+      - name: Secret pattern gate
+        run: python3 scripts/ci/secret-pattern-scan.py
+      - name: Documentation gate
+        run: python3 scripts/ci/docs-gate.py
+      - name: Canonical release validator
+        run: ./validate_release.sh --structure-only
+
+  application:
+    name: API, worker and demo frontend
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
-          node-version: '24'
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
           cache-dependency-path: |
             bevoac-api-enterprise/package-lock.json
@@ -28,19 +57,38 @@ jobs:
       - name: Worker dependencies and gates
         working-directory: bevoac-worker-enterprise
         run: npm ci && npm run check && npm test
-      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
-        with:
-          terraform_version: 1.14.7
-      - name: Terraform format and validate
-        working-directory: bevoac-iac-enterprise
+      - name: Demo frontend build and typecheck
+        working-directory: bevoac-frontend-enterprise
         run: |
-          terraform fmt -check -recursive
-          terraform init -backend=false
-          terraform validate
-          bash scripts/static-hardening-check.sh
+          npm install --ignore-scripts --no-audit --no-fund
+          npm run typecheck
+          npm run build
+      - name: Lockfile dependency security gate
+        run: node scripts/ci/dependency-security-gate.js
+      - name: Dependency vulnerability policy
+        run: |
+          (cd bevoac-api-enterprise && npm audit --audit-level=high)
+          (cd bevoac-worker-enterprise && npm audit --audit-level=high)
+          (cd bevoac-frontend-enterprise && npm audit --audit-level=high)
+      - name: Generate deterministic CycloneDX SBOMs from package-lock
+        run: |
+          mkdir -p evidence/sbom
+          node scripts/ci/generate-cyclonedx-from-lock.js --project-dir bevoac-api-enterprise --output evidence/sbom/api.cdx.json --omit-dev
+          node scripts/ci/generate-cyclonedx-from-lock.js --project-dir bevoac-worker-enterprise --output evidence/sbom/worker.cdx.json --omit-dev
+          node scripts/ci/generate-cyclonedx-from-lock.js --project-dir bevoac-frontend-enterprise --output evidence/sbom/frontend-demo.cdx.json --omit-dev
+          node scripts/ci/validate-cyclonedx-sbom.js evidence/sbom/api.cdx.json evidence/sbom/worker.cdx.json evidence/sbom/frontend-demo.cdx.json
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: dependency-sboms
+          path: evidence/sbom/*.json
+          if-no-files-found: error
+          retention-days: 30
 
   postgres-enterprise:
+    name: PostgreSQL, migrations and tenant isolation
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     services:
       postgres:
         image: postgres:16-alpine
@@ -59,7 +107,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
-          node-version: '24'
+          node-version: ${{ env.NODE_VERSION }}
       - name: Install runtime dependencies
         run: |
           (cd bevoac-api-enterprise && npm ci)
@@ -71,3 +119,103 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         run: bash scripts/ci/postgres-enterprise-gate.sh
+
+  terraform:
+    name: Terraform syntax, hardening and policy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
+        with:
+          terraform_version: 1.14.7
+      - name: Terraform format and validate
+        working-directory: bevoac-iac-enterprise
+        run: |
+          terraform fmt -check -recursive
+          terraform init -backend=false
+          terraform validate
+          bash scripts/static-hardening-check.sh
+      - name: IaC and secret scan
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
+        with:
+          scan-type: fs
+          scan-ref: bevoac-iac-enterprise
+          scanners: vuln,secret,misconfig
+          severity: CRITICAL,HIGH
+          exit-code: '1'
+          ignore-unfixed: true
+          format: table
+
+  codeql:
+    name: CodeQL JavaScript and TypeScript
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: github/codeql-action/init@d1ba80a13dd99fba24a470575428917156a28b43
+        with:
+          languages: javascript-typescript
+          queries: security-extended
+      - uses: github/codeql-action/analyze@d1ba80a13dd99fba24a470575428917156a28b43
+
+  images:
+    name: Container image build and vulnerability scan
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: api
+            context: bevoac-api-enterprise
+            image: bevoac-api-enterprise:ci
+          - name: worker
+            context: bevoac-worker-enterprise
+            image: bevoac-worker-enterprise:ci
+          - name: frontend-demo
+            context: bevoac-frontend-enterprise
+            image: bevoac-frontend-enterprise:ci
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Build image
+        run: docker build --pull --tag "${{ matrix.image }}" "${{ matrix.context }}"
+      - name: Scan image
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
+        with:
+          image-ref: ${{ matrix.image }}
+          scanners: vuln,secret
+          severity: CRITICAL,HIGH
+          exit-code: '1'
+          ignore-unfixed: true
+          format: table
+
+  complete:
+    name: Enterprise gate complete
+    if: always()
+    needs: [source-policy, application, postgres-enterprise, terraform, codeql, images]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enforce all mandatory jobs
+        env:
+          SOURCE_POLICY: ${{ needs.source-policy.result }}
+          APPLICATION: ${{ needs.application.result }}
+          POSTGRES: ${{ needs.postgres-enterprise.result }}
+          TERRAFORM: ${{ needs.terraform.result }}
+          CODEQL: ${{ needs.codeql.result }}
+          IMAGES: ${{ needs.images.result }}
+        run: |
+          for result in "$SOURCE_POLICY" "$APPLICATION" "$POSTGRES" "$TERRAFORM" "$CODEQL" "$IMAGES"; do
+            test "$result" = "success"
+          done
+          echo "BEVOAC_ENTERPRISE_GATES_OK=true"

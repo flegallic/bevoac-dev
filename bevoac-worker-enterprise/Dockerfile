@@ -4,8 +4,8 @@ RUN apk add --no-cache nmap ca-certificates
 WORKDIR /usr/src/app
 ENV NODE_ENV=production
 
-COPY package.json .npmrc ./
-RUN npm install --omit=dev --registry=https://registry.npmjs.org/ \
+COPY package.json package-lock.json .npmrc ./
+RUN npm ci --omit=dev --registry=https://registry.npmjs.org/ \
   && node -e "require('pg'); require('@azure/service-bus'); require('ajv'); require('ajv/dist/2020'); require('@azure/identity'); console.log('worker dependencies verified')" \
   && npm cache clean --force
 

@@ -3,91 +3,45 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>${brand_name} - Onboarding Azure</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'" />
+  <meta name="referrer" content="no-referrer" />
+  <title>${brand_name} - Démonstrateur d'onboarding Azure</title>
   <style>
     body{font-family:Arial,sans-serif;max-width:1040px;margin:40px auto;padding:0 20px;color:#152238;line-height:1.5;background:#f7fafc}
     .card{background:white;border:1px solid #d8e1ec;border-radius:16px;padding:24px;margin:18px 0;box-shadow:0 8px 20px rgba(20,40,80,.08)}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}.step{border-left:5px solid #17324d}.ok{background:#edf8f0;border-color:#9ad2a1}.warning{background:#fff8e6;border-color:#ffd56a}
-    label{display:block;font-weight:700;margin:14px 0 6px}input{width:100%;box-sizing:border-box;padding:12px;border:1px solid #bdcad8;border-radius:10px;font-size:14px}button{display:inline-block;background:#17324d;color:white;padding:12px 18px;border:0;border-radius:10px;text-decoration:none;font-weight:700;cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}code{background:#eef3f8;padding:2px 6px;border-radius:6px}.muted{color:#5f6f82}.error{color:#9a2b2b;font-weight:700}.success{color:#146c2e;font-weight:700}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}.step{border-left:5px solid #17324d}.warning{background:#fff8e6;border-color:#ffd56a}.danger{background:#fff0f0;border-color:#e3a0a0}
+    code{background:#eef3f8;padding:2px 6px;border-radius:6px}.muted{color:#5f6f82}.badge{display:inline-block;background:#8b1d1d;color:white;padding:6px 10px;border-radius:999px;font-weight:700;letter-spacing:.04em}
   </style>
 </head>
 <body>
-  <h1>${brand_name} - Onboarding Azure securise V3</h1>
-  <p class="muted">Flux entreprise-ready : le client ne declare plus librement son tenant Azure. Bevoac obtient un consentement administrateur Microsoft, verifie l'acces Azure puis alimente automatiquement l'allowlist backend.</p>
+  <p class="badge">DEMO ONLY — NON CONTRACTUEL</p>
+  <h1>${brand_name} - Démonstrateur d'onboarding Azure</h1>
+
+  <div class="card danger">
+    <h2>Ce composant ne collecte aucune clé API</h2>
+    <p>Cette page statique est conservée uniquement comme support visuel historique. Elle ne démarre aucun onboarding, n'appelle aucune API et ne doit pas être déployée dans le profil V6.2.0 <code>controlled_production</code>.</p>
+    <p>Le parcours réel utilise les routes API authentifiées, puis la page de résultat sans identifiant hébergée par l'API.</p>
+  </div>
 
   <div class="grid">
-    <div class="card step"><strong>1. API start onboarding</strong><br/>Creation d'une session courte, state signe HMAC, callback API.</div>
+    <div class="card step"><strong>1. API start onboarding</strong><br/>Création d'une session courte et d'un state authentifié.</div>
     <div class="card step"><strong>2. Microsoft admin consent</strong><br/>Consentement par un administrateur du tenant client.</div>
-    <div class="card step"><strong>3. Callback API securise</strong><br/>Verification state, anti-replay, rattachement au tenant Bevoac.</div>
-    <div class="card step"><strong>4. Verification RBAC</strong><br/>Appel Azure Management pour lister uniquement les subscriptions accessibles.</div>
-    <div class="card step"><strong>5. Allowlist</strong><br/>Alimentation de tenant_azure_scopes uniquement avec les scopes verifies.</div>
-    <div class="card step"><strong>6. Success page</strong><br/>Retour client avec statut success ou action RBAC requise.</div>
+    <div class="card step"><strong>3. Callback API sécurisé</strong><br/>Vérification du state, de l'expiration et de l'anti-rejeu.</div>
+    <div class="card step"><strong>4. Vérification RBAC</strong><br/>Inventaire des subscriptions accessibles en lecture seule.</div>
+    <div class="card step"><strong>5. Allowlist</strong><br/>Enregistrement uniquement des scopes vérifiés côté serveur.</div>
+    <div class="card step"><strong>6. Résultat</strong><br/>Retour vers une page API sans clé, puis interrogation du statut via un client approuvé.</div>
   </div>
 
   <div class="card warning">
-    <h2>Prerequis cote Microsoft</h2>
+    <h2>Parcours V6.2.0 à utiliser</h2>
     <ul>
-      <li>L'URI <code>/v1/onboarding/azure/callback</code> de l'API doit etre enregistree dans l'app registration Microsoft Entra.</li>
-      <li>Apres consentement, le service principal Bevoac doit avoir un role Azure RBAC adapte, par exemple Reader/Security Reader, sur les subscriptions ou management groups a auditer.</li>
-      <li>Sans RBAC, le consentement sera marque comme valide mais le statut final sera <code>action_required</code>.</li>
+      <li><code>POST /v1/onboarding/azure/start</code> depuis un client approuvé et authentifié.</li>
+      <li><code>GET /v1/onboarding/azure/callback</code> comme URI de retour Microsoft Entra.</li>
+      <li><code>GET /v1/onboarding/azure/result</code> comme page de résultat sans identifiant.</li>
+      <li><code>GET /v1/onboarding/azure/status</code> pour lire l'état depuis un client authentifié.</li>
     </ul>
   </div>
 
-  <div class="card ok">
-    <h2>Demarrer l'onboarding</h2>
-    <form id="onboarding-form">
-      <label for="apiBaseUrl">API Bevoac</label>
-      <input id="apiBaseUrl" name="apiBaseUrl" value="${api_base_url}" placeholder="https://api.example.com" required />
-      <label for="apiKey">Cle API client Bevoac</label>
-      <input id="apiKey" name="apiKey" type="password" autocomplete="off" placeholder="bev_live_..." required />
-      <p class="muted">La cle API est envoyee uniquement a l'API Bevoac pour creer la session d'onboarding. Elle n'est jamais transmise a Microsoft.</p>
-      <button id="startButton" type="submit">Demarrer Microsoft admin consent</button>
-    </form>
-    <p id="status" class="muted"></p>
-  </div>
-
-  <p>Support: <a href="mailto:${support_email}">${support_email}</a></p>
-
-  <script>
-    const form = document.getElementById('onboarding-form');
-    const statusEl = document.getElementById('status');
-    const button = document.getElementById('startButton');
-
-    function cleanBaseUrl(value) {
-      const trimmed = String(value || '').trim().replace(/\/+$/, '');
-      if (!trimmed) return '';
-      if (!/^https?:\/\//i.test(trimmed)) return 'https://' + trimmed;
-      return trimmed;
-    }
-
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      statusEl.textContent = 'Creation de la session securisee...';
-      statusEl.className = 'muted';
-      button.disabled = true;
-      try {
-        const apiBaseUrl = cleanBaseUrl(document.getElementById('apiBaseUrl').value);
-        const apiKey = document.getElementById('apiKey').value;
-        const response = await fetch(apiBaseUrl + '/v1/onboarding/azure/start', {
-          method: 'POST',
-          headers: {
-            'authorization': 'Bearer ' + apiKey,
-            'content-type': 'application/json'
-          },
-          body: JSON.stringify({ startedFrom: 'bevoac-static-onboarding-v3' })
-        });
-        const payload = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(payload.message || payload.error || 'Demarrage impossible.');
-        if (!payload.authorizationUrl) throw new Error('authorizationUrl manquante dans la reponse API.');
-        statusEl.textContent = 'Redirection vers Microsoft...';
-        statusEl.className = 'success';
-        window.location.assign(payload.authorizationUrl);
-      } catch (error) {
-        statusEl.textContent = error.message;
-        statusEl.className = 'error';
-        button.disabled = false;
-      }
-    });
-  </script>
+  <p class="muted">Support : ${support_email}</p>
 </body>
 </html>

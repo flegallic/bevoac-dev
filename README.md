@@ -1,62 +1,73 @@
-# Bevoac V6.1.3 — Enterprise release baseline
+# Bevoac V6.2.0 R2.2 — Client-Ready Controlled Production candidate
 
-Bevoac is an Azure-first B2B SaaS control plane for security-audit orchestration. This repository contains the public API, asynchronous worker, transactional outbox publisher, retention job, isolated administration API, Azure infrastructure as code, database migrations, security gates and the canonical operations documentation.
+Bevoac is an Azure-first B2B SaaS control plane for security-audit orchestration. This source tree is the complete V6.2.0 remediation candidate based on the immutable V6.1.3 production baseline `d9b85ad728a9f1252ca2acd0b9421cd5ec9a7ba4`.
 
-## Release scope
 
-V6.1.3 turns the V6.1.2 runtime-role model into a deployable release without changing the public `/v1` API or the active `scan.requested` contract.
+## R2.2 final source revision
 
-Main outcomes:
+R2.1 closed the dependency-qualification findings. 
+R2.2 preserves the R2.1 API, worker, package manifests and lockfiles, and corrects only the PostgreSQL 16 qualification profile and runner. The local enterprise gate now uses `NODE_ENV=test` with disabled TLS against a disposable container, while production continues to fail closed. Docker Desktop CLI and credential-helper paths are preserved, with an isolated anonymous fallback for the public PostgreSQL image. See [`POSTGRES16_QUALIFICATION_R2_2.md`](POSTGRES16_QUALIFICATION_R2_2.md).
 
-- PostgreSQL identity per workload: `bevoac_api`, `bevoac_worker`, `bevoac_outbox`, `bevoac_retention`, `bevoac_admin_api` and `bevoac_operator`;
-- forced row-level security bound to the real PostgreSQL `session_user`;
-- no mutable `app.service_context` runtime path;
-- public API separated from Service Bus publication;
-- dedicated Managed Identities and secret-scoped Key Vault access;
-- Managed Identity authentication for Service Bus sender, receiver and queue scaler;
-- staged migration followed by explicit security finalization;
-- PostgreSQL 16 ephemeral CI and real API/worker integration tests;
-- fail-closed provider boundary preparing AWS and GCP without advertising either as runtime-enabled.
+- API Swagger UI/static-file chain removed while retaining opt-in OpenAPI JSON;
+- API dependency lock proven with zero npm audit findings on Node.js 24.19.0;
+- deprecated Azure Resource Graph SDK chain removed from the worker;
+- Resource Graph transported through the authenticated Azure Resource Manager REST API (`2024-04-01`);
+- deterministic lockfile-derived CycloneDX 1.6 SBOMs included;
+- native `npm sbom` is not used as a release gate.
 
-## Canonical entry points
+See [`DEPENDENCY_SECURITY_REFRESH_R2_1.md`](DEPENDENCY_SECURITY_REFRESH_R2_1.md) and [`FINAL_QUALIFICATION_STATUS.md`](FINAL_QUALIFICATION_STATUS.md).
 
-- Deployment: [`APPLY.md`](APPLY.md)
-- Validation: [`VALIDATION_MATRIX.md`](VALIDATION_MATRIX.md)
-- Changelog: [`CHANGELOG_V6_1_3.md`](CHANGELOG_V6_1_3.md)
-- Runbook: `docs/operations/Runbook_Bevoac_V6_1_2_Production_Enterprise_Ready_R3.docx`
-- From scratch: `docs/operations/Guide_From_Scratch_Bevoac_V6_1_2_R3.docx`
-- V6.1.3 deployment guide: `docs/operations/Bevoac_V6_1_3_Enterprise_Release_Deployment_Guide.docx`
-- Multi-cloud boundary: `docs/multicloud/MULTICLOUD_READINESS_V6_1_3.md`
+## Scope
 
-## Local release validation
+V6.2.0 closes the known source findings identified by the V6.1.3 audit:
 
-Node.js 24 and Terraform 1.14.7 are required.
+- release evidence and validator consistency;
+- PostgreSQL tenant-context safety;
+- request-bound idempotency;
+- shared Azure module catalog and Resource Graph pagination;
+- retryable-versus-terminal worker failures;
+- customer-visible error sanitization and cancellation propagation;
+- fail-closed HTTP/configuration/admin OIDC controls;
+- authenticated APIM-to-backend boundary;
+- diagnostics, Action Group and baseline alerts in Terraform;
+- demo-only frontend classification;
+- CI supply-chain and documentation gates.
+
+## Runtime status
+
+- Public API: Azure-first, `/v1`, controlled production candidate.
+- Worker: Azure runtime enabled; AWS/GCP remain fail-closed.
+- Frontend: **DEMO-ONLY** and excluded from contractual client-portal scope.
+- V6.3.0: AWS multicloud implementation after V6.2.0 acceptance.
+- V7.0.0: Enterprise Network Pack (VPN, private runner, private endpoints, private DNS and private backend).
+
+## Canonical documentation
+
+- [`docs/README.md`](docs/README.md)
+- [`docs/operations/runbook-v6-2.md`](docs/operations/runbook-v6-2.md)
+- [`docs/operations/release-validation-v6-2.md`](docs/operations/release-validation-v6-2.md)
+- [`docs/technical/architecture-v6-2.md`](docs/technical/architecture-v6-2.md)
+- [`docs/technical/security-model-v6-2.md`](docs/technical/security-model-v6-2.md)
+- [`docs/evidence/FINDINGS_CLOSURE_V6_2.md`](docs/evidence/FINDINGS_CLOSURE_V6_2.md)
+- [`docs/evidence/SOURCE_VALIDATION_V6_2_0.md`](docs/evidence/SOURCE_VALIDATION_V6_2_0.md)
+- [`REMEDIATION_CLOSURE_MATRIX.md`](REMEDIATION_CLOSURE_MATRIX.md)
+- [`VALIDATION_REPORT_V6_2_0.md`](VALIDATION_REPORT_V6_2_0.md)
+- [`RELEASE_CANDIDATE_LIMITATIONS.md`](RELEASE_CANDIDATE_LIMITATIONS.md)
+
+## Validation
+
+Node.js 24 and Terraform 1.14.7 are required for the complete gate.
 
 ```bash
 ./validate_release.sh --full
 ```
 
-The full validation installs exact lockfile dependencies, runs API and worker checks/tests, validates every JavaScript/Bash/JSON source, initializes Terraform without a backend, validates the IaC and executes the static hardening gate.
-
-## Azure deployment
-
-The release is deployed in two controlled phases:
-
-1. **Workload migration** — new images, dedicated database users and Managed Identities, while legacy rollback access remains temporarily available.
-2. **Security finalization** — private Key Vault/PostgreSQL, Service Bus local authentication disabled, legacy Service Bus secret removed, broad workload RBAC removed.
-
-Use only:
+Static structure validation:
 
 ```bash
-scripts/release/deploy_v6_1_3.sh help
+./validate_release.sh --structure-only
 ```
 
-No production claim is valid until CI, database, Azure identity, network, APIM, smoke, traffic rollout and evidence gates are green.
+## Production rule
 
-## Multi-cloud status
-
-Azure is the only runtime-enabled provider. AWS and GCP are declared behind a versioned provider boundary and fail closed. The next AWS chantier can implement STS AssumeRole, discovery, preflight and scanners without redesigning tenant isolation, billing, outbox, persistence or reporting.
-
-## Claims
-
-This repository is designed as an enterprise release baseline. It is not an independent certification, a penetration-test report or a guarantee of zero residual risk. Environment-specific acceptance remains mandatory before the term “enterprise-ready production baseline” is used.
+This source candidate is not considered deployed or production-accepted until the full CI, PostgreSQL/RLS, Terraform, Azure monitoring, restore, APIM boundary, load, security, real-tenant and rollback gates have produced an evidence pack.

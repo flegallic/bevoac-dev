@@ -4,6 +4,7 @@ require('isomorphic-fetch');
 const { ClientSecretCredential } = require('@azure/identity');
 const { Client } = require('@microsoft/microsoft-graph-client');
 const { coverageKpi, riskCountKpi, buildModuleEvidenceMetadata } = require('../../src/lib/kpi-engine');
+const { throwIfAborted, azureAbortOptions } = require('../../src/lib/abort');
 
 const MODULE_NAME = 'identity_admin_posture';
 const PRIVILEGED_ROLE_TEMPLATE_IDS = [
@@ -14,7 +15,7 @@ const PRIVILEGED_ROLE_TEMPLATE_IDS = [
   { id: '729827e3-9c14-49f7-bb1b-9608f156bbb8', name: 'Helpdesk Administrator' }
 ];
 
-function buildGraphClient(targetTenantId, credential = null) {
+function buildGraphClient(targetTenantId, credential = null, options = {}) {
   const effectiveCredential = credential || new ClientSecretCredential(
     targetTenantId,
     process.env.MICROSOFT_CLIENT_ID,
@@ -23,19 +24,23 @@ function buildGraphClient(targetTenantId, credential = null) {
   return Client.initWithMiddleware({
     authProvider: {
       getAccessToken: async () => {
-        const token = await effectiveCredential.getToken('https://graph.microsoft.com/.default');
+        const token = await effectiveCredential.getToken('https://graph.microsoft.com/.default', azureAbortOptions(options.signal));
         return token.token;
       }
     }
   });
 }
 
-async function fetchAllPages(client, apiPath) {
+async function fetchAllPages(client, apiPath, options = {}) {
   const all = [];
+  throwIfAborted(options.signal, `Microsoft Graph ${apiPath}`);
   let response = await client.api(apiPath).get();
+  throwIfAborted(options.signal, `Microsoft Graph ${apiPath}`);
   if (Array.isArray(response?.value)) all.push(...response.value);
   while (response && response['@odata.nextLink']) {
+    throwIfAborted(options.signal, `Microsoft Graph ${apiPath}`);
     response = await client.api(response['@odata.nextLink']).get();
+    throwIfAborted(options.signal, `Microsoft Graph ${apiPath}`);
     if (Array.isArray(response?.value)) all.push(...response.value);
   }
   return all;
@@ -54,8 +59,9 @@ function normalizeUser(user, roleName = null) {
   };
 }
 
-async function auditIdentityAdminPosture(targetTenantId, credential = null) {
+async function auditIdentityAdminPosture(targetTenantId, credential = null, options = {}) {
   const startTime = Date.now();
+  throwIfAborted(options.signal, 'Identity admin posture audit');
   const result = {
     status: 'PENDING',
     checks: [],
@@ -72,15 +78,17 @@ async function auditIdentityAdminPosture(targetTenantId, credential = null) {
   }
 
   try {
-    const graphClient = buildGraphClient(targetTenantId, credential);
+    const graphClient = buildGraphClient(targetTenantId, credential, options);
     const privilegedById = new Map();
 
     for (const role of PRIVILEGED_ROLE_TEMPLATE_IDS) {
       try {
+        throwIfAborted(options.signal, 'Identity admin posture audit');
         const roleRes = await graphClient.api('/directoryRoles').filter(`roleTemplateId eq '${role.id}'`).get();
+        throwIfAborted(options.signal, 'Identity admin posture audit');
         const directoryRole = Array.isArray(roleRes?.value) ? roleRes.value[0] : null;
         if (!directoryRole?.id) continue;
-        const members = await fetchAllPages(graphClient, `/directoryRoles/${directoryRole.id}/members`);
+        const members = await fetchAllPages(graphClient, `/directoryRoles/${directoryRole.id}/members`, options);
         for (const member of members) {
           if (!member?.id) continue;
           const existing = privilegedById.get(member.id) || normalizeUser(member, role.name);
@@ -95,7 +103,7 @@ async function auditIdentityAdminPosture(targetTenantId, credential = null) {
     const privilegedUsers = Array.from(privilegedById.values());
     const mfaRegistration = new Map();
     try {
-      const registrations = await fetchAllPages(graphClient, '/reports/credentialUserRegistrationDetails');
+      const registrations = await fetchAllPages(graphClient, '/reports/credentialUserRegistrationDetails', options);
       for (const item of registrations) {
         const id = item.id || item.userId;
         if (id) mfaRegistration.set(id, item);

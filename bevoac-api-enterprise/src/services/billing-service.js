@@ -1,4 +1,4 @@
-const { AppError, NotFoundError } = require('../lib/errors');
+const { AppError, NotFoundError, ValidationError } = require('../lib/errors');
 const { withTenantSession, withDatabaseSession, withDatabaseTransaction } = require('../lib/db-context');
 
 class BillingService {
@@ -18,6 +18,24 @@ class BillingService {
   }
   getActiveScanLimit(planCode) { const limits = this.config.backpressure?.activeScanLimits || {}; return Number(limits[planCode] ?? limits.standard ?? 3); }
   getCurrentQuotaMonth() { const now = new Date(); return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString().slice(0, 10); }
+  normalizeQuotaMonth(value, { required = false, completedOnly = false } = {}) {
+    if (value == null || String(value).trim() === '') {
+      if (required) throw new ValidationError('A billing month is required in YYYY-MM-01 format.');
+      return this.getCurrentQuotaMonth();
+    }
+    const month = String(value).trim();
+    if (!/^(?:20|21)[0-9]{2}-(?:0[1-9]|1[0-2])-01$/.test(month)) {
+      throw new ValidationError('Billing month must use YYYY-MM-01 format.');
+    }
+    const parsed = new Date(`${month}T00:00:00.000Z`);
+    if (Number.isNaN(parsed.getTime()) || parsed.toISOString().slice(0, 10) !== month) {
+      throw new ValidationError('Billing month is not a valid calendar month.');
+    }
+    if (completedOnly && month >= this.getCurrentQuotaMonth()) {
+      throw new ValidationError('Only a completed billing month can be closed.');
+    }
+    return month;
+  }
   money(value) { return Number(Number(value || 0).toFixed(2)); }
   async lockTenantMonth(client, tenantId, quotaMonth) { await client.query(`SELECT pg_advisory_xact_lock(hashtext($1), hashtext($2))`, [`bevoac:${tenantId}`, `quota:${quotaMonth}`]); }
   async getTenantContext(client, tenantId, { forUpdate = false } = {}) {
@@ -95,7 +113,7 @@ class BillingService {
         total_amount_eur_ht = EXCLUDED.total_amount_eur_ht,
         generated_at = NOW(),
         metadata = EXCLUDED.metadata`,
-      [tenantId, quotaMonth, tenant.plan_code, plan.quotaLimit, plan.resourceLimit, Number(row.included_units_used || 0), Number(row.payg_units_used || 0), this.money(plan.unitPriceEur), this.money(row.payg_amount_eur_ht || 0), this.money(row.adjustments_amount_eur_ht || 0), this.money(row.credits_amount_eur_ht || 0), totalAmount, JSON.stringify({ refreshedAt: new Date().toISOString(), source: 'billing-service-v6-1-2-enterprise-hardening', reservedUnits: Number(row.reserved_units || 0) })]
+      [tenantId, quotaMonth, tenant.plan_code, plan.quotaLimit, plan.resourceLimit, Number(row.included_units_used || 0), Number(row.payg_units_used || 0), this.money(plan.unitPriceEur), this.money(row.payg_amount_eur_ht || 0), this.money(row.adjustments_amount_eur_ht || 0), this.money(row.credits_amount_eur_ht || 0), totalAmount, JSON.stringify({ refreshedAt: new Date().toISOString(), source: 'billing-service-v6-2-0-client-ready', reservedUnits: Number(row.reserved_units || 0) })]
     );
   }
   async authorizeScan(client, { tenantId, billingUnits, cloudProvider, scanProfile, modules, metadata }) {
@@ -132,14 +150,14 @@ class BillingService {
   }
   async getAdminBillingOverview(quotaMonth) {
     return withDatabaseSession(this.pg, async (client) => {
-      const resolvedMonth = quotaMonth || this.getCurrentQuotaMonth();
+      const resolvedMonth = this.normalizeQuotaMonth(quotaMonth);
       const result = await client.query(`SELECT t.id AS tenant_id, t.company_name, t.plan_code, s.* FROM billing_monthly_snapshots s INNER JOIN tenants t ON t.id = s.tenant_id WHERE s.quota_month = $1::date ORDER BY t.company_name ASC`, [resolvedMonth]);
       return { quotaMonth: resolvedMonth, tenants: result.rows.map((row) => ({ tenantId: row.tenant_id, companyName: row.company_name, planCode: row.plan_code, quotaLimit: row.quota_limit, resourceLimit: row.resource_limit, includedUnitsUsed: Number(row.included_units_used || 0), scansRemaining: row.quota_limit == null ? null : Math.max(Number(row.quota_limit) - Number(row.included_units_used || 0), 0), paygUnitsUsed: Number(row.payg_units_used || 0), paygAmountEurHt: this.money(row.payg_amount_eur_ht || 0), totalAmountEurHt: this.money(row.total_amount_eur_ht || 0), snapshotStatus: row.snapshot_status, generatedAt: row.generated_at, closedAt: row.closed_at })) };
     });
   }
   async getTenantLedger(tenantId, quotaMonth) {
     return withTenantSession(this.pg, tenantId, async (client) => {
-      const resolvedMonth = quotaMonth || this.getCurrentQuotaMonth();
+      const resolvedMonth = this.normalizeQuotaMonth(quotaMonth);
       const tenant = await this.getTenantContext(client, tenantId);
       if (!tenant) return null;
       const result = await client.query(`SELECT id, scan_id, event_type, plan_code_snapshot, quota_month, billing_units, unit_price_eur_ht, amount_eur_ht, currency_code, cloud_provider, scan_profile, modules, metadata, recorded_at FROM billing_usage_ledger WHERE tenant_id = $1 AND quota_month = $2::date ORDER BY recorded_at DESC, id DESC`, [tenantId, resolvedMonth]);
@@ -148,7 +166,7 @@ class BillingService {
   }
   async closeBillingMonth(quotaMonth, actor) {
     return withDatabaseTransaction(this.pg, async (client) => {
-      const resolvedMonth = quotaMonth || this.getCurrentQuotaMonth();
+      const resolvedMonth = this.normalizeQuotaMonth(quotaMonth, { required: true, completedOnly: true });
       const countResult = await client.query('SELECT COUNT(*)::int AS count FROM billing_monthly_snapshots WHERE quota_month = $1::date', [resolvedMonth]);
       if (Number(countResult.rows[0]?.count || 0) === 0) throw new AppError(`No billing snapshots found for month ${resolvedMonth}`, { code: 'BILLING_MONTH_NOT_INITIALIZED', statusCode: 400 });
       const alreadyClosed = await client.query('SELECT COUNT(*)::int AS count FROM billing_monthly_snapshots WHERE quota_month = $1::date AND snapshot_status = $2', [resolvedMonth, 'CLOSED']);

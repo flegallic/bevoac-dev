@@ -1,43 +1,28 @@
-name: bevoac-frontend-enterprise
+name: bevoac-frontend-demo-build-reference
+
+# Reference only: GitHub loads workflows only from the repository root
+# .github/workflows directory. The canonical V6.2.0 gate builds this demo
+# frontend and never deploys it automatically.
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "bevoac-frontend-enterprise/**"
-      - ".github/workflows/bevoac-frontend-enterprise.yml"
   workflow_dispatch:
 
 permissions:
-  id-token: write
   contents: read
 
-env:
-  FRONTEND_IMAGE_NAME: bevoac-frontend-enterprise
-  FRONTEND_VERSION: v1.0.0
-
 jobs:
-  build-and-push:
+  demo-build-only:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: azure/login@v2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          client-id: ${{ vars.AZURE_CLIENT_ID }}
-          tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Login to ACR
-        run: az acr login --name "${{ vars.ACR_NAME }}"
-
-      - name: Build and push frontend image
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Build DEMO-ONLY frontend
         working-directory: bevoac-frontend-enterprise
         run: |
-          IMAGE="${{ vars.ACR_LOGIN_SERVER }}/${FRONTEND_IMAGE_NAME}:${FRONTEND_VERSION}"
-          docker build --platform linux/amd64 -t "$IMAGE" .
-          docker push "$IMAGE"
-
-      - name: Show image reference
-        run: echo "${{ vars.ACR_LOGIN_SERVER }}/${FRONTEND_IMAGE_NAME}:${FRONTEND_VERSION}"
+          npm install --ignore-scripts --no-audit --no-fund
+          npm run typecheck
+          npm run build

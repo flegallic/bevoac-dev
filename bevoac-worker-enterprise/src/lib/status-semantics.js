@@ -1,4 +1,4 @@
-// scanners/lib/status-semantics.js
+'use strict';
 
 const HIGH_RISK = new Set(['HIGH', 'CRITICAL']);
 const WARN_RISK = new Set(['MEDIUM', 'LOW']);
@@ -21,38 +21,22 @@ function getAnalyzedCount(moduleResult = {}) {
     'databases_analyzed',
     'apps_analyzed',
     'subscriptions_analyzed',
-    'duration_ms',
     'totalResourcesScanned'
   ];
-
   for (const key of numericKeys) {
-    if (typeof moduleResult[key] === 'number' && !Number.isNaN(moduleResult[key])) {
-      if (key === 'duration_ms') continue;
-      return moduleResult[key];
-    }
+    if (typeof moduleResult[key] === 'number' && !Number.isNaN(moduleResult[key])) return moduleResult[key];
   }
-
   if (moduleResult.summary && typeof moduleResult.summary === 'object') {
     const summaryKeys = [
-      'totalStorageAccounts',
-      'totalNsgs',
-      'totalVMs',
-      'totalVaults',
-      'totalWorkspaces',
-      'totalDbs',
-      'totalApps',
-      'totalSubscriptions',
-      'totalGuests',
-      'totalResourcesScanned'
+      'totalStorageAccounts', 'totalNsgs', 'totalVMs', 'totalVaults', 'totalWorkspaces',
+      'totalDbs', 'totalApps', 'totalSubscriptions', 'totalGuests', 'totalResourcesScanned',
+      'totalResources', 'totalCriticalResources', 'totalAssignments', 'totalPolicyStates',
+      'totalRoleAssignments', 'totalEligibleResources'
     ];
-
     for (const key of summaryKeys) {
-      if (typeof moduleResult.summary[key] === 'number' && !Number.isNaN(moduleResult.summary[key])) {
-        return moduleResult.summary[key];
-      }
+      if (typeof moduleResult.summary[key] === 'number' && !Number.isNaN(moduleResult.summary[key])) return moduleResult.summary[key];
     }
   }
-
   return 0;
 }
 
@@ -64,16 +48,11 @@ function computeExecutionStatus(moduleResult = {}) {
   const rawStatus = String(moduleResult.status || '').toUpperCase();
   const partialErrorsCount = getPartialErrorsCount(moduleResult.details);
   const analyzedCount = getAnalyzedCount(moduleResult);
-
   if (moduleResult.error) return 'FAILED';
   if (rawStatus === 'NOT_IMPLEMENTED') return 'FAILED';
-
-  // Cas bloquant : le module a rencontré des erreurs et n'a rien réellement analysé.
   if (partialErrorsCount > 0 && analyzedCount === 0) return 'FAILED';
-
-  // Cas bloquant explicite du module.
   if (rawStatus === 'FAILED' && analyzedCount === 0) return 'FAILED';
-
+  if (rawStatus === 'PARTIAL' || rawStatus === 'WARNING' || (partialErrorsCount > 0 && analyzedCount > 0)) return 'PARTIAL';
   return 'SUCCESS';
 }
 
@@ -81,33 +60,21 @@ function computeSecurityPosture(moduleResult = {}) {
   const executionStatus = computeExecutionStatus(moduleResult);
   const partialErrorsCount = getPartialErrorsCount(moduleResult.details);
   const checks = getChecks(moduleResult);
-
-  if (executionStatus === 'FAILED') {
-    return 'FAIL';
-  }
-
+  if (executionStatus === 'FAILED') return 'FAIL';
   let hasFailHigh = false;
-  let hasWarn = false;
-
+  let hasWarn = executionStatus === 'PARTIAL';
   for (const check of checks) {
     const checkStatus = String(check.status || '').toUpperCase();
     const severity = String(check.severity || 'LOW').toUpperCase();
-
     if (checkStatus !== 'FAILED') continue;
-
     if (HIGH_RISK.has(severity)) {
       hasFailHigh = true;
       break;
     }
-
-    if (WARN_RISK.has(severity) || severity === 'INFO') {
-      hasWarn = true;
-    }
+    if (WARN_RISK.has(severity) || severity === 'INFO') hasWarn = true;
   }
-
   if (hasFailHigh) return 'FAIL';
   if (hasWarn || partialErrorsCount > 0) return 'WARN';
-
   return 'PASS';
 }
 
@@ -120,18 +87,14 @@ function decorateModuleStatus(moduleResult = {}) {
 }
 
 function rollupExecutionStatus(modules = {}) {
-  const values = Object.values(modules).map((moduleResult) =>
-    moduleResult.executionStatus || computeExecutionStatus(moduleResult)
-  );
-
-  return values.includes('FAILED') ? 'FAILED' : 'SUCCESS';
+  const values = Object.values(modules).map((moduleResult) => moduleResult.executionStatus || computeExecutionStatus(moduleResult));
+  if (values.includes('FAILED')) return 'FAILED';
+  if (values.includes('PARTIAL')) return 'PARTIAL';
+  return 'SUCCESS';
 }
 
 function rollupSecurityPosture(modules = {}) {
-  const values = Object.values(modules).map((moduleResult) =>
-    moduleResult.securityPosture || computeSecurityPosture(moduleResult)
-  );
-
+  const values = Object.values(modules).map((moduleResult) => moduleResult.securityPosture || computeSecurityPosture(moduleResult));
   if (values.includes('FAIL')) return 'FAIL';
   if (values.includes('WARN')) return 'WARN';
   return 'PASS';

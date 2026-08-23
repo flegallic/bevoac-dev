@@ -1,6 +1,7 @@
 'use strict';
 
-const { runResourceGraphQuery } = require('../../src/lib/resource-graph');
+const { runResourceGraphQueryDetailed } = require('../../src/lib/resource-graph');
+const { recordResourceGraphResult } = require('../../src/lib/resource-graph-evidence');
 const { coverageKpi, riskCountKpi, buildModuleEvidenceMetadata } = require('../../src/lib/kpi-engine');
 
 const MODULE_NAME = 'diagnostic_coverage';
@@ -18,7 +19,7 @@ function parentIdFromDiagnosticId(id) {
   return String(id || '').replace(/\/providers\/microsoft\.insights\/diagnosticsettings\/[^/]+$/i, '').toLowerCase();
 }
 
-async function auditDiagnosticCoverage(subscriptions, credential) {
+async function auditDiagnosticCoverage(subscriptions, credential, options = {}) {
   const startTime = Date.now();
   const result = {
     status: 'PENDING',
@@ -31,13 +32,15 @@ async function auditDiagnosticCoverage(subscriptions, credential) {
     const typeList = CRITICAL_TYPES.map((type) => `'${type}'`).join(', ');
     const resourcesQuery = `resources | where tolower(type) in (${typeList}) | project id, name, type, location, resourceGroup, subscriptionId`;
     const diagnosticsQuery = `resources | where tolower(type) == 'microsoft.insights/diagnosticsettings' | project id, name, type, subscriptionId`;
-    const [resources, diagnosticSettings] = await Promise.all([
-      runResourceGraphQuery(credential, subscriptions, resourcesQuery),
-      runResourceGraphQuery(credential, subscriptions, diagnosticsQuery).catch((error) => {
+    const [resourcesResult, diagnosticsResult] = await Promise.all([
+      runResourceGraphQueryDetailed(credential, subscriptions, resourcesQuery, { signal: options.signal }),
+      runResourceGraphQueryDetailed(credential, subscriptions, diagnosticsQuery, { signal: options.signal }).catch((error) => {
         result.details.partialErrors.push({ scope: 'ResourceGraph/diagnosticsettings', message: error.message });
-        return [];
+        return { rows: [], metadata: null };
       })
     ]);
+    const resources = recordResourceGraphResult(result, 'critical-resources', resourcesResult);
+    const diagnosticSettings = recordResourceGraphResult(result, 'diagnostic-settings', diagnosticsResult);
 
     const diagnosticParentIds = new Set(diagnosticSettings.map((item) => parentIdFromDiagnosticId(item.id)));
     result.details.resources = resources;

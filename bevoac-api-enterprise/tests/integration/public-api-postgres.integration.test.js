@@ -8,11 +8,12 @@ const enabled = process.env.BEVOAC_INTEGRATION_DB === '1';
 const integrationTest = enabled ? test : test.skip;
 
 integrationTest('public API authenticates with bevoac_api and preserves tenant isolation', async () => {
-  process.env.NODE_ENV = 'production';
+  process.env.NODE_ENV = 'test';
   process.env.APP_RUNTIME_MODE = 'public_api';
   process.env.OUTBOX_PUBLISHER_ENABLED = 'false';
   process.env.OUTBOX_IMMEDIATE_PUBLISH_AFTER_REQUEST = 'false';
-  process.env.PG_SSL_MODE = process.env.PG_SSL_MODE || 'disable';
+  process.env.PG_SSL_MODE = 'disable';
+  process.env.APIM_BACKEND_BOUNDARY_REQUIRED = 'false';
   process.env.API_PUBLIC_BASE_URL = 'https://api.integration.invalid';
   process.env.ONBOARDING_REDIRECT_URI = 'https://api.integration.invalid/v1/onboarding/azure/callback';
   process.env.ONBOARDING_FRONTEND_SUCCESS_URL = 'https://frontend.integration.invalid/success';
@@ -60,7 +61,7 @@ integrationTest('public API authenticates with bevoac_api and preserves tenant i
       headers: {
         authorization: `Bearer ${apiKey}`,
         'content-type': 'application/json',
-        'idempotency-key': 'ci-public-api-outbox-v6-1-3'
+        'idempotency-key': 'ci-public-api-outbox-v6-2-0'
       },
       payload: {
         cloudProvider: 'azure',

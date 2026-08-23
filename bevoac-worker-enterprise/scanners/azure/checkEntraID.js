@@ -2,12 +2,14 @@
 require('isomorphic-fetch');
 const { ClientSecretCredential } = require('@azure/identity');
 const { Client } = require('@microsoft/microsoft-graph-client');
+const { throwIfAborted, azureAbortOptions } = require('../../src/lib/abort');
 
 /**
  * Enterprise-Grade Entra ID (O365) Auditor
  * Format: Standardized CSPM (Cloud Security Posture Management)
  */
-async function auditEntraID(targetTenantId) {
+async function auditEntraID(targetTenantId, options = {}) {
+  throwIfAborted(options.signal, 'Entra audit');
   console.log(`[ENTRA ID] Starting Advanced Cross-Tenant audit for Client Tenant: ${targetTenantId}`);
 
   const bevoacAppId = process.env.MICROSOFT_CLIENT_ID;
@@ -25,7 +27,7 @@ async function auditEntraID(targetTenantId) {
     const graphClient = Client.initWithMiddleware({
       authProvider: {
         getAccessToken: async () => {
-          const tokenResponse = await credential.getToken('https://graph.microsoft.com/.default');
+          const tokenResponse = await credential.getToken('https://graph.microsoft.com/.default', azureAbortOptions(options.signal));
           return tokenResponse.token;
         }
       }
@@ -57,7 +59,9 @@ async function auditEntraID(targetTenantId) {
         request = request.select(selectParams);
       }
 
+      throwIfAborted(options.signal, `Microsoft Graph ${apiPath}`);
       let response = await request.get();
+      throwIfAborted(options.signal, `Microsoft Graph ${apiPath}`);
 
       if (response && response.value) {
         allItems = allItems.concat(response.value);
@@ -65,7 +69,9 @@ async function auditEntraID(targetTenantId) {
 
       while (response && response['@odata.nextLink']) {
         console.log(`[ENTRA ID] Fetching next page for ${apiPath}...`);
+        throwIfAborted(options.signal, `Microsoft Graph ${apiPath}`);
         response = await client.api(response['@odata.nextLink']).get();
+        throwIfAborted(options.signal, `Microsoft Graph ${apiPath}`);
 
         if (response && response.value) {
           allItems = allItems.concat(response.value);

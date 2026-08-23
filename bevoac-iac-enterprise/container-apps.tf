@@ -34,14 +34,18 @@ locals {
     { name = "ONBOARDING_FRONTEND_SUCCESS_URL", value = local.onboarding_success_url },
     { name = "ONBOARDING_ALLOW_INFER_REDIRECT_URI", value = "false" },
     { name = "ONBOARDING_STATE_TTL_MINUTES", value = "20" },
-    { name = "ONBOARDING_AZURE_REQUEST_TIMEOUT_MS", value = "15000" }
+    { name = "ONBOARDING_AZURE_REQUEST_TIMEOUT_MS", value = "15000" },
+    { name = "SWAGGER_ENABLED", value = "false" },
+    { name = "APIM_BACKEND_BOUNDARY_REQUIRED", value = tostring(var.enable_apim_gateway && var.enable_apim_backend_boundary) }
   ]
 
-  api_env_secret = [
+  api_env_secret = concat([
     { name = "PG_PASSWORD", secret_name = "pg-api-password" },
     { name = "MICROSOFT_CLIENT_SECRET", secret_name = "microsoft-client-secret" },
     { name = "ONBOARDING_STATE_SECRET", secret_name = "onboarding-state-secret" }
-  ]
+  ], var.enable_apim_gateway && var.enable_apim_backend_boundary ? [
+    { name = "APIM_BACKEND_SHARED_SECRET", secret_name = "apim-backend-token" }
+  ] : [])
 
   worker_env_plain = [
     { name = "NODE_ENV", value = "production" },
@@ -55,7 +59,11 @@ locals {
     { name = "SERVICEBUS_FQ_NAMESPACE", value = "${azurerm_servicebus_namespace.sb.name}.servicebus.windows.net" },
     { name = "SERVICEBUS_QUEUE_NAME", value = azurerm_servicebus_queue.scan_jobs.name },
     { name = "SERVICEBUS_SESSIONS_ENABLED", value = tostring(var.enable_service_bus_sessions) },
+    { name = "SERVICEBUS_MAX_DELIVERY_COUNT", value = tostring(azurerm_servicebus_queue.scan_jobs.max_delivery_count) },
     { name = "MAX_CONCURRENT_TENANT_SESSIONS", value = tostring(var.max_concurrent_tenant_sessions) },
+    { name = "AZURE_RESOURCE_GRAPH_PAGE_SIZE", value = "1000" },
+    { name = "AZURE_RESOURCE_GRAPH_MAX_ROWS", value = "100000" },
+    { name = "AZURE_RESOURCE_GRAPH_MAX_PAGES", value = "100" },
     { name = "MAX_RESULT_JSON_BYTES", value = tostring(var.max_result_json_bytes) },
     { name = "RESULT_COMPRESSION_THRESHOLD_BYTES", value = "524288" },
     { name = "TIMEOUT_WEB_HEADERS_MS", value = "10000" },
@@ -148,6 +156,14 @@ resource "azurerm_container_app" "api" {
     identity            = azurerm_user_assigned_identity.api.id
     key_vault_secret_id = azurerm_key_vault_secret.onboarding_state_secret.versionless_id
   }
+  dynamic "secret" {
+    for_each = var.enable_apim_gateway && var.enable_apim_backend_boundary ? [1] : []
+    content {
+      name                = "apim-backend-token"
+      identity            = azurerm_user_assigned_identity.api.id
+      key_vault_secret_id = azurerm_key_vault_secret.apim_backend_token[0].versionless_id
+    }
+  }
 
   ingress {
     external_enabled = true
@@ -227,6 +243,7 @@ resource "azurerm_container_app" "api" {
     azurerm_role_assignment.api_pg_secret_reader,
     azurerm_role_assignment.api_microsoft_secret_reader,
     azurerm_role_assignment.api_onboarding_secret_reader,
+    azurerm_role_assignment.api_apim_backend_secret_reader,
     azurerm_role_assignment.api_kv_reader,
     time_sleep.wait_for_workload_roles,
     time_sleep.wait_for_dedicated_workload_roles,
@@ -234,7 +251,8 @@ resource "azurerm_container_app" "api" {
     azurerm_key_vault_secret.admin_api_secret,
     azurerm_key_vault_secret.pg_api_password,
     azurerm_key_vault_secret.microsoft_client_secret,
-    azurerm_key_vault_secret.onboarding_state_secret
+    azurerm_key_vault_secret.onboarding_state_secret,
+    azurerm_key_vault_secret.apim_backend_token
   ]
 
 }

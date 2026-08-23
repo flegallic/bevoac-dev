@@ -119,16 +119,25 @@ function inferRedirectUri(config, request) {
 function buildSuccessRedirect(config, params) {
   const base =
     config.onboarding.frontendSuccessUrl ||
-    '/success.html';
+    '/v1/onboarding/azure/result';
 
-  if (base.startsWith('/')) {
-    const query =
-      new URLSearchParams(params).toString();
+  const safeParams = {
+    status: params.status || 'unknown',
+    reason: params.reason || '',
+    subscriptionCount: params.subscriptionCount || '0'
+  };
 
-    return `${base}?${query}`;
+  const fragmentParams = new URLSearchParams();
+  for (const [key, value] of Object.entries(safeParams)) {
+    if (String(value || '').trim() !== '') fragmentParams.set(key, String(value));
   }
+  const fragment = fragmentParams.toString();
+  if (base.startsWith('/')) return `${base}#${fragment}`;
 
-  return appendQuery(base, params);
+  const target = new URL(base);
+  target.search = '';
+  target.hash = fragment;
+  return target.toString();
 }
 
 class AzureOnboardingService {

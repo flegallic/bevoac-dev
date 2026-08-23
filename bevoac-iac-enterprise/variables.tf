@@ -73,8 +73,8 @@ variable "deploy_container_apps" {
 
 variable "deploy_onboarding_frontend" {
   type        = bool
-  description = "Deploy Azure Storage static website for customer onboarding"
-  default     = true
+  description = "Deploy the legacy static onboarding helper. It is demo-only and must remain false for the V6.2 controlled-production profile."
+  default     = false
 }
 
 variable "frontend_brand_name" {
