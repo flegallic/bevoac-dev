@@ -43,7 +43,7 @@ locals {
     { name = "PG_PASSWORD", secret_name = "pg-api-password" },
     { name = "MICROSOFT_CLIENT_SECRET", secret_name = "microsoft-client-secret" },
     { name = "ONBOARDING_STATE_SECRET", secret_name = "onboarding-state-secret" }
-  ], var.enable_apim_gateway && var.enable_apim_backend_boundary ? [
+    ], var.enable_apim_gateway && var.enable_apim_backend_boundary ? [
     { name = "APIM_BACKEND_SHARED_SECRET", secret_name = "apim-backend-token" }
   ] : [])
 

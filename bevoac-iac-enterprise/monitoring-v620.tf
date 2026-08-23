@@ -22,11 +22,14 @@ locals {
       name = "acr"
       id   = azurerm_container_registry.acr.id
     }
+  }
+
+  diagnostic_targets_storage = var.deploy_onboarding_frontend ? {
     storage = {
       name = "frontend-storage"
-      id   = azurerm_storage_account.frontend.id
+      id   = azurerm_storage_account.frontend[0].id
     }
-  }
+  } : {}
 
   diagnostic_targets_apim = var.enable_apim_gateway ? {
     apim = {
@@ -44,6 +47,7 @@ locals {
 
   diagnostic_targets = merge(
     local.diagnostic_targets_base,
+    local.diagnostic_targets_storage,
     local.diagnostic_targets_apim,
     local.diagnostic_targets_container_apps
   )
@@ -51,10 +55,10 @@ locals {
 
 resource "terraform_data" "production_monitoring_precondition" {
   input = {
-    environment             = var.environment
-    external_action_group   = trimspace(var.monitor_action_group_id)
-    notification_email      = trimspace(var.monitor_notification_email)
-    monitoring_is_required  = var.require_production_monitoring
+    environment            = var.environment
+    external_action_group  = trimspace(var.monitor_action_group_id)
+    notification_email     = trimspace(var.monitor_notification_email)
+    monitoring_is_required = var.require_production_monitoring
   }
 
   lifecycle {
@@ -117,6 +121,7 @@ resource "azurerm_monitor_activity_log_alert" "resource_group_delete" {
   count               = var.enable_baseline_activity_alerts && local.monitor_action_group_id_effective != "" ? 1 : 0
   name                = "alert-${local.name_suffix}-resource-group-delete"
   resource_group_name = azurerm_resource_group.rg.name
+  location            = "global"
   scopes              = [azurerm_resource_group.rg.id]
   description         = "Alert when deletion of the Bevoac production resource group is requested."
   enabled             = true
@@ -136,6 +141,7 @@ resource "azurerm_monitor_activity_log_alert" "role_assignment_write" {
   count               = var.enable_baseline_activity_alerts && local.monitor_action_group_id_effective != "" ? 1 : 0
   name                = "alert-${local.name_suffix}-role-assignment-write"
   resource_group_name = azurerm_resource_group.rg.name
+  location            = "global"
   scopes              = [azurerm_resource_group.rg.id]
   description         = "Alert when an Azure RBAC role assignment is created or changed in the Bevoac resource group."
   enabled             = true
@@ -155,6 +161,7 @@ resource "azurerm_monitor_activity_log_alert" "role_assignment_delete" {
   count               = var.enable_baseline_activity_alerts && local.monitor_action_group_id_effective != "" ? 1 : 0
   name                = "alert-${local.name_suffix}-role-assignment-delete"
   resource_group_name = azurerm_resource_group.rg.name
+  location            = "global"
   scopes              = [azurerm_resource_group.rg.id]
   description         = "Alert when an Azure RBAC role assignment is deleted in the Bevoac resource group."
   enabled             = true
