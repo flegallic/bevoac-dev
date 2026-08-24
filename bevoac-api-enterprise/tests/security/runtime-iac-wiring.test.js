@@ -88,6 +88,6 @@ test('network and Service Bus hardening are explicit staged release profiles', (
   assert.match(main, /public_network_access_enabled\s*=\s*var\.key_vault_public_network_access_enabled/);
   assert.match(main, /bypass\s*=\s*var\.key_vault_network_bypass/);
   assert.match(main, /default_action\s*=\s*var\.key_vault_network_default_action/);
-  assert.match(main, /ip_rules\s*=\s*var\.key_vault_ip_rules/);
+  assert.match(main, /ip_rules\s*=\s*local\.key_vault_ip_rules_effective/);
   assert.match(main, /virtual_network_subnet_ids\s*=\s*var\.key_vault_virtual_network_subnet_ids/);
 });

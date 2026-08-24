@@ -1,0 +1,205 @@
+{
+  "schemaVersion": "1.0",
+  "modules": [
+    {
+      "name": "web",
+      "profiles": [
+        "web",
+        "full"
+      ],
+      "scope": "web",
+      "resourcePreflight": false,
+      "workerRegistry": false
+    },
+    {
+      "name": "entra",
+      "profiles": [
+        "entra",
+        "full"
+      ],
+      "scope": "tenant",
+      "resourcePreflight": false,
+      "workerRegistry": false
+    },
+    {
+      "name": "identity_admin_posture",
+      "profiles": [
+        "entra",
+        "full"
+      ],
+      "scope": "tenant",
+      "resourcePreflight": false,
+      "workerRegistry": false
+    },
+    {
+      "name": "storage",
+      "profiles": [
+        "infra",
+        "full"
+      ],
+      "scope": "subscription",
+      "resourcePreflight": true,
+      "workerRegistry": true
+    },
+    {
+      "name": "vms",
+      "profiles": [
+        "infra",
+        "full"
+      ],
+      "scope": "subscription",
+      "resourcePreflight": true,
+      "workerRegistry": true
+    },
+    {
+      "name": "nsg",
+      "profiles": [
+        "infra",
+        "full"
+      ],
+      "scope": "subscription",
+      "resourcePreflight": true,
+      "workerRegistry": true
+    },
+    {
+      "name": "keyvault",
+      "profiles": [
+        "infra",
+        "full"
+      ],
+      "scope": "subscription",
+      "resourcePreflight": true,
+      "workerRegistry": true
+    },
+    {
+      "name": "logs",
+      "profiles": [
+        "infra",
+        "full"
+      ],
+      "scope": "subscription",
+      "resourcePreflight": true,
+      "workerRegistry": true
+    },
+    {
+      "name": "db",
+      "profiles": [
+        "infra",
+        "full"
+      ],
+      "scope": "subscription",
+      "resourcePreflight": true,
+      "workerRegistry": true
+    },
+    {
+      "name": "governance",
+      "profiles": [
+        "infra",
+        "full"
+      ],
+      "scope": "subscription",
+      "resourcePreflight": true,
+      "workerRegistry": true
+    },
+    {
+      "name": "appservices",
+      "profiles": [
+        "infra",
+        "full"
+      ],
+      "scope": "subscription",
+      "resourcePreflight": true,
+      "workerRegistry": true
+    },
+    {
+      "name": "finops",
+      "profiles": [
+        "infra",
+        "full"
+      ],
+      "scope": "subscription",
+      "resourcePreflight": true,
+      "workerRegistry": true
+    },
+    {
+      "name": "entra_b2b",
+      "profiles": [
+        "infra",
+        "full"
+      ],
+      "scope": "tenant",
+      "resourcePreflight": false,
+      "workerRegistry": true
+    },
+    {
+      "name": "tags",
+      "profiles": [
+        "infra",
+        "full"
+      ],
+      "scope": "subscription",
+      "resourcePreflight": true,
+      "workerRegistry": true
+    },
+    {
+      "name": "exposure_map",
+      "profiles": [
+        "infra",
+        "full"
+      ],
+      "scope": "subscription",
+      "resourcePreflight": true,
+      "workerRegistry": true
+    },
+    {
+      "name": "diagnostic_coverage",
+      "profiles": [
+        "infra",
+        "full"
+      ],
+      "scope": "subscription",
+      "resourcePreflight": true,
+      "workerRegistry": true
+    },
+    {
+      "name": "encryption_coverage",
+      "profiles": [
+        "infra",
+        "full"
+      ],
+      "scope": "subscription",
+      "resourcePreflight": true,
+      "workerRegistry": true
+    },
+    {
+      "name": "azure_rbac_exposure",
+      "profiles": [
+        "infra",
+        "full"
+      ],
+      "scope": "subscription",
+      "resourcePreflight": true,
+      "workerRegistry": true
+    },
+    {
+      "name": "private_link_coverage",
+      "profiles": [
+        "infra",
+        "full"
+      ],
+      "scope": "subscription",
+      "resourcePreflight": true,
+      "workerRegistry": true
+    },
+    {
+      "name": "policy_compliance",
+      "profiles": [
+        "infra",
+        "full"
+      ],
+      "scope": "subscription",
+      "resourcePreflight": true,
+      "workerRegistry": true
+    }
+  ]
+}

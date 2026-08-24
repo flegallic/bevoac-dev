@@ -1,28 +1,43 @@
-# Bevoac V6.1.3 package audit report
+# Bevoac V6.2.0 complete remediation candidate — package audit report
 
-## Baseline
+## Cryptographic source baseline
 
-- Source export: commit `d542684381c0120f6b9e95e02bc97c1cce355712`.
-- Source archive SHA-256: `aceaaa87fc029bd28dfc11e9aec250b3e6d04da6da5511781d46c217e370f6ce`.
-- Target application version: `6.1.3-production-ready`.
+- Baseline release: Bevoac V6.1.3 final-deployment-safety.
+- Baseline commit: `d9b85ad728a9f1252ca2acd0b9421cd5ec9a7ba4`.
+- Baseline source archive SHA-256: `f2448c3a71e05fc06e95457fa59035f3b4e7512c9085162ff026f5a4f091a588`.
+- Candidate version: `6.2.0-client-ready-controlled-production`.
+- Expected migrations after upgrade: 9.
 
-## Controls embedded in the release
+## Remediation scope
 
-- exact lockfile dependency installation;
-- API and worker syntax, dependency, contract and test gates;
-- PostgreSQL 16 from-scratch CI with eight migrations;
-- exact role/RLS/policy/grant verification;
-- dynamic login and application integration tests;
-- Terraform formatting, provider validation and static security checks;
-- staged workload migration and security finalization;
-- progressive API traffic rollout and rollback;
-- post-deployment evidence collection with redaction and checksums;
-- provider boundary with AWS/GCP fail-closed.
+This candidate integrates the complete source remediation train for the known V6.1.3 audit findings:
+
+- release validator and evidence truth;
+- PostgreSQL tenant-context safety;
+- request-bound idempotency;
+- shared module catalog and Azure Resource Graph pagination;
+- retryable/terminal worker semantics;
+- customer-error redaction;
+- timeout cancellation and bounded execution;
+- strict HTTP schemas, cache and security headers;
+- fail-closed production configuration and admin OIDC;
+- encrypted onboarding state and safe redirects;
+- authenticated APIM-to-backend boundary;
+- observability IaC and production preconditions;
+- CI supply-chain gates;
+- canonical V6.2 documentation;
+- explicit demo-only frontend classification, including removal of the active API-key flow from the legacy static onboarding page.
 
 ## Validation boundary
 
-Static source validation and generated-artifact QA can be executed before deployment. Azure identity attachment, private DNS/connectivity, production PostgreSQL state, APIM behavior, revision traffic, queue state and rollback can only be proven against the target environment. These are mandatory deployment gates, not unimplemented source modifications.
+The package distinguishes three proof levels:
+
+1. **Source implemented** — remediation is present in the candidate source.
+2. **Locally validated** — syntax, deterministic static gates and dependency-free tests were executed in the delivery environment.
+3. **CI/live proof required** — Node.js 24 dependency tests, PostgreSQL 16 integration, Terraform validation/plan and Azure behavior must still execute in their supported environments before production promotion.
+
+No statement in this report substitutes for the release gates in `VALIDATION_MATRIX_V6_2_0.md`.
 
 ## Security statement
 
-The package does not claim independent certification, completed pentest, regulatory compliance or zero residual risk. It is an enterprise release baseline that becomes an enterprise-ready production baseline only after the acceptance matrix is signed with live evidence.
+This package does not claim independent certification, completed pentest, completed load test, completed restore drill or zero residual risk. It is a complete source remediation candidate. Production acceptance occurs only after all blocking V6.2 gates are green and the evidence pack is signed.

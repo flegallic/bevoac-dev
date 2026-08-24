@@ -17,7 +17,8 @@ const EXPECTED_MIGRATIONS = Object.freeze([
   '202607090001_enterprise_hardening_baseline',
   '202607160001_retention_audit_operational_indexes',
   '202607160002_secure_api_key_auth_boundary_optional',
-  '202607170001_runtime_role_rls_boundary_optional'
+  '202607170001_runtime_role_rls_boundary_optional',
+  '202608030001_v620_request_integrity_worker_resilience'
 ]);
 
 const EXPECTED_RLS_TABLES = Object.freeze([

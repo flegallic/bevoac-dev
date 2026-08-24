@@ -150,7 +150,7 @@ async function verifyAdminState() {
     `);
 
     const row = summary.rows[0];
-    assert(row.migrations === 8, `Expected 8 migrations, got ${row.migrations}`);
+    assert(row.migrations === 9, `Expected 9 migrations, got ${row.migrations}`);
     assert(row.policies === 29, `Expected 29 policies, got ${row.policies}`);
     assert(row.rls_enabled === 15, `Expected 15 RLS tables, got ${row.rls_enabled}`);
     assert(row.rls_forced === 15, `Expected 15 forced RLS tables, got ${row.rls_forced}`);

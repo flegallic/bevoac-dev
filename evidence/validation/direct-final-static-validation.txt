@@ -1,0 +1,757 @@
+MODE=LOCAL_READ_ONLY_VALIDATION
+AZURE_COMMANDS=none
+TERRAFORM_APPLY=none
+POSTGRESQL_MUTATION=none
+NODE_VERSION=v22.16.0
+REPOSITORY=/mnt/data/direct_r21_final_source
+NODE_VALIDATION_VERSION=not-required-structure-only
+RELEASE_STATIC_VALIDATION_OK=true
+STRUCTURE_ONLY=true
+FULL_VALIDATION=false
+API and worker contracts are synchronized.
+RELATIVE_IMPORTS_CHECKED=277
+RELATIVE_IMPORT_GATE_OK=true
+TERRAFORM_STATIC_FILES=26
+TERRAFORM_STATIC_VARIABLES=84
+TERRAFORM_STATIC_BLOCKS=107
+TERRAFORM_STATIC_REFERENCE_CHECK_OK=true
+DOCS_GATE_OK=true
+SECRET_PATTERN_FILES_SCANNED=475
+SECRET_PATTERN_SCAN_OK=true
+SOURCE_RELEASE_FILE_COUNT=675
+SOURCE_SECURITY_GATE_OK=true
+API_LOCK_PACKAGES=218
+WORKER_LOCK_PACKAGES=174
+WORKER_RESOURCE_GRAPH_TRANSPORT=arm-rest-2024-04-01
+DEPENDENCY_SECURITY_GATE_OK=true
+RELATIVE_IMPORTS_CHECKED=277
+RELATIVE_IMPORT_GATE_OK=true
+[OK] No duplicate hardening outputs file is present.
+[OK] Service Bus DLQ alert aggregation is Maximum.
+[OK] APIM gateway hardening policies are declared.
+[OK] V6.2 controlled-production boundary, monitoring and demo-only frontend controls are declared.
+[OK] Operational outputs are present.
+[OK] Retention runtime is isolated.
+[OK] Dedicated outbox publisher is isolated.
+[OK] API and worker runtime identities are explicit.
+[OK] Container Apps rollback compatibility is explicitly staged.
+[OK] Key Vault network posture is snapshotted for workloads and explicitly finalized.
+[OK] Legacy RBAC resources are staged and state-safe.
+[OK] Release runner pins images, plans, rollout boundaries, and final smoke checks.
+..........
+----------------------------------------------------------------------
+Ran 10 tests in 5.745s
+
+OK
+[OK] Workload and security plan semantic gates pass their unit tests.
+Static IaC hardening checks passed.
+TERRAFORM_STATIC_FILES=26
+TERRAFORM_STATIC_VARIABLES=84
+TERRAFORM_STATIC_BLOCKS=107
+TERRAFORM_STATIC_REFERENCE_CHECK_OK=true
+JSON_PARSE_COUNT=26
+JSON_SCHEMA_META_VALIDATION_COUNT=5
+JSON_SCHEMA_META_VALIDATION_EXECUTED=true
+PYTHON_SYNTAX_COUNT=10
+YAML_PARSE_COUNT=2
+YAML_PARSE_EXECUTED=true
+TYPESCRIPT_PARSE_COUNT=10
+TYPESCRIPT_PARSE_EXECUTED=true
+test_security_legacy_identity_blocks (test_validate_release_plan.ValidatorTests.test_security_legacy_identity_blocks) ... ok
+test_security_missing_required_deletion_blocks (test_validate_release_plan.ValidatorTests.test_security_missing_required_deletion_blocks) ... ok
+test_security_mutable_image_blocks (test_validate_release_plan.ValidatorTests.test_security_mutable_image_blocks) ... ok
+test_security_plan_passes (test_validate_release_plan.ValidatorTests.test_security_plan_passes) ... ok
+test_security_unapproved_change_blocks (test_validate_release_plan.ValidatorTests.test_security_unapproved_change_blocks) ... ok
+test_workload_key_vault_acl_drift_blocks (test_validate_release_plan.ValidatorTests.test_workload_key_vault_acl_drift_blocks) ... ok
+test_workload_missing_legacy_secret_blocks (test_validate_release_plan.ValidatorTests.test_workload_missing_legacy_secret_blocks) ... ok
+test_workload_mutable_image_blocks (test_validate_release_plan.ValidatorTests.test_workload_mutable_image_blocks) ... ok
+test_workload_plan_passes (test_validate_release_plan.ValidatorTests.test_workload_plan_passes) ... ok
+test_workload_unexpected_change_blocks (test_validate_release_plan.ValidatorTests.test_workload_unexpected_change_blocks) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 5.633s
+
+OK
+TAP version 13
+# Subtest: admin billing schemas reject unknown parameters and require UUID tenant IDs
+ok 1 - admin billing schemas reject unknown parameters and require UUID tenant IDs
+  ---
+  duration_ms: 1.623252
+  type: 'test'
+  ...
+# Subtest: billing service accepts only normalized month boundaries
+ok 2 - billing service accepts only normalized month boundaries
+  ---
+  duration_ms: 0.842061
+  type: 'test'
+  ...
+# Subtest: month close is fail-closed for a missing or current/future month
+ok 3 - month close is fail-closed for a missing or current/future month
+  ---
+  duration_ms: 0.239435
+  type: 'test'
+  ...
+# Subtest: admin authorization accepts application roles only
+ok 4 - admin authorization accepts application roles only
+  ---
+  duration_ms: 0.861401
+  type: 'test'
+  ...
+# Subtest: APIM boundary exempt paths are minimal and ignore query strings
+ok 5 - APIM boundary exempt paths are minimal and ignore query strings
+  ---
+  duration_ms: 0.662294
+  type: 'test'
+  ...
+# Subtest: backend token comparison is exact and timing safe at the helper boundary
+ok 6 - backend token comparison is exact and timing safe at the helper boundary
+  ---
+  duration_ms: 0.923492
+  type: 'test'
+  ...
+# Subtest: production rejects disabled PostgreSQL TLS
+ok 7 - production rejects disabled PostgreSQL TLS
+  ---
+  duration_ms: 1.955005
+  type: 'test'
+  ...
+# Subtest: production rejects PostgreSQL TLS without certificate verification
+ok 8 - production rejects PostgreSQL TLS without certificate verification
+  ---
+  duration_ms: 1.154807
+  type: 'test'
+  ...
+# Subtest: production allows temporary PostgreSQL require mode only through explicit rollback opt-in
+ok 9 - production allows temporary PostgreSQL require mode only through explicit rollback opt-in
+  ---
+  duration_ms: 0.476848
+  type: 'test'
+  ...
+# Subtest: production rejects short APIM backend boundary secrets
+ok 10 - production rejects short APIM backend boundary secrets
+  ---
+  duration_ms: 0.26228
+  type: 'test'
+  ...
+# Subtest: production rejects short onboarding state secrets
+ok 11 - production rejects short onboarding state secrets
+  ---
+  duration_ms: 0.253207
+  type: 'test'
+  ...
+# Subtest: production public API requires Microsoft client credentials at startup
+ok 12 - production public API requires Microsoft client credentials at startup
+  ---
+  duration_ms: 0.294608
+  type: 'test'
+  ...
+# Subtest: production public API requires the APIM backend boundary secret
+ok 13 - production public API requires the APIM backend boundary secret
+  ---
+  duration_ms: 0.266365
+  type: 'test'
+  ...
+# Subtest: production Service Bus connection string requires explicit rollback opt-in
+ok 14 - production Service Bus connection string requires explicit rollback opt-in
+  ---
+  duration_ms: 0.325494
+  type: 'test'
+  ...
+# Subtest: production forbids a combined public and admin runtime
+ok 15 - production forbids a combined public and admin runtime
+  ---
+  duration_ms: 0.382459
+  type: 'test'
+  ...
+# Subtest: production admin API requires a dedicated OIDC tenant
+ok 16 - production admin API requires a dedicated OIDC tenant
+  ---
+  duration_ms: 0.554584
+  type: 'test'
+  ...
+# Subtest: production onboarding success URL must be on the explicit HTTPS origin allowlist
+ok 17 - production onboarding success URL must be on the explicit HTTPS origin allowlist
+  ---
+  duration_ms: 0.387125
+  type: 'test'
+  ...
+# Subtest: production rejects non-HTTPS allowed origins
+ok 18 - production rejects non-HTTPS allowed origins
+  ---
+  duration_ms: 0.240768
+  type: 'test'
+  ...
+# Subtest: tenant session is transaction-local and cannot leak into the pool
+ok 19 - tenant session is transaction-local and cannot leak into the pool
+  ---
+  duration_ms: 1.371548
+  type: 'test'
+  ...
+# Subtest: failed rollback removes the client from the pool
+ok 20 - failed rollback removes the client from the pool
+  ---
+  duration_ms: 0.649104
+  type: 'test'
+  ...
+# Subtest: ordinary application errors do not destroy a healthy pooled client
+ok 21 - ordinary application errors do not destroy a healthy pooled client
+  ---
+  duration_ms: 0.214448
+  type: 'test'
+  ...
+# Subtest: connection-level errors destroy the pooled client
+ok 22 - connection-level errors destroy the pooled client
+  ---
+  duration_ms: 0.187629
+  type: 'test'
+  ...
+# Subtest: connection failure inside a transaction destroys the client even when rollback succeeds
+ok 23 - connection failure inside a transaction destroys the client even when rollback succeeds
+  ---
+  duration_ms: 0.997363
+  type: 'test'
+  ...
+# Subtest: R2.1 removes Swagger UI and its static-file runtime surface
+ok 24 - R2.1 removes Swagger UI and its static-file runtime surface
+  ---
+  duration_ms: 0.722074
+  type: 'test'
+  ...
+# Subtest: R2.1 pins the targeted API transitive security fixes
+ok 25 - R2.1 pins the targeted API transitive security fixes
+  ---
+  duration_ms: 0.14145
+  type: 'test'
+  ...
+# Subtest: create scan schema is fail-closed
+ok 26 - create scan schema is fail-closed
+  ---
+  duration_ms: 2.141603
+  type: 'test'
+  ...
+# Subtest: scan ID parameter requires a UUID
+ok 27 - scan ID parameter requires a UUID
+  ---
+  duration_ms: 0.105106
+  type: 'test'
+  ...
+# Subtest: routes without query parameters use an explicit empty query schema
+ok 28 - routes without query parameters use an explicit empty query schema
+  ---
+  duration_ms: 0.074521
+  type: 'test'
+  ...
+# Subtest: health probes reject unknown query parameters
+ok 29 - health probes reject unknown query parameters
+  ---
+  duration_ms: 0.084486
+  type: 'test'
+  ...
+# Subtest: fingerprint is canonical across module and subscription ordering
+ok 30 - fingerprint is canonical across module and subscription ordering
+  ---
+  duration_ms: 1.264069
+  type: 'test'
+  ...
+# Subtest: same idempotency key with different request is rejected
+ok 31 - same idempotency key with different request is rejected
+  ---
+  duration_ms: 0.441646
+  type: 'test'
+  ...
+# Subtest: client idempotency keys are bounded and fail closed
+ok 32 - client idempotency keys are bounded and fail closed
+  ---
+  duration_ms: 0.258865
+  type: 'test'
+  ...
+# Subtest: API and worker module catalogs are byte-equivalent JSON documents
+ok 33 - API and worker module catalogs are byte-equivalent JSON documents
+  ---
+  duration_ms: 1.241845
+  type: 'test'
+  ...
+# Subtest: all extended Azure modules are included in resource preflight
+ok 34 - all extended Azure modules are included in resource preflight
+  ---
+  duration_ms: 0.209541
+  type: 'test'
+  ...
+# Subtest: scan message schema enum matches the catalog
+ok 35 - scan message schema enum matches the catalog
+  ---
+  duration_ms: 0.176412
+  type: 'test'
+  ...
+# Subtest: Entra B2B is tenant-scoped and does not trigger subscription resource preflight
+ok 36 - Entra B2B is tenant-scoped and does not trigger subscription resource preflight
+  ---
+  duration_ms: 0.173478
+  type: 'test'
+  ...
+# Subtest: onboarding status rejects unexpected query parameters
+ok 37 - onboarding status rejects unexpected query parameters
+  ---
+  duration_ms: 0.591519
+  type: 'test'
+  ...
+# Subtest: Microsoft callback accepts only the documented, bounded parameter set
+ok 38 - Microsoft callback accepts only the documented, bounded parameter set
+  ---
+  duration_ms: 0.544669
+  type: 'test'
+  ...
+# Subtest: credential-free onboarding result page contains no script or API-key input
+ok 39 - credential-free onboarding result page contains no script or API-key input
+  ---
+  duration_ms: 0.239947
+  type: 'test'
+  ...
+# Subtest: new onboarding state is authenticated and opaque
+ok 40 - new onboarding state is authenticated and opaque
+  ---
+  duration_ms: 2.131017
+  type: 'test'
+  ...
+# Subtest: tampered onboarding state is rejected
+ok 41 - tampered onboarding state is rejected
+  ---
+  duration_ms: 0.635955
+  type: 'test'
+  ...
+# Subtest: onboarding callback defaults to the credential-free API result page
+ok 42 - onboarding callback defaults to the credential-free API result page
+  ---
+  duration_ms: 0.250432
+  type: 'test'
+  ...
+# Subtest: runtime mode rejects unsupported values
+ok 43 - runtime mode rejects unsupported values
+  ---
+  duration_ms: 0.818336
+  type: 'test'
+  ...
+# Subtest: runtime capabilities are explicit
+ok 44 - runtime capabilities are explicit
+  ---
+  duration_ms: 0.14105
+  type: 'test'
+  ...
+# Subtest: public API does not require admin or Service Bus configuration when outbox is dedicated and requires its APIM boundary
+ok 45 - public API does not require admin or Service Bus configuration when outbox is dedicated and requires its APIM boundary
+  ---
+  duration_ms: 1.287744
+  type: 'test'
+  ...
+# Subtest: admin API does not require onboarding or Service Bus configuration
+ok 46 - admin API does not require onboarding or Service Bus configuration
+  ---
+  duration_ms: 0.954298
+  type: 'test'
+  ...
+# Subtest: retention runtime requires only PostgreSQL configuration
+ok 47 - retention runtime requires only PostgreSQL configuration
+  ---
+  duration_ms: 0.306135
+  type: 'test'
+  ...
+# Subtest: outbox runtime requires Service Bus but not HTTP secrets
+ok 48 - outbox runtime requires Service Bus but not HTTP secrets
+  ---
+  duration_ms: 0.344973
+  type: 'test'
+  ...
+# Subtest: customer scan and onboarding responses are explicitly non-cacheable
+ok 49 - customer scan and onboarding responses are explicitly non-cacheable
+  ---
+  duration_ms: 0.756965
+  type: 'test'
+  ...
+# Subtest: production security policy emits no-store and HSTS
+ok 50 - production security policy emits no-store and HSTS
+  ---
+  duration_ms: 0.218665
+  type: 'test'
+  ...
+# Subtest: worker production rejects PostgreSQL TLS without certificate verification
+ok 51 - worker production rejects PostgreSQL TLS without certificate verification
+  ---
+  duration_ms: 1.518236
+  type: 'test'
+  ...
+# Subtest: worker production requires Microsoft credentials
+ok 52 - worker production requires Microsoft credentials
+  ---
+  duration_ms: 0.247007
+  type: 'test'
+  ...
+# Subtest: worker production accepts only HTTPS web scan schemes
+ok 53 - worker production accepts only HTTPS web scan schemes
+  ---
+  duration_ms: 0.178956
+  type: 'test'
+  ...
+# Subtest: worker production defaults to Managed Identity Service Bus auth
+ok 54 - worker production defaults to Managed Identity Service Bus auth
+  ---
+  duration_ms: 0.279475
+  type: 'test'
+  ...
+# Subtest: worker tenant context is transaction-local
+ok 55 - worker tenant context is transaction-local
+  ---
+  duration_ms: 1.417777
+  type: 'test'
+  ...
+# Subtest: worker destroys a connection that fails inside a tenant transaction
+ok 56 - worker destroys a connection that fails inside a tenant transaction
+  ---
+  duration_ms: 0.472622
+  type: 'test'
+  ...
+# Subtest: Service Bus delivery count is interpreted as a one-based attempt count
+ok 57 - Service Bus delivery count is interpreted as a one-based attempt count
+  ---
+  duration_ms: 0.736455
+  type: 'test'
+  ...
+# Subtest: safe invalid-message identity accepts only two valid UUIDs
+ok 58 - safe invalid-message identity accepts only two valid UUIDs
+  ---
+  duration_ms: 0.709435
+  type: 'test'
+  ...
+# Subtest: validation errors are bounded and stripped to safe fields
+ok 59 - validation errors are bounded and stripped to safe fields
+  ---
+  duration_ms: 0.313886
+  type: 'test'
+  ...
+# Subtest: invalid message with safe identity is persisted/refunded before dead-letter
+ok 60 - invalid message with safe identity is persisted/refunded before dead-letter
+  ---
+  duration_ms: 0.838196
+  type: 'test'
+  ...
+# Subtest: invalid message is abandoned if its failure state cannot be persisted
+ok 61 - invalid message is abandoned if its failure state cannot be persisted
+  ---
+  duration_ms: 0.655885
+  type: 'test'
+  ...
+# Subtest: invalid message without safe identity is dead-lettered without DB mutation
+ok 62 - invalid message without safe identity is dead-lettered without DB mutation
+  ---
+  duration_ms: 0.16789
+  type: 'test'
+  ...
+# Subtest: retryable failure is persisted and message is abandoned
+ok 63 - retryable failure is persisted and message is abandoned
+  ---
+  duration_ms: 0.493294
+  type: 'test'
+  ...
+# Subtest: retryable failure is dead-lettered at max delivery count
+ok 64 - retryable failure is dead-lettered at max delivery count
+  ---
+  duration_ms: 0.312124
+  type: 'test'
+  ...
+# Subtest: an unsettled delivery that still owns the scan is abandoned instead of completed
+ok 65 - an unsettled delivery that still owns the scan is abandoned instead of completed
+  ---
+  duration_ms: 0.327857
+  type: 'test'
+  ...
+# Subtest: a duplicate message for an already-settled scan is completed
+ok 66 - a duplicate message for an already-settled scan is completed
+  ---
+  duration_ms: 0.450049
+  type: 'test'
+  ...
+# Subtest: terminal failures pass the partial result to the sanitizing persistence boundary
+ok 67 - terminal failures pass the partial result to the sanitizing persistence boundary
+  ---
+  duration_ms: 0.35704
+  type: 'test'
+  ...
+# Subtest: preflight includes all extended Azure modules
+ok 68 - preflight includes all extended Azure modules
+  ---
+  duration_ms: 0.689825
+  type: 'test'
+  ...
+# Subtest: worker registry and catalog stay identical
+ok 69 - worker registry and catalog stay identical # SKIP Azure SDK dependencies are not installed in this local static environment.
+  ---
+  duration_ms: 0.08734
+  type: 'test'
+  ...
+# Subtest: Entra B2B remains a tenant module and is excluded from resource preflight
+ok 70 - Entra B2B remains a tenant module and is excluded from resource preflight
+  ---
+  duration_ms: 0.137624
+  type: 'test'
+  ...
+# Subtest: withTimeout aborts the operation signal and rejects on deadline
+ok 71 - withTimeout aborts the operation signal and rejects on deadline
+  ---
+  duration_ms: 20.63104
+  type: 'test'
+  ...
+# Subtest: withTimeout rejects immediately when parent signal aborts
+ok 72 - withTimeout rejects immediately when parent signal aborts
+  ---
+  duration_ms: 0.723275
+  type: 'test'
+  ...
+# Subtest: withTimeout returns a successful operation before the deadline
+ok 73 - withTimeout returns a successful operation before the deadline
+  ---
+  duration_ms: 0.24933
+  type: 'test'
+  ...
+# Subtest: worker acquires, persists and dead-letters a declared but disabled AWS provider
+ok 74 - worker acquires, persists and dead-letters a declared but disabled AWS provider
+  ---
+  duration_ms: 1.788227
+  type: 'test'
+  ...
+# Subtest: disabled provider is abandoned if its terminal state cannot be persisted
+ok 75 - disabled provider is abandoned if its terminal state cannot be persisted
+  ---
+  duration_ms: 0.914969
+  type: 'test'
+  ...
+# Subtest: worker accepts Azure and reaches the idempotent attempt boundary
+ok 76 - worker accepts Azure and reaches the idempotent attempt boundary
+  ---
+  duration_ms: 0.206006
+  type: 'test'
+  ...
+# Subtest: provider registry is explicit and fail-closed
+ok 77 - provider registry is explicit and fail-closed
+  ---
+  duration_ms: 1.039485
+  type: 'test'
+  ...
+# Subtest: future multi-cloud contract declares Azure, AWS and GCP without enabling them
+ok 78 - future multi-cloud contract declares Azure, AWS and GCP without enabling them
+  ---
+  duration_ms: 1.071902
+  type: 'test'
+  ...
+# Subtest: Resource Graph consumes all pages beyond 1000 rows
+ok 79 - Resource Graph consumes all pages beyond 1000 rows
+  ---
+  duration_ms: 1.879894
+  type: 'test'
+  ...
+# Subtest: Resource Graph reports bounded truncation explicitly
+ok 80 - Resource Graph reports bounded truncation explicitly
+  ---
+  duration_ms: 0.265484
+  type: 'test'
+  ...
+# Subtest: Resource Graph never returns more than maxRows even if a page ignores requested top
+ok 81 - Resource Graph never returns more than maxRows even if a page ignores requested top
+  ---
+  duration_ms: 0.275099
+  type: 'test'
+  ...
+# Subtest: Resource Graph REST client maps SDK-shaped pagination options to the ARM REST contract
+ok 82 - Resource Graph REST client maps SDK-shaped pagination options to the ARM REST contract
+  ---
+  duration_ms: 14.577464
+  type: 'test'
+  ...
+# Subtest: Resource Graph REST client exposes retry classification data without leaking service payloads
+ok 83 - Resource Graph REST client exposes retry classification data without leaking service payloads
+  ---
+  duration_ms: 0.651378
+  type: 'test'
+  ...
+# Subtest: Resource Graph REST client fails closed on unsupported request options
+ok 84 - Resource Graph REST client fails closed on unsupported request options
+  ---
+  duration_ms: 0.183302
+  type: 'test'
+  ...
+# Subtest: Resource Graph REST client fails closed when the credential returns no token
+ok 85 - Resource Graph REST client fails closed when the credential returns no token
+  ---
+  duration_ms: 0.176102
+  type: 'test'
+  ...
+# Subtest: customer result sanitizer removes secrets and URL query values
+ok 86 - customer result sanitizer removes secrets and URL query values
+  ---
+  duration_ms: 1.360562
+  type: 'test'
+  ...
+# Subtest: sanitizer removes stack and response internals
+ok 87 - sanitizer removes stack and response internals
+  ---
+  duration_ms: 0.532561
+  type: 'test'
+  ...
+# Subtest: string sanitizer redacts credential-shaped fields
+ok 88 - string sanitizer redacts credential-shaped fields
+  ---
+  duration_ms: 0.279696
+  type: 'test'
+  ...
+# Subtest: scan result JSON and summary are built from the same sanitized object
+ok 89 - scan result JSON and summary are built from the same sanitized object
+  ---
+  duration_ms: 1.005884
+  type: 'test'
+  ...
+# Subtest: redelivery of the same Service Bus message reclaims an interrupted attempt
+ok 90 - redelivery of the same Service Bus message reclaims an interrupted attempt
+  ---
+  duration_ms: 1.630473
+  type: 'test'
+  ...
+# Subtest: a stale attempt cannot overwrite the result of the current owner
+ok 91 - a stale attempt cannot overwrite the result of the current owner
+  ---
+  duration_ms: 0.417671
+  type: 'test'
+  ...
+# Subtest: a stale attempt cannot persist a terminal failure or refund billing
+ok 92 - a stale attempt cannot persist a terminal failure or refund billing
+  ---
+  duration_ms: 0.373475
+  type: 'test'
+  ...
+# Subtest: resource preflight updates only the owning attempt
+ok 93 - resource preflight updates only the owning attempt
+  ---
+  duration_ms: 0.348638
+  type: 'test'
+  ...
+# Subtest: completion ownership loss after result persistence rolls back the whole transaction
+ok 94 - completion ownership loss after result persistence rolls back the whole transaction
+  ---
+  duration_ms: 1.44674
+  type: 'test'
+  ...
+# Subtest: terminal ownership loss after result persistence rolls back before billing refund
+ok 95 - terminal ownership loss after result persistence rolls back before billing refund
+  ---
+  duration_ms: 1.215076
+  type: 'test'
+  ...
+# Subtest: invalid queued message terminalizes the pending scan, refunds billing and records dead-letter evidence atomically
+ok 96 - invalid queued message terminalizes the pending scan, refunds billing and records dead-letter evidence atomically
+  ---
+  duration_ms: 1.030802
+  type: 'test'
+  ...
+# Subtest: invalid queued message does not alter an already-running or settled scan
+ok 97 - invalid queued message does not alter an already-running or settled scan
+  ---
+  duration_ms: 0.23575
+  type: 'test'
+  ...
+# Subtest: R2.1 removes the deprecated Resource Graph SDK and uses the authenticated ARM REST adapter
+ok 98 - R2.1 removes the deprecated Resource Graph SDK and uses the authenticated ARM REST adapter
+  ---
+  duration_ms: 0.655594
+  type: 'test'
+  ...
+# Subtest: R2.1 worker lock excludes the deprecated ms-rest Resource Graph chain
+ok 99 - R2.1 worker lock excludes the deprecated ms-rest Resource Graph chain
+  ---
+  duration_ms: 1.482072
+  type: 'test'
+  ...
+# Subtest: R2.1 pins worker URI and XML transitive security fixes
+ok 100 - R2.1 pins worker URI and XML transitive security fixes
+  ---
+  duration_ms: 0.103394
+  type: 'test'
+  ...
+# Subtest: RBAC pagination truncation is PARTIAL when role assignments were analyzed
+ok 101 - RBAC pagination truncation is PARTIAL when role assignments were analyzed
+  ---
+  duration_ms: 0.777465
+  type: 'test'
+  ...
+# Subtest: private-link pagination truncation is PARTIAL when eligible resources were analyzed
+ok 102 - private-link pagination truncation is PARTIAL when eligible resources were analyzed
+  ---
+  duration_ms: 0.196081
+  type: 'test'
+  ...
+# Subtest: partial error with no analyzed resource remains FAILED
+ok 103 - partial error with no analyzed resource remains FAILED
+  ---
+  duration_ms: 0.112737
+  type: 'test'
+  ...
+# Subtest: tags module consumes every Resource Graph page and reports complete coverage
+ok 104 - tags module consumes every Resource Graph page and reports complete coverage
+  ---
+  duration_ms: 3.112505
+  type: 'test'
+  ...
+# Subtest: tags module exposes partial coverage when the Resource Graph limit is reached
+ok 105 - tags module exposes partial coverage when the Resource Graph limit is reached
+  ---
+  duration_ms: 1.434992
+  type: 'test'
+  ...
+# Subtest: 429 and 503 failures are retryable
+ok 106 - 429 and 503 failures are retryable
+  ---
+  duration_ms: 0.751597
+  type: 'test'
+  ...
+# Subtest: 403 is terminal and exposes only a safe public message
+ok 107 - 403 is terminal and exposes only a safe public message
+  ---
+  duration_ms: 0.24211
+  type: 'test'
+  ...
+# Subtest: redaction removes URLs and secret-like values
+ok 108 - redaction removes URLs and secret-like values
+  ---
+  duration_ms: 0.317291
+  type: 'test'
+  ...
+1..108
+# tests 108
+# suites 0
+# pass 107
+# fail 0
+# cancelled 0
+# skipped 1
+# todo 0
+# duration_ms 391.61767
+SBOM_PROJECT=bevoac-api-enterprise
+SBOM_COMPONENTS=216
+SBOM_OMIT_DEV=true
+SBOM_OUTPUT=/mnt/data/direct_r21_final_source/artifacts/sbom/api.cdx.json
+CYCLONEDX_LOCKFILE_SBOM_OK=true
+SBOM_PROJECT=bevoac-worker-enterprise
+SBOM_COMPONENTS=173
+SBOM_OMIT_DEV=true
+SBOM_OUTPUT=/mnt/data/direct_r21_final_source/artifacts/sbom/worker.cdx.json
+CYCLONEDX_LOCKFILE_SBOM_OK=true
+CYCLONEDX_FILE_OK=/mnt/data/direct_r21_final_source/artifacts/sbom/api.cdx.json
+CYCLONEDX_COMPONENTS__mnt_data_direct_r21_final_source_artifacts_sbom_api_cdx_json=216
+CYCLONEDX_FILE_OK=/mnt/data/direct_r21_final_source/artifacts/sbom/worker.cdx.json
+CYCLONEDX_COMPONENTS__mnt_data_direct_r21_final_source_artifacts_sbom_worker_cdx_json=173
+CYCLONEDX_TOTAL_COMPONENTS=389
+CYCLONEDX_STRUCTURAL_VALIDATION_OK=true
+JS_SYNTAX_COUNT=194
+SHELL_SYNTAX_COUNT=26
+LOCAL_STATIC_VALIDATION_OK=true
+FULL_NODE24_DEPENDENCY_TESTS_EXECUTED=false
+FRONTEND_DEPENDENCY_BUILD_EXECUTED=false
+TERRAFORM_VALIDATE_EXECUTED=false
+POSTGRESQL_INTEGRATION_EXECUTED=false
+LIVE_AZURE_SMOKE_EXECUTED=false
+REPORT=/mnt/data/direct_r21_final_source/artifacts/v6.2.0-local-validation.txt

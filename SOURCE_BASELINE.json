@@ -1,0 +1,31 @@
+{
+  "product": "Bevoac",
+  "candidateVersion": "6.2.0-client-ready-controlled-production",
+  "baseline": {
+    "release": "V6.1.3 final-deployment-safety",
+    "tag": "v6.1.3-final-deployment-safety",
+    "commit": "d9b85ad728a9f1252ca2acd0b9421cd5ec9a7ba4",
+    "sourceArchive": "bevoac-source-v6.1.3-d9b85ad.zip",
+    "sourceArchiveSha256": "f2448c3a71e05fc06e95457fa59035f3b4e7512c9085162ff026f5a4f091a588"
+  },
+  "scope": {
+    "runtimeProvider": "azure",
+    "publicApi": "/v1",
+    "frontend": "DEMO_ONLY",
+    "nextProductRelease": "V6.3.0 Multicloud Azure and AWS",
+    "enterpriseNetworkPack": "V7.0.0"
+  },
+  "sourceRemediationGroups": [
+    "release-validator-and-evidence-truth",
+    "postgres-tenant-context-safety",
+    "authenticated-apim-backend-boundary",
+    "request-bound-idempotency",
+    "complete-resource-preflight-module-catalog",
+    "azure-resource-graph-pagination",
+    "worker-retryable-terminal-failure-policy",
+    "strict-http-and-fail-closed-production-configuration",
+    "demo-only-frontend-scope"
+  ],
+  "terraformSourceRevision": "R2.3",
+  "productionAcceptance": "REQUIRES_ALL_BLOCKING_GATES"
+}

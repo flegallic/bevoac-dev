@@ -89,5 +89,5 @@ export const demoDashboardData: BevoacDashboardData = {
       date: "2025-04-23T19:02:00.000Z"
     }
   ],
-  apiStatus: "fallback"
+  apiStatus: "demo"
 };

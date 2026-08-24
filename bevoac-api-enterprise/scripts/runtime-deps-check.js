@@ -4,7 +4,6 @@ const required = [
   '@fastify/cors',
   '@fastify/rate-limit',
   '@fastify/swagger',
-  '@fastify/swagger-ui',
   'pg',
   '@azure/service-bus',
   '@azure/identity',

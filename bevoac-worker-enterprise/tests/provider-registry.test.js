@@ -29,7 +29,7 @@ test('provider registry is explicit and fail-closed', () => {
 });
 
 test('future multi-cloud contract declares Azure, AWS and GCP without enabling them', () => {
-  const contract = require('../contracts/scan-request.v7.multicloud.schema.json');
+  const contract = require('../contracts/scan-request.v2.multicloud.schema.json');
   assert.deepEqual(
     contract.properties.cloudProvider.enum,
     ['azure', 'aws', 'gcp']

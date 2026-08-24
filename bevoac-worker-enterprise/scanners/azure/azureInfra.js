@@ -20,46 +20,67 @@ const { auditExposureMap } = require('./exposure_map');
 const { withRetry } = require('../../src/lib/retry');
 const { decorateModuleStatus, rollupExecutionStatus, rollupSecurityPosture } = require('../../src/lib/status-semantics');
 const { enhanceModuleResult } = require('../../src/lib/module-enhancers');
+const { WORKER_REGISTRY_MODULES } = require('../../src/lib/module-catalog');
+const { isRetryableError, safeErrorProjection } = require('../../src/lib/worker-errors');
+const { throwIfAborted } = require('../../src/lib/abort');
 
 const MODULE_REGISTRY = {
-  storage: { runner: (subscriptions, credential) => auditStorage(subscriptions, credential) },
-  vms: { runner: (subscriptions, credential) => auditVMs(subscriptions, credential) },
-  nsg: { runner: (subscriptions, credential) => auditNsg(subscriptions, credential) },
-  keyvault: { runner: (subscriptions, credential) => auditKeyVault(subscriptions, credential) },
-  logs: { runner: (subscriptions, credential) => auditLogs(subscriptions, credential) },
-  db: { runner: (subscriptions, credential) => auditDb(subscriptions, credential) },
-  governance: { runner: (subscriptions, credential) => auditGovernance(subscriptions, credential) },
-  appservices: { runner: (subscriptions, credential) => auditAppServices(subscriptions, credential) },
-  finops: { runner: (subscriptions, credential) => auditFinOps(subscriptions, credential) },
-  entra_b2b: { runner: (_subscriptions, credential, microsoftTenantId) => auditEntraB2B(microsoftTenantId || 'common', credential) },
-  tags: { runner: (subscriptions, credential) => auditTags(subscriptions, credential) },
-  exposure_map: { runner: (subscriptions, credential) => auditExposureMap(subscriptions, credential) },
-  diagnostic_coverage: { runner: (subscriptions, credential) => auditDiagnosticCoverage(subscriptions, credential) },
-  encryption_coverage: { runner: (subscriptions, credential) => auditEncryptionCoverage(subscriptions, credential) },
-  azure_rbac_exposure: { runner: (subscriptions, credential) => auditAzureRbacExposure(subscriptions, credential) },
-  private_link_coverage: { runner: (subscriptions, credential) => auditPrivateLinkCoverage(subscriptions, credential) },
-  policy_compliance: { runner: (subscriptions, credential) => auditPolicyCompliance(subscriptions, credential) }
+  storage: { runner: (subscriptions, credential, _tenant, options) => auditStorage(subscriptions, credential, options) },
+  vms: { runner: (subscriptions, credential, _tenant, options) => auditVMs(subscriptions, credential, options) },
+  nsg: { runner: (subscriptions, credential, _tenant, options) => auditNsg(subscriptions, credential, options) },
+  keyvault: { runner: (subscriptions, credential, _tenant, options) => auditKeyVault(subscriptions, credential, options) },
+  logs: { runner: (subscriptions, credential, _tenant, options) => auditLogs(subscriptions, credential, options) },
+  db: { runner: (subscriptions, credential, _tenant, options) => auditDb(subscriptions, credential, options) },
+  governance: { runner: (subscriptions, credential, _tenant, options) => auditGovernance(subscriptions, credential, options) },
+  appservices: { runner: (subscriptions, credential, _tenant, options) => auditAppServices(subscriptions, credential, options) },
+  finops: { runner: (subscriptions, credential, _tenant, options) => auditFinOps(subscriptions, credential, options) },
+  entra_b2b: { runner: (_subscriptions, credential, microsoftTenantId, options) => auditEntraB2B(microsoftTenantId || 'common', credential, options) },
+  tags: { runner: (subscriptions, credential, _tenant, options) => auditTags(subscriptions, credential, options) },
+  exposure_map: { runner: (subscriptions, credential, _tenant, options) => auditExposureMap(subscriptions, credential, options) },
+  diagnostic_coverage: { runner: (subscriptions, credential, _tenant, options) => auditDiagnosticCoverage(subscriptions, credential, options) },
+  encryption_coverage: { runner: (subscriptions, credential, _tenant, options) => auditEncryptionCoverage(subscriptions, credential, options) },
+  azure_rbac_exposure: { runner: (subscriptions, credential, _tenant, options) => auditAzureRbacExposure(subscriptions, credential, options) },
+  private_link_coverage: { runner: (subscriptions, credential, _tenant, options) => auditPrivateLinkCoverage(subscriptions, credential, options) },
+  policy_compliance: { runner: (subscriptions, credential, _tenant, options) => auditPolicyCompliance(subscriptions, credential, options) }
 };
 
-async function runModuleWithRetry(moduleName, subscriptions, credential, microsoftTenantId, logger) {
+const registryNames = Object.keys(MODULE_REGISTRY).sort();
+const catalogRegistryNames = [...WORKER_REGISTRY_MODULES].sort();
+if (JSON.stringify(registryNames) !== JSON.stringify(catalogRegistryNames)) {
+  throw new Error(`Azure module registry/catalog mismatch. registry=${registryNames.join(',')} catalog=${catalogRegistryNames.join(',')}`);
+}
+
+async function runModuleWithRetry(moduleName, subscriptions, credential, microsoftTenantId, logger, signal = null) {
+  throwIfAborted(signal, `Azure module ${moduleName}`);
   const descriptor = MODULE_REGISTRY[moduleName];
   if (!descriptor) return { status: 'FAILED', error: `Unsupported Azure infra module: ${moduleName}` };
   try {
-    return await withRetry(() => descriptor.runner(subscriptions, credential, microsoftTenantId), { label: `azure.module.${moduleName}`, retries: 2, logger });
+    return await withRetry(({ signal: retrySignal }) => {
+      throwIfAborted(retrySignal, `Azure module ${moduleName}`);
+      return descriptor.runner(subscriptions, credential, microsoftTenantId, { signal: retrySignal, logger });
+    }, { label: `azure.module.${moduleName}`, retries: 2, logger, signal });
   } catch (error) {
-    logger?.error?.({ err: error, moduleName }, 'Unhandled Azure infra module error after retries.');
-    return { status: 'FAILED', error: error.message };
+    logger?.error?.({ error: safeErrorProjection(error), moduleName }, 'Unhandled Azure infra module error after retries.');
+    if (isRetryableError(error)) throw error;
+    return {
+      status: 'FAILED',
+      error: 'Azure module execution failed.',
+      errorCode: String(error?.code || 'AZURE_MODULE_FAILED').slice(0, 120),
+      details: { partialErrors: [{ code: String(error?.code || 'AZURE_MODULE_FAILED').slice(0, 120), message: 'Azure module execution failed.' }] }
+    };
   }
 }
 
 async function auditAzureInfra(subscriptions, credential, requestedModules, microsoftTenantId = null, options = {}) {
   const logger = options.logger || console;
+  const signal = options.signal || null;
+  throwIfAborted(signal, 'Azure infrastructure audit');
   const modulesToRun = (requestedModules || []).filter((moduleName) => Object.prototype.hasOwnProperty.call(MODULE_REGISTRY, moduleName));
   if (modulesToRun.length === 0) return null;
   logger.info?.({ modulesToRun }, '[AZURE-INFRA] Starting infrastructure orchestrator.');
   const startTime = Date.now();
   const entries = await Promise.all(modulesToRun.map(async (moduleName) => {
-    const rawResult = await runModuleWithRetry(moduleName, subscriptions, credential, microsoftTenantId, logger);
+    const rawResult = await runModuleWithRetry(moduleName, subscriptions, credential, microsoftTenantId, logger, signal);
     const enhanced = enhanceModuleResult(moduleName, rawResult);
     return [moduleName, decorateModuleStatus(enhanced)];
   }));

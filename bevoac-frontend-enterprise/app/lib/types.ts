@@ -48,5 +48,5 @@ export type BevoacDashboardData = {
   priorityActions: Finding[];
   resourceTypes: ResourceDistribution[];
   recentAlerts: AlertItem[];
-  apiStatus: "live" | "fallback";
+  apiStatus: "demo";
 };

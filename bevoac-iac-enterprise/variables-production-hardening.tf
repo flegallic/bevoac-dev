@@ -1,3 +1,20 @@
+
+variable "release_security_profile" {
+  description = "Release security profile. Use controlled_production for V6.2.0 and enterprise_network only with the V7 pack."
+  type        = string
+  default     = "legacy_migration"
+
+  validation {
+    condition     = contains(["legacy_migration", "controlled_production", "enterprise_network"], var.release_security_profile)
+    error_message = "release_security_profile must be legacy_migration, controlled_production or enterprise_network."
+  }
+}
+
+variable "key_vault_allow_container_apps_egress" {
+  description = "Add the fixed Container Apps NAT egress IP to the Key Vault firewall while public access remains enabled."
+  type        = bool
+  default     = false
+}
 variable "enable_service_bus_sessions" {
   description = "Enable Service Bus sessions for tenant-level fair scheduling. Changing this recreates the queue."
   type        = bool
@@ -35,6 +52,17 @@ variable "admin_oidc_issuer" {
 variable "admin_oidc_audience" {
   type    = string
   default = ""
+}
+
+variable "admin_oidc_tenant_id" {
+  description = "Microsoft Entra tenant ID authorized to issue administrator tokens."
+  type        = string
+  default     = ""
+
+  validation {
+    condition     = var.admin_oidc_tenant_id == "" || can(regex("^[0-9a-fA-F-]{36}$", var.admin_oidc_tenant_id))
+    error_message = "admin_oidc_tenant_id must be empty or a UUID."
+  }
 }
 
 variable "admin_oidc_required_roles" {
@@ -136,4 +164,28 @@ variable "apim_publisher_name" {
 variable "apim_publisher_email" {
   type    = string
   default = "security@bevoac.fr"
+}
+
+variable "monitor_notification_email" {
+  description = "Operational email used when Terraform creates the Bevoac Action Group. Leave empty only when monitor_action_group_id references an existing group."
+  type        = string
+  default     = ""
+}
+
+variable "require_production_monitoring" {
+  description = "Fail a production plan when neither an existing Action Group nor a notification email is configured."
+  type        = bool
+  default     = true
+}
+
+variable "enable_monitoring_diagnostics" {
+  description = "Send supported logs and metrics from critical resources to the Bevoac Log Analytics workspace."
+  type        = bool
+  default     = true
+}
+
+variable "enable_baseline_activity_alerts" {
+  description = "Enable baseline Azure Activity Log alerts for critical administrative changes."
+  type        = bool
+  default     = true
 }

@@ -1,5 +1,5 @@
 resource "azurerm_api_management" "gateway" {
-  count               = 1
+  count               = var.enable_apim_gateway ? 1 : 0
   name                = substr(replace("apim-${local.name_suffix}", "_", "-"), 0, 50)
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
@@ -7,10 +7,14 @@ resource "azurerm_api_management" "gateway" {
   publisher_email     = var.apim_publisher_email
   sku_name            = var.apim_sku_name
   tags                = local.common_tags
+
+  identity {
+    type = "SystemAssigned"
+  }
 }
 
 resource "azurerm_api_management_api" "bevoac" {
-  count                 = 1
+  count                 = var.enable_apim_gateway ? 1 : 0
   name                  = "bevoac-api"
   resource_group_name   = azurerm_resource_group.rg.name
   api_management_name   = azurerm_api_management.gateway[0].name
@@ -19,7 +23,7 @@ resource "azurerm_api_management_api" "bevoac" {
   path                  = "v1"
   protocols             = ["https"]
   service_url           = "${local.api_public_base_url_effective}/v1"
-  subscription_required = true
+  subscription_required = var.apim_subscription_required
 }
 
 resource "azurerm_api_management_api_policy" "bevoac" {
@@ -41,6 +45,7 @@ resource "azurerm_api_management_api_policy" "bevoac" {
     <set-header name="X-Bevoac-Gateway" exists-action="override">
       <value>apim</value>
     </set-header>
+${local.apim_backend_boundary_policy}
     <rate-limit calls="60" renewal-period="60" />
     <validate-content unspecified-content-type-action="ignore" max-size="1048576" size-exceeded-action="prevent" errors-variable-name="bevoacRequestBodyValidation" />
   </inbound>
@@ -58,9 +63,9 @@ resource "azurerm_api_management_api_policy" "bevoac" {
   </on-error>
 </policies>
 XML
+
+  depends_on = [azurerm_api_management_named_value.bevoac_backend_token]
 }
-
-
 
 resource "azurerm_api_management_product" "bevoac" {
   count                 = var.enable_apim_gateway ? 1 : 0
@@ -69,7 +74,7 @@ resource "azurerm_api_management_product" "bevoac" {
   resource_group_name   = azurerm_resource_group.rg.name
   display_name          = "Bevoac API Product"
   description           = "Product-scoped subscription for Bevoac B2B clients. Required for APIM quota enforcement on Consumption SKU."
-  subscription_required = true
+  subscription_required = var.apim_subscription_required
   approval_required     = false
   published             = true
 }
@@ -112,7 +117,7 @@ locals {
 }
 
 resource "azurerm_api_management_api_operation" "bevoac_proxy" {
-  count               = length(local.apim_proxy_methods)
+  count               = var.enable_apim_gateway ? length(local.apim_proxy_methods) : 0
   operation_id        = "proxy-${lower(local.apim_proxy_methods[count.index])}"
   api_name            = azurerm_api_management_api.bevoac[0].name
   api_management_name = azurerm_api_management.gateway[0].name

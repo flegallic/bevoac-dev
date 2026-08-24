@@ -28,7 +28,7 @@ test('runtime database verifier is read-only and wired to npm', () => {
 });
 
 test('runtime database expectations match the validated enterprise boundary', () => {
-  assert.equal(expectations.EXPECTED_MIGRATIONS.length, 8);
+  assert.equal(expectations.EXPECTED_MIGRATIONS.length, 9);
   assert.equal(expectations.RUNTIME_ROLES.length, 6);
   assert.equal(expectations.EXPECTED_RLS_TABLES.length, 15);
   assert.equal(expectations.EXPECTED_GRANTS.length, 58);

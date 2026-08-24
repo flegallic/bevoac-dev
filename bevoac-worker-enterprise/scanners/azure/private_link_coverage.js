@@ -1,6 +1,7 @@
 'use strict';
 
-const { runResourceGraphQuery } = require('../../src/lib/resource-graph');
+const { runResourceGraphQueryDetailed } = require('../../src/lib/resource-graph');
+const { recordResourceGraphResult } = require('../../src/lib/resource-graph-evidence');
 const { coverageKpi, riskCountKpi, buildModuleEvidenceMetadata } = require('../../src/lib/kpi-engine');
 
 const MODULE_NAME = 'private_link_coverage';
@@ -20,7 +21,7 @@ function approvedPrivateEndpointsCount(properties) {
   }).length;
 }
 
-async function auditPrivateLinkCoverage(subscriptions, credential) {
+async function auditPrivateLinkCoverage(subscriptions, credential, options = {}) {
   const startTime = Date.now();
   const result = {
     status: 'PENDING',
@@ -31,7 +32,8 @@ async function auditPrivateLinkCoverage(subscriptions, credential) {
   try {
     const typeList = RESOURCE_TYPES.map((type) => `'${type}'`).join(', ');
     const query = `resources | where tolower(type) in (${typeList}) | project id, name, type, location, resourceGroup, subscriptionId, properties`;
-    const rows = await runResourceGraphQuery(credential, subscriptions, query);
+    const queryResult = await runResourceGraphQueryDetailed(credential, subscriptions, query, { signal: options.signal });
+    const rows = recordResourceGraphResult(result, 'private-link-resources', queryResult);
     result.details.resources = rows.map((row) => ({
       id: row.id,
       name: row.name,

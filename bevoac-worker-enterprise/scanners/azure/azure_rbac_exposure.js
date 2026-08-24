@@ -1,6 +1,7 @@
 'use strict';
 
-const { runResourceGraphQuery } = require('../../src/lib/resource-graph');
+const { runResourceGraphQueryDetailed } = require('../../src/lib/resource-graph');
+const { recordResourceGraphResult } = require('../../src/lib/resource-graph-evidence');
 const { coverageKpi, riskCountKpi, buildModuleEvidenceMetadata } = require('../../src/lib/kpi-engine');
 
 const MODULE_NAME = 'azure_rbac_exposure';
@@ -27,7 +28,7 @@ function classifyRole(roleDefinitionId) {
   return null;
 }
 
-async function auditAzureRbacExposure(subscriptions, credential) {
+async function auditAzureRbacExposure(subscriptions, credential, options = {}) {
   const startTime = Date.now();
   const result = {
     status: 'PENDING',
@@ -38,7 +39,8 @@ async function auditAzureRbacExposure(subscriptions, credential) {
 
   try {
     const query = `authorizationresources | where tolower(type) == 'microsoft.authorization/roleassignments' | project id, name, type, subscriptionId, roleDefinitionId=tostring(properties.roleDefinitionId), principalId=tostring(properties.principalId), principalType=tostring(properties.principalType), scope=tostring(properties.scope)`;
-    const rows = await runResourceGraphQuery(credential, subscriptions, query);
+    const queryResult = await runResourceGraphQueryDetailed(credential, subscriptions, query, { signal: options.signal });
+    const rows = recordResourceGraphResult(result, 'role-assignments', queryResult);
     result.details.roleAssignments = rows;
     for (const row of rows) {
       const roleName = classifyRole(row.roleDefinitionId);

@@ -12,8 +12,8 @@ module.exports = fp(async function postgresPlugin(fastify) {
     max: config.max,
     ssl: config.ssl,
     application_name: 'bevoac-api-enterprise',
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 10000
+    idleTimeoutMillis: config.idleTimeoutMillis,
+    connectionTimeoutMillis: config.connectionTimeoutMillis
   });
 
   const client = await pool.connect();

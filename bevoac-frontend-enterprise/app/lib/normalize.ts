@@ -153,6 +153,6 @@ export function normalizeBevoacPayload(payload: unknown): BevoacDashboardData {
     priorityActions: normalizeFindings(dashboard.priorityActions ?? findings.priority ?? findings.items),
     resourceTypes: normalizeResources(dashboard.resourceTypes ?? findings.byResourceType),
     recentAlerts: normalizeAlerts(dashboard.recentAlerts ?? dashboard.alerts),
-    apiStatus: "live"
+    apiStatus: "demo"
   };
 }

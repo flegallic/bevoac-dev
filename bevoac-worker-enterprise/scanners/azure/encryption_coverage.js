@@ -1,6 +1,7 @@
 'use strict';
 
-const { runResourceGraphQuery } = require('../../src/lib/resource-graph');
+const { runResourceGraphQueryDetailed } = require('../../src/lib/resource-graph');
+const { recordResourceGraphResult } = require('../../src/lib/resource-graph-evidence');
 const { coverageKpi, riskCountKpi, buildModuleEvidenceMetadata } = require('../../src/lib/kpi-engine');
 
 const MODULE_NAME = 'encryption_coverage';
@@ -44,7 +45,7 @@ function evaluateEncryption(row) {
   return { supported: false, compliant: null, reason: 'unsupported resource type' };
 }
 
-async function auditEncryptionCoverage(subscriptions, credential) {
+async function auditEncryptionCoverage(subscriptions, credential, options = {}) {
   const startTime = Date.now();
   const result = {
     status: 'PENDING',
@@ -55,7 +56,8 @@ async function auditEncryptionCoverage(subscriptions, credential) {
   try {
     const typeList = RESOURCE_TYPES.map((type) => `'${type}'`).join(', ');
     const query = `resources | where tolower(type) in (${typeList}) | project id, name, type, location, resourceGroup, subscriptionId, properties`;
-    const rows = await runResourceGraphQuery(credential, subscriptions, query);
+    const queryResult = await runResourceGraphQueryDetailed(credential, subscriptions, query, { signal: options.signal });
+    const rows = recordResourceGraphResult(result, 'encryption-resources', queryResult);
     result.details.resources = rows.map((row) => ({ id: row.id, name: row.name, type: row.type, location: row.location, resourceGroup: row.resourceGroup, subscriptionId: row.subscriptionId, evaluation: evaluateEncryption(row) }));
 
     for (const resource of result.details.resources) {

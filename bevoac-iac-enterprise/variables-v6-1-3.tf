@@ -140,3 +140,9 @@ variable "retain_legacy_api_servicebus_sender" {
   type        = bool
   default     = true
 }
+
+variable "enable_apim_backend_boundary" {
+  description = "Require an authenticated APIM-to-backend token while the Container Apps backend remains public. Keep true for V6.2 controlled production."
+  type        = bool
+  default     = true
+}

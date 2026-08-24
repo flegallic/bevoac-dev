@@ -1,11 +1,12 @@
 'use strict';
 
-const { runResourceGraphQuery } = require('../../src/lib/resource-graph');
+const { runResourceGraphQueryDetailed } = require('../../src/lib/resource-graph');
+const { recordResourceGraphResult } = require('../../src/lib/resource-graph-evidence');
 const { coverageKpi, riskCountKpi, buildModuleEvidenceMetadata } = require('../../src/lib/kpi-engine');
 
 const MODULE_NAME = 'policy_compliance';
 
-async function auditPolicyCompliance(subscriptions, credential) {
+async function auditPolicyCompliance(subscriptions, credential, options = {}) {
   const startTime = Date.now();
   const result = {
     status: 'PENDING',
@@ -16,7 +17,8 @@ async function auditPolicyCompliance(subscriptions, credential) {
 
   try {
     const query = `policyresources | where tolower(type) contains 'microsoft.policyinsights/policystates' | project id, subscriptionId, policyAssignmentId=tostring(properties.policyAssignmentId), policyDefinitionId=tostring(properties.policyDefinitionId), complianceState=tostring(properties.complianceState), resourceId=tostring(properties.resourceId), resourceType=tostring(properties.resourceType), policyAssignmentName=tostring(properties.policyAssignmentName)`;
-    const rows = await runResourceGraphQuery(credential, subscriptions, query);
+    const queryResult = await runResourceGraphQueryDetailed(credential, subscriptions, query, { signal: options.signal });
+    const rows = recordResourceGraphResult(result, 'policy-states', queryResult);
     result.details.policyStates = rows;
     result.details.nonCompliantStates = rows.filter((row) => String(row.complianceState || '').toLowerCase() === 'noncompliant');
   } catch (error) {

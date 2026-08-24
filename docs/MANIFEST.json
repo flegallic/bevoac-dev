@@ -1,425 +1,1964 @@
 {
-  "baseline": "Bevoac V6.1.2-R3 documentation / V6.1.3 application release",
-  "generated_at_utc": "2026-07-29T00:00:00Z",
-  "application_version": "6.1.3-production-ready",
-  "canonical_runbook": "docs/operations/Runbook_Bevoac_V6_1_2_Production_Enterprise_Ready_R3.docx",
-  "canonical_from_scratch": "docs/operations/Guide_From_Scratch_Bevoac_V6_1_2_R3.docx",
-  "release_deployment_guide": "docs/operations/Bevoac_V6_1_3_Enterprise_Release_Deployment_Guide.docx",
+  "baseline": "Bevoac V6.2.0 Client-Ready Controlled Production candidate R2",
+  "generated_at_utc": "2026-08-03T18:43:10Z",
+  "application_version": "6.2.0-client-ready-controlled-production",
+  "source_baseline_commit": "d9b85ad728a9f1252ca2acd0b9421cd5ec9a7ba4",
+  "canonical_documents": [
+    "docs/README.md",
+    "docs/technical/architecture-v6-2.md",
+    "docs/technical/security-model-v6-2.md",
+    "docs/technical/api-contract-v6-2.md",
+    "docs/operations/runbook-v6-2.md",
+    "docs/operations/monitoring-alerting-v6-2.md",
+    "docs/operations/incident-response-v6-2.md",
+    "docs/operations/postgres-backup-restore-v6-2.md",
+    "docs/operations/release-validation-v6-2.md",
+    "docs/testing/test-strategy-v6-2.md",
+    "docs/client/client-presentation-safe-v6-2.md",
+    "docs/evidence/FINDINGS_CLOSURE_V6_2.md",
+    "docs/evidence/FINDINGS_CLOSURE_V6_2.csv",
+    "docs/evidence/SOURCE_VALIDATION_V6_2_0.md",
+    "docs/TRACEABILITY.md"
+  ],
+  "historical_documents_are_not_active_baseline": true,
   "files": [
     {
+      "path": "docs/MANIFEST.md",
+      "sha256": "9264538fdac23eadf5b929fbd7cb593f6e651c3948b777fecb04a609e60c6206",
+      "size": 1256,
+      "classification": "retained-supporting-or-historical"
+    },
+    {
       "path": "docs/README.md",
-      "sha256": "6a94e8d63444e9a519294522e0b50765f0a511d52b17dfaea1b126e84915b288",
-      "size": 1671
+      "sha256": "5878dc38c777a1bc065ae1ae4a11acff9ed852cff7c91732cc405222a184a997",
+      "size": 1092,
+      "classification": "canonical-v6.2"
     },
     {
       "path": "docs/TRACEABILITY.md",
-      "sha256": "1385870a70ec7d47d7c127f765d9b8514269af39c3c769238418650ba4ed1f55",
-      "size": 1702
+      "sha256": "11c71b1894cee6ade70718512fe42a4fdaf2ed6ba8733f484346fa912c72a574",
+      "size": 2402,
+      "classification": "canonical-v6.2"
     },
     {
       "path": "docs/architecture/ADR-006-runtime-identities-and-provider-boundary.md",
       "sha256": "3e2d15ed15cdfe0573b0333a3d8ee0fa76cd3c5ab09aea748cc877194a29c929",
-      "size": 2251
+      "size": 2251,
+      "classification": "retained-supporting-or-historical"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/ARCHITECTURE_V6_1_2_ENTERPRISE_HARDENED.md",
+      "sha256": "1507eaf8f266c2f4b8fe10c9f6c1b08410d05480d5645e2a9cdb3badf09d5cc8",
+      "size": 1639,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/CLIENT_LIMITS_AND_GUARANTEES_V6_1_2.md",
+      "sha256": "4b37684819825e36ae267de6f3c2817d8452f09ebf1751ecdb1668ca0d63b773",
+      "size": 714,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/MULTICLOUD_AWS_FOUNDATION.md",
+      "sha256": "244ca52371898a5860702ccae94a0a7cf637d7329783b5a00733a869e8f3fa65",
+      "size": 1211,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/NOTICE_Obsolescence_Runbook_Enterprise_Hardened_V6_1_2.docx",
+      "sha256": "2087c6bf6d0dc3bbbc9a819e75a0ff9abcb9234e9e0b2568cf494ec2ba990a13",
+      "size": 40503,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/README.md",
+      "sha256": "daaedcf50cb3bd417e0b0b07fecc8002675b48119c0e17ef47fa636da28c381d",
+      "size": 404,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/SECURITY_MODEL_V6_1_2_ENTERPRISE_HARDENED.md",
+      "sha256": "68decc51a6ac2e00c1dfbf510de8d419ef9a683ea2b65964151c66b1ff621621",
+      "size": 1659,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/TRACEABILITY.md",
+      "sha256": "cdbf3ac0fcd34511c3be070b1661913fe6b67bc040ad25ebea03fdb72b1ba91e",
+      "size": 1344,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/assets/architecture_v4.dot",
+      "sha256": "cbe22b1df19accc493abf874f8d1833e7433d951aefda9c9a14767a88fbe8873",
+      "size": 2126,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/assets/architecture_v4.png",
+      "sha256": "01f2ac7b55e8810d760fde731379e1efb467b31035a3ec8463b074417f324ac2",
+      "size": 204772,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/assets/onboarding_sequence_v4.dot",
+      "sha256": "7eb31ae4bd5c64f53edd1bc91466772b4f941e491979190536839f85f48f4a26",
+      "size": 1226,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/assets/onboarding_sequence_v4.png",
+      "sha256": "f220d990226cb5e84a2988ae568991e2399057cbf22bd0330a3d061cb6c9e5b1",
+      "size": 60088,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/assets/scan_lifecycle_v4.dot",
+      "sha256": "9a7a624fdce7937e36bc053f4f2c9dd579f7d0ae8c00e85c727866cbe2768d0e",
+      "size": 861,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/assets/scan_lifecycle_v4.png",
+      "sha256": "02175f4bbedf4b107d02e482ca97227450334df5f07172ee7b2c134fe65a93b3",
+      "size": 35413,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/assets/tenant_isolation_v4.dot",
+      "sha256": "5ac84b95d4ab63c2f0eece2e2d97cc66913be541d66365b84e5f057c4f429a40",
+      "size": 976,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/assets/tenant_isolation_v4.png",
+      "sha256": "3042a36b1eccfd2dfedabb2dc217f8d2dd2f5b7fb359ab5864bca62e523e4956",
+      "size": 39476,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/client/client-presentation-safe-v5-2.md",
+      "sha256": "3e9204a7819e357296a6105c8227627095b1658879fd3c10ac2ab700ba3cfda3",
+      "size": 1093,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/commercial/pricing-model-v5-1.md",
+      "sha256": "ec599ec3f8f65fc0d5fc157fca937c6d110556498cf501f5b0d0afa954431663",
+      "size": 1324,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/apim_modes_v6_1_1.dot",
+      "sha256": "8883f933fe0f4d2570b155442067eb4bacf037f6eaf82f95268271858ddcce6c",
+      "size": 691,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/apim_modes_v6_1_1.png",
+      "sha256": "bd0b2daf8be9a22f3feca04d5aa5796b252707a445a7094f8ee4c4746be338fc",
+      "size": 30608,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/architecture_v6_1_1.dot",
+      "sha256": "4e7d814062d9e5bbcd7c9c9a59fb810e12e4b30353273d486f3c86731c78a12c",
+      "size": 1409,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/architecture_v6_1_1.png",
+      "sha256": "2864e086c0eb826867db8898a1f56b167569563f0a41b3005fcac7d15e945b91",
+      "size": 83215,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/deployment_v6_1_1.dot",
+      "sha256": "70727b0476a253fcd24bbc0a479a7e260fb68ce1a1aa2d241817093510c7bf63",
+      "size": 881,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/deployment_v6_1_1.png",
+      "sha256": "7dd01a005dfab05188665c6fc3f9b8d0dba8e6c3efa2dd5418f0a62a65b1edc4",
+      "size": 51622,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/observability_v6_1_1.dot",
+      "sha256": "a9a90cc1f7e2ec87cd9038e5ff436d2512d2ab11ddf9c2667e6e32c4203e9f8e",
+      "size": 790,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/observability_v6_1_1.png",
+      "sha256": "c5f63d78b9f49be575855cf47bdd505ce7931d69272745187e84c81725de60b8",
+      "size": 36979,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/onboarding_azure_v6_1_1.dot",
+      "sha256": "e6f916b2221e2d826dd475abc638ae911bbc0b11fe6096c0ff906ae5e4b205e6",
+      "size": 795,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/onboarding_azure_v6_1_1.png",
+      "sha256": "7e18787c23120aebd56aa7f3bf8da9eba0e4aa2d7f4738ad6e1ee9a2cdba4544",
+      "size": 38198,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/outbox_publisher_v6_1_1.dot",
+      "sha256": "f195e80ba268216912357bb8e2e5f5307cc8b50862517a5d6b73d79e48630cdb",
+      "size": 793,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/outbox_publisher_v6_1_1.png",
+      "sha256": "5a24f2ad975a19f3875ef76703a488c00a0a52519482e7a74d367ad9d9be350d",
+      "size": 39552,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/reporting_v6_1_1.dot",
+      "sha256": "ec28f94abf9c461294e423f32727319e2b41c96657dc829bf71926487aa0165c",
+      "size": 763,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/reporting_v6_1_1.png",
+      "sha256": "a1eb31abdf1df8ab13b79529ef888fb5d08ae2147ccc32375978bda922530d54",
+      "size": 41003,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/scan_lifecycle_v6_1_1.dot",
+      "sha256": "14732d4f7390aaf27bfe4a98e5ec195884f6356e12b7ea144219418f2349bbff",
+      "size": 1107,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/scan_lifecycle_v6_1_1.png",
+      "sha256": "2ce8be808c03fd24745d95eea73092f58823826fff4c7060beb5bb7ab3ba6cad",
+      "size": 66281,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/tenant_isolation_v6_1_1.dot",
+      "sha256": "1513bf40de05a93a41475e6da7eb095e9ced02a77cd92d5c85408679d28f7de6",
+      "size": 1080,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/tenant_isolation_v6_1_1.png",
+      "sha256": "8553e3326f457decbcdad9e9cb64d8c148e48b936c5232b3f0173e902b504c1f",
+      "size": 52556,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/terraform_keyvault_v6_1_1.dot",
+      "sha256": "a869b824b2357e5831a1af2211b58b8bf6044f384d76657eee445b70fd3f7f1a",
+      "size": 773,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/diagrams/terraform_keyvault_v6_1_1.png",
+      "sha256": "e70582c308610f98fe448de2b0c2f0ae8046c685c348f77cee3059878b720d4e",
+      "size": 39235,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/mermaid/apim-v5-3.mmd",
+      "sha256": "a6c843c6b4374479ecb09d807fb75677493d16fead8b95433daf9975181afb14",
+      "size": 255,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/mermaid/apim_mandatory_v6_1_1.mmd",
+      "sha256": "2bbf3c9090be4945a4b383c1f8573d987d3796cbe3ec1b6eba6dc517b1f1345e",
+      "size": 396,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/mermaid/apim_modes_v5_3.mmd",
+      "sha256": "963c8e6ae65806120dac2688c7bd4aa35c32efa6fba2045708fe35dfc83ebb08",
+      "size": 350,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/mermaid/architecture_v6_1_1.mmd",
+      "sha256": "6790bc7fab1bf7bd34bea90be36056f0795b8a73646046e6bddf0e7c4db87f46",
+      "size": 1006,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/mermaid/ci_validation_v5_3.mmd",
+      "sha256": "a9552a9b81f05a3beb3f757fee39511ced0999cc12295d382a74ed2d4648b9cd",
+      "size": 323,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/mermaid/foundation_v6_1_1.mmd",
+      "sha256": "5f5692a1032558b75a0e4d70bc34fed8bca7801a96ee4161a0ee6969afc5cb90",
+      "size": 233,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/mermaid/from-scratch-v5-3.mmd",
+      "sha256": "aea5073805ed39f87a77cd2315bac0c54baf3442fd959b0e007aea8a7b8a7a4e",
+      "size": 230,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/mermaid/observability-v5-3.mmd",
+      "sha256": "242f8e545f9064187ebb623b4547ad3083666f99853ec0019f3e8196d8ad0558",
+      "size": 223,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/mermaid/onboarding_azure_v6_1_1.mmd",
+      "sha256": "160bb5f2c9b05e4662cfd49ddb6246351bd0c1fb13a3dc9fd619af09ba590bb7",
+      "size": 409,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/mermaid/outbox-v5-3.mmd",
+      "sha256": "c368cf9a98e6122e70d80d75cca7a3653f7de88c704ca88a8b8b7edcf1365d7a",
+      "size": 281,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/mermaid/outbox_publisher_v5_3.mmd",
+      "sha256": "283ea244fd9b805dc761d43c969d185a74caa2158765be782ae48dc88ef32849",
+      "size": 430,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/mermaid/retention_alerting_v5_3.mmd",
+      "sha256": "aedda013576879bf90977de31f581512ecd102af38871749e7da9b18586344e6",
+      "size": 472,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/mermaid/scan_lifecycle_v6_1_1.mmd",
+      "sha256": "4c9b938adc7926ee72e3ee68f26addb209d0c822180e0862902e24bc3db83f14",
+      "size": 529,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/mermaid/tenant-isolation-v5-3.mmd",
+      "sha256": "36cf54f531f068f8086a5f9a73ce8c193034d15f9cdcce3622dc4ce2c4ce95c3",
+      "size": 431,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/mermaid/tenant_isolation_v5_3.mmd",
+      "sha256": "6b1b2ab1ca8d76a2bb823df2d9cb3b23ae1c03dd0cd3067f430448de95e9ce1e",
+      "size": 513,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/mermaid/terraform-kv-v5-3.mmd",
+      "sha256": "a47d82e5ed7829a02a96967e4d34eb39a895d0e4a72559af01a741efe80a6b7f",
+      "size": 282,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/mermaid/terraform_private_network_v5_3.mmd",
+      "sha256": "7090874a98ca9adbaede9b3c70e7e32556f3b8d4926c3744d635f0901ab4144a",
+      "size": 379,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/apim-mandatory-v6-1-1.md",
+      "sha256": "3768e03e3aba1f58a7c1953be7c09426442f7e9fba9da5039d42654ae480de5c",
+      "size": 526,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/azure-monitor-v6-1-1.md",
+      "sha256": "980c0ed0a9727a8576b0c0644dc61677802fc8511d2e079f216099fdeab0f98e",
+      "size": 261,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/backfill-billing-v6-1-1.md",
+      "sha256": "af315cca8ec7986c81fc12fac3ec18e0fd44c629734702d27da8149452dcd2ac",
+      "size": 271,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/ci-release-lock-v6-1-1.md",
+      "sha256": "3507e1e37c37974454e35d682f2c4bac1aeccfdeae382902f22dc412f75ba445",
+      "size": 576,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/comparatif-v5-3-v6-1-1-final.md",
+      "sha256": "4ccffe52e0dfa4b2c3088ea00665d5a154bfcb3568aed4030c0513a77a7c2d19",
+      "size": 1608,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/document-inventory-v6-1-1.md",
+      "sha256": "69e705db65aa8031841c75d495c25cc546e65df8c18191de01dc3d3b4427ee3a",
+      "size": 682,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/load-test-multitenant-v5-3.md",
+      "sha256": "0eaf5a794908b7e1a3a796f02a049519345c5593b5ebe3fa9986c874134483d6",
+      "size": 1002,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/outbox-publisher-v5-3.md",
+      "sha256": "ea482a0ad8ccd51cc01b6c3c453dcea8d940b13c3cc99ea3f6709048f5e91e5b",
+      "size": 1543,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/postgres-backup-restore-v6-1-1.md",
+      "sha256": "703fbc99c0aa62b7fca67001703685835f679f66af6b8daa412f41399dbfd02d",
+      "size": 823,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/postgres-rls-v6-1-1.md",
+      "sha256": "235d7f6b4556b45e257c188ab124849892ff3bdd92f70e7f481acfcb80d8a135",
+      "size": 729,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/production-acceptance-v5-3.md",
+      "sha256": "3ed2eac69a1c2ce1ab7d9654ca175324bf4e9bf8abeca1a55c3fe07372973ccf",
+      "size": 3477,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/qa-render-summary-v6-1-1-release-lock.md",
+      "sha256": "6df8828083b7ed6d569ed5a55f09df0c70cc994d017af996328aff9bc6e90c1f",
+      "size": 373,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/qa-render-summary-v6-1-1.md",
+      "sha256": "47ecfc871641e7441cd826446c9a4d0bd53a2ef287c4e1e3ebf2f90c7d666959",
+      "size": 499,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/release-evidence-v6-1-1.md",
+      "sha256": "8504578a81fd8b96bfce201e92deb51aee6af5f4d75996ca281f04a7cc1eb02a",
+      "size": 2055,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/retention-policy-v6-1-1.md",
+      "sha256": "fefa599a0c7ebd9f4c5b57d1d56c27e0542a4a617c7f9666effc98a30935a697",
+      "size": 544,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/tenant-isolation-v5-3.md",
+      "sha256": "98e254e87c59527e00eab3f02e6fd5747e47848b6aa425112cd5f4d47f26c142",
+      "size": 1327,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/terraform-private-network-v5-3.md",
+      "sha256": "80a1ab5ceaa3b043b9f6da8aafa22f3554885265d9558c09b37ec86aa30a0110",
+      "size": 870,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/v6-1-patch-notes.md",
+      "sha256": "cdccff9042faa8d9721ba07e1ac33730d41fee25f5b0bb220acf5395e869b189",
+      "size": 2955,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/v6-kpi-modules-production-ready.md",
+      "sha256": "8c126359fd86d9e73410b8daa1f6716e4721be568f84b9c425b831cc2895e364",
+      "size": 4474,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/operations/validation-go-v6-1-1.md",
+      "sha256": "1d83038829271ef6fc45d2b479fbe118b522a9d2b70e114dc427f009397097ff",
+      "size": 286,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/release-package-v6-1-2/CHANGELOG_ENTERPRISE_HARDENING.md",
+      "sha256": "b3a2fb1f6b8a3bd828e7481252fa6c12b9d16973c14adc8f330a82b07c462483",
+      "size": 1318,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/release-package-v6-1-2/MANIFEST_ENTERPRISE_HARDENING.json",
+      "sha256": "8cdb8bfbd657d47a0a7f59525f957476d23c5da1e46506c4e02a162118402c54",
+      "size": 1535,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/release-package-v6-1-2/PACKAGE_AUDIT_REPORT.md",
+      "sha256": "1a9bd673c93d1f00a4cc596a5d5be539e309a5df137f4536d4eb4c3a3d0de365",
+      "size": 2562,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/release-package-v6-1-2/scripts/apply_enterprise_hardening.py",
+      "sha256": "4e39153ce200a5cec59c8066da169a918981c1c0ebd9f0d5a4e448958bb046e4",
+      "size": 3422,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/release-package-v6-1-2/scripts/smoke_expected_commands.sh",
+      "sha256": "758d2c5113fdfab1e36308b76293717211bda908abae483df2d5b70a0a42b711",
+      "size": 510,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/release-package-v6-1-2/scripts/validate_package.py",
+      "sha256": "6bd74c0f2bc9719ceb3117ae2326582e056cd62952e198529dee0e5f2d021a3e",
+      "size": 1584,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/scans_worker_v6.docx",
+      "sha256": "75a5c8fbf3262b28a2b7341962e3fa8c6acdb93ea81f63b844bcbb7888ee0625",
+      "size": 20494,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/technical/api-contract-v5-2.md",
+      "sha256": "43d026ed1c2d625e214c11a0e8fa7880d95f19f7b6485d2263eb4877afcc46ca",
+      "size": 3630,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/technical/architecture-v5-2.md",
+      "sha256": "9b607289348e6030b979ab0795db6e2d85e219fb80209f23dda1c969934a5246",
+      "size": 1774,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/technical/data-model-v5-2.md",
+      "sha256": "8ed71054fe688c9b456aaef7acc9d633e74bd391a372a14011479f8b3755846a",
+      "size": 1014,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/technical/infrastructure-azure-v5-1.md",
+      "sha256": "7965dd4178b907ef9dc931d18f90ca47ae3e0146aeebfba143620448419108d6",
+      "size": 2350,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/technical/reporting-json-pdf-v5-1.md",
+      "sha256": "ad9b6d0c03e96f7a7fee424d4864317020782f655ac0973d6496594c15643599",
+      "size": 3964,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/technical/security-model-v5-2.md",
+      "sha256": "334fc08e0f1ca564161c82cf7ba3e3367d1be7942c9dc2b8faa1aa7fe69f204b",
+      "size": 1767,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive/legacy-v5-v6-1-1/technical/worker-v5-1.md",
+      "sha256": "8a2bc0b39115ebc48e17ee3df23af95551b080505adc772ec5ad2762e3c564ef",
+      "size": 1958,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/api/components.md",
+      "sha256": "7d1edf6acd53fa4558c14e1c2509195f5fd489edc4de296a8ef2f6b92da05642",
+      "size": 13017,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/api/deployment_guide_v5.md",
+      "sha256": "0358718f457f44304cf7e676e9b3f99f39c8a0b560756455dc4b7f84bb6397bd",
+      "size": 6471,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/api/dlq_operations_v5.md",
+      "sha256": "bb4c82e2fb23ad5391cec0cead0ee2b9159ef93670192590a176057583584dda",
+      "size": 2753,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/api/from_scratch_v5.md",
+      "sha256": "ca9989324d3172659418cede001230a2d43e170bdfbc60c5c7e12f14c207c2bc",
+      "size": 3881,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/api/market_overview.md",
+      "sha256": "d7cc01970862cd77b068540dee13195a8cdc3d5d90ab97f6ca7222309d5991c2",
+      "size": 2401,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/api/production_hardening_v5.md",
+      "sha256": "2fb7fd3e324db0ada3932a8d960ddc3d9d90b6c436124f13b3f406233db1bb5a",
+      "size": 4382,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/api/release_validation_v5.md",
+      "sha256": "c4feeb1bbdeb895787fe7c115edb0e5c8116f35618fafe682a3ac27dac61e50a",
+      "size": 2585,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/api/v2_security_hardening.addendum_v5_1.md",
+      "sha256": "64bbe3479b555a1e6f60decaa01e7d8b58ee0ee8c63e458e1882baf289fd0ee7",
+      "size": 720,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/api/v3_azure_onboarding.addendum_v5_1.md",
+      "sha256": "9278bed49abdc3acee9887745876d58339bb8d7b39cbf68f91aa1fc45c641f10",
+      "size": 660,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/api/v4_audit_and_demo_readiness.md",
+      "sha256": "dbddc500d1a622e85cba1056414889e5ba0e1fcc19a8a4058c39d01c49dd7656",
+      "size": 6085,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/commercial/pricing_model.md",
+      "sha256": "807936b41fed58bba149a40c9816e06fc2ec0f0b036d2b137b02c48df5f349a9",
+      "size": 4184,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/contracts/scan-message-version 2.json",
+      "sha256": "c75255778d19ab3a5d83074e50a5ea19d073e166871691d8d0d9171d3e55ccfd",
+      "size": 65,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/contracts/scan-message-version.json",
+      "sha256": "c75255778d19ab3a5d83074e50a5ea19d073e166871691d8d0d9171d3e55ccfd",
+      "size": 65,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/apim-v5-3.dot",
+      "sha256": "d876878c106bda5d77e42f817df758a6c46cb53fc1430625d23ff20b56b1a70d",
+      "size": 627,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/apim-v5-3.png",
+      "sha256": "4b2b36a036ba554e47c8f88dc7326ecc692d32312ea5f9a1195d558f4b12ff57",
+      "size": 29480,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/apim_modes_v5_3.dot",
+      "sha256": "7c1eb7fff8ece8b655bdaeccdb7f55ce64fc26e989fa6ef30ffdc77f6f9b0843",
+      "size": 382,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/apim_modes_v5_3.png",
+      "sha256": "0c93dcbed12b521e58bde45ec6d7d238bc521c7209837352f0f3ed858382f97c",
+      "size": 37437,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/apim_v5_2.dot",
+      "sha256": "f6a1c2223ad4beb2e1fd457de4acd8432340a79cf1cfc68e67c731e2aa862eed",
+      "size": 563,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/apim_v5_2.png",
+      "sha256": "22d2e0c8470cf8f302db43783d264fd202d0c601d5505e96a7ebf977fe1d0097",
+      "size": 27811,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/architecture-v5-3.dot",
+      "sha256": "5eaa57ac1b150bec28c416d544abfa65182be269694309a49cec82ed18ad3d1b",
+      "size": 1327,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/architecture-v5-3.png",
+      "sha256": "0329df4bce324a7ec0e2d4263b920816557ceca3c572ac1450e353d9e4455377",
+      "size": 76283,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/architecture_v5_2.dot",
+      "sha256": "8d6308099cb94873c1af53b756fea82e0417104fba2d4accdbb320ae80ee3db4",
+      "size": 1264,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/architecture_v5_2.png",
+      "sha256": "7e1dc8931eb3c2cb8b069bea7406141e55af4755803fd7d297110cc000b26662",
+      "size": 105303,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/architecture_v5_3.dot",
+      "sha256": "098df1ae82d67bf9b1411e61fbe5a378d18fcf9bea4a883cc252f48df0be0a0c",
+      "size": 876,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/architecture_v5_3.png",
+      "sha256": "d745ff2482de97f0ca053fa78c3c222f67d3053859807b0c3c11afbb5f023196",
+      "size": 80733,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/ci_validation_v5_3.dot",
+      "sha256": "71ad4c7d70546809c9c3776fac09ed49ae753e5c5518712971f6e73f3ecf29b7",
+      "size": 381,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/ci_validation_v5_3.png",
+      "sha256": "88e44e111a18888b08cd0cb4de0c834ed2f5a3aada8dd2d6c7f7454c1efcaf80",
+      "size": 24516,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/dlq_v5_2.dot",
+      "sha256": "8a0ddc73a1915df067605791e0a82da1f8f094600839cbd684680f93561f9fbe",
+      "size": 622,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/dlq_v5_2.png",
+      "sha256": "57b338445e3cf237f383053beb20cc8f4e8f923de5734a46e5e202dfb571916d",
+      "size": 27494,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/from-scratch-v5-3.dot",
+      "sha256": "8a905ad08cce84d21afdcb0d482526b01f1b8d207cfc57f1fcd57b6263a6dd34",
+      "size": 747,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/from-scratch-v5-3.png",
+      "sha256": "701b345b24ead5f814a9d29a021ec2a93be9662d7d50bad78ec75910084881ef",
+      "size": 46683,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/observability-v5-3.dot",
+      "sha256": "8909a4de0188eeadc5f718abc028b63f47afcc70163a57747a5943ef30831679",
+      "size": 706,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/observability-v5-3.png",
+      "sha256": "1cc8959a16428579fabaa304d61ff3e772e2c2d66a6f19f78973db4339d0a56a",
+      "size": 37879,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/onboarding-v5-3.dot",
+      "sha256": "76a1cb7aed47a59c345147ac5f08a899052cde9b72db198af5571e9ce7b2e5ec",
+      "size": 764,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/onboarding-v5-3.png",
+      "sha256": "27ad284aa543463a6a773fae8b80ffaa35b81b3ddbcf119fec80be825c68e08f",
+      "size": 39686,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/onboarding_v5_2.dot",
+      "sha256": "b1a54b509e6912c63aedffe2c8f8c40ed97a8d5452343043d512788cf1fa2485",
+      "size": 813,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/onboarding_v5_2.png",
+      "sha256": "b9707e350806b85c2508d8812c7cf6f799d9fa96759fa4785fa27ece7b9d0972",
+      "size": 44819,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/outbox-v5-3.dot",
+      "sha256": "498ba9b531c9a9e1af9c0990c0e198d9c2e88666dda3867ee96fc0cabfc470b3",
+      "size": 702,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/outbox-v5-3.png",
+      "sha256": "c24d6a930962b63ea8d26da8eefa6e72c42432389652d900bcaf0203bfc41840",
+      "size": 30787,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/outbox_billing_v5_2.dot",
+      "sha256": "9aec6bda998211586e31c6862dbaba6c39bbc13fb3326f26de2cd17ff65cb224",
+      "size": 700,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/outbox_billing_v5_2.png",
+      "sha256": "dbe8d2956493def5399e84d7eee27e30b7e449bd2abeeec3e14df054f0341d6d",
+      "size": 35456,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/outbox_publisher_v5_3.dot",
+      "sha256": "23e8950c877271ab2002e93b52e17274dce2aea387564dc651600654b3e23fba",
+      "size": 525,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/outbox_publisher_v5_3.png",
+      "sha256": "d98053bcced1a9f0ecfb2e8a6a9356f3abc56690d95b9ba05f42bf5103f43ff2",
+      "size": 43535,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/retention_alerting_v5_3.dot",
+      "sha256": "2d0a576ebe96423d0781b29cb0b762c7271a3c3d7a925d22071673fe33c71ac7",
+      "size": 377,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/retention_alerting_v5_3.png",
+      "sha256": "1a6143a1c68970a82895dcd0c2da9302474ddab7c94839ca74c9883d6d4bf41c",
+      "size": 25879,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/retention_backup_v5_2.dot",
+      "sha256": "c59f387d39fafc7270fae5938f70b45b29bf3480ad933ee6e59223bde4b5ce52",
+      "size": 727,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/retention_backup_v5_2.png",
+      "sha256": "7dbb0c78aac3ead3514ab2aadeca693fdcacec137c201d8a246402a2852181fb",
+      "size": 32815,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/scan-lifecycle-v5-3.dot",
+      "sha256": "66d67aaccf70ea9af77784e509cbb7b2365012a3b49090f5690e454601c72f45",
+      "size": 900,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/scan-lifecycle-v5-3.png",
+      "sha256": "1732493be16c779c927b94015e184c7e3d4d9e041f7c8e35ca641d5fbc42f468",
+      "size": 55206,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/scan_lifecycle_v5_2.dot",
+      "sha256": "7aa6769470bc62f05d7c841f3d733a45c6a981b1ecb87694eefd059f8d131eb6",
+      "size": 1088,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/scan_lifecycle_v5_2.png",
+      "sha256": "210adc91d47452771f9692964fbd0c090f36fac7c6f243d0316747a6c896ec61",
+      "size": 74775,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/scan_lifecycle_v5_3.dot",
+      "sha256": "5ec68e8c8b98ea0e5a1426c13b45a91005e97aa5435bfa31b1d3fce7cec0d7a1",
+      "size": 564,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/scan_lifecycle_v5_3.png",
+      "sha256": "b703c6dc39085961e4a6e04b24f7d52de325dc6fd60be4efb6b619847e2c8dd6",
+      "size": 65534,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/tenant-isolation-v5-3.dot",
+      "sha256": "7749127d7ad830e4e62c32e76ccc350b6149c9ac84d2f1fe001bcdebd8271592",
+      "size": 976,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/tenant-isolation-v5-3.png",
+      "sha256": "f241eb66570003b687f2fc866e7e53ebe4ee160f45322cd6817d045ac2943ca3",
+      "size": 47432,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/tenant_isolation_v5_2.dot",
+      "sha256": "a378d27a59b2a9ed8b201565c8c0b83047da96f0ce714504bd93f904e90ed837",
+      "size": 909,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/tenant_isolation_v5_2.png",
+      "sha256": "45cdaaaa0f63d1dc10392b0d8cd0c5b4f9df15c2ca0840da31339663e0e5e3fe",
+      "size": 57688,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/tenant_isolation_v5_3.dot",
+      "sha256": "3c557d9aeb1ed0be61583f7e510e3a48bb95f1428f3346d61976f8fad1cd481b",
+      "size": 596,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/tenant_isolation_v5_3.png",
+      "sha256": "87b89454efca2d8e99dec9a54da745d5c55259c9a6b1f13691f67f32372b5e07",
+      "size": 41369,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/terraform-kv-v5-3.dot",
+      "sha256": "9e15d867d7d24444891c031fa219495c2d44c4befd79c2c5a0371b5b5f2272ee",
+      "size": 682,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/terraform-kv-v5-3.png",
+      "sha256": "655922ef089aa5d358bf8aa3821c0bb70f82db01280edb7beaefaabba95fc74c",
+      "size": 36860,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/terraform_private_network_v5_3.dot",
+      "sha256": "318b88b9cbaea4e81f7ee67fcc530a24a5e9e29814485726b7987acc84f3d416",
+      "size": 551,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/diagrams/legacy-v5/terraform_private_network_v5_3.png",
+      "sha256": "abb021edbc6181a277c7ebff31f96db6a8893783cc84569e5bff98592fdbb8e3",
+      "size": 48341,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/apim_v5_2.mmd",
+      "sha256": "7715ee55b27dcc06f38c6589dabc9763a9bc10bafa511f9a0410b823145d285b",
+      "size": 411,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/architecture-v5-3.mmd",
+      "sha256": "00d2e60128ac584e8d263d67b06c92ac838d180038fdefd80f6f57a68ba09928",
+      "size": 746,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/architecture_v4.mmd",
+      "sha256": "f4e5c596f3e79bf711c0d9b09f7a9dba336fbcbf5be29aba4634c31a7c19cc49",
+      "size": 1504,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/architecture_v5.mmd",
+      "sha256": "b6693c2cd00ee2d2a715fdd77e1aead2a49ac273e6a61875f4ced1a2fb4f7554",
+      "size": 946,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/architecture_v5_2.mmd",
+      "sha256": "69383e56df7b3a539c80fdefe37c7e4718d633fd9279108608efb87525d9b1aa",
+      "size": 856,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/architecture_v5_3.mmd",
+      "sha256": "269a7aab69531010b756179caeb61a42f4101e2dc8d1c26fe6cd1008908ee75b",
+      "size": 708,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/customer_onboarding.png",
+      "sha256": "40ca54a5ca016e20199656a3fa17218b49af58ffd3d7e93e1cef79b5b91b351f",
+      "size": 786432,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/dlq_operations_v5.mmd",
+      "sha256": "4a9e888b7aaae908cc74fe53cc4b10af5125ff94f59986b7c431f3237f3cf5b7",
+      "size": 568,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/dlq_operations_v5_2.mmd",
+      "sha256": "9741955686a5405bbc5cb5f27b40edb26098e2de8d92162ea813fbc132bce3c1",
+      "size": 499,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/onboarding-v5-3.mmd",
+      "sha256": "0ade28c20da283bcd5dc06793f89167ac4bcd335ee3344381331c94329a15aaa",
+      "size": 373,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/onboarding_sequence_v4.mmd",
+      "sha256": "b0bd47159fb1aed5b4993ebaa582dbb8c7bb27a8727b1e92cf4ed8ec2719eca3",
+      "size": 1279,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/onboarding_v5_2.mmd",
+      "sha256": "fd6fbca83aabf5f48a9b0f21aeb59178ffd305b95cbf3e57eff8201f9532c990",
+      "size": 643,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/outbox_billing_v5_2.mmd",
+      "sha256": "ac9b61d5d72e3e47c2853b7d46b7b4021f67e579448e2bb765e2495ab294db34",
+      "size": 545,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/retention_backup_v5_2.mmd",
+      "sha256": "ebc521cee379557fdf26d6dad8b3495a1b717a431b9d4c4fdf0c90b2c780827a",
+      "size": 340,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/scan-lifecycle-v5-3.mmd",
+      "sha256": "84715207fa19fca03854f939aa1f799f314b766492ddd4d54ee60e83aea787c5",
+      "size": 511,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/scan_lifecycle_v4.mmd",
+      "sha256": "c1eefac14e743deda45bf39db2504fd6311eb9b8f7f50f999939c09150c4e56b",
+      "size": 1127,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/scan_lifecycle_v5.mmd",
+      "sha256": "0392b80a875b53715d58edbe1f0c8e89ba0d0e72b25f4e4ef015299730945120",
+      "size": 978,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/scan_lifecycle_v5_2.mmd",
+      "sha256": "fcc1395a5ff588935d8eb0c762c699ea4f2d4de9b32245f533de987be9caedc1",
+      "size": 786,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/scan_lifecycle_v5_3.mmd",
+      "sha256": "3b567d4bf3d4494c5ce2a642c6aa35c9bedea9482d14097e0642d028f34b3306",
+      "size": 874,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/tenant_isolation_v4.mmd",
+      "sha256": "0edbb9a8285dbe6f2e5c1ff25b842d0ad30fee7879998f99a9f33f09daefbbc0",
+      "size": 827,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/tenant_isolation_v5.mmd",
+      "sha256": "1905c716d91c7805a408cffe0ed0dbbcc20b7c25fe9c8d3b3362f9584b093513",
+      "size": 710,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/mermaid/tenant_isolation_v5_2.mmd",
+      "sha256": "c6494e4883e769221dd19ac935fd2320737e83d83e22a5e97a8330e94df37d6e",
+      "size": 490,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/Comparatif_Runbooks_Bevoac_V4_2_V5_1_V5_2_V5_3.docx",
+      "sha256": "b23d7b6da1ee26503cbefeefef55fbb5c704ecf011f9d46371e07054fba447ef",
+      "size": 37646,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/Comparatif_Runbooks_V4_2_V5_2_V5_3_Rebase.docx",
+      "sha256": "0d00fcb9ca580ed5334e2d03cfb1ce518f78acfe87ec04ad5bc90db1167fc635",
+      "size": 38161,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/Guide_validation_Bevoac_API_B2B_v2.docx",
+      "sha256": "95ed719409e14e9399f35b3d06d653c201303dbbbfc1ea5c1c48cfb307842c16",
+      "size": 50966,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/README.md",
+      "sha256": "c9dc1743e108cd0dd7f06c7402e7733629f01edacf9b322f044b1253625fe5ec",
+      "size": 2481,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/Runbook_Bevoac_V4_2_Production_Ready.docx",
+      "sha256": "f8478eaf463b5a77e55e25061ff7692dab43306c879b9759721dcc7271898505",
+      "size": 411281,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/Runbook_Bevoac_V5_2_Production_Ready_Ultime.docx",
+      "sha256": "738504c28cf22e73242c314b10d40c4c337a6fa69ac3a8678b6e661ebcccb5e4",
+      "size": 471791,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/Runbook_Bevoac_V5_3.docx",
+      "sha256": "af4ff9d40c4a25cd7ad955e6511bc54b1e05f8fffaad38fe07e70a279831e132",
+      "size": 485619,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/Runbook_Bevoac_V5_3_Production_Ready_Rebase_V4_2_Client_B2B.docx",
+      "sha256": "af4ff9d40c4a25cd7ad955e6511bc54b1e05f8fffaad38fe07e70a279831e132",
+      "size": 485619,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/Runbook_Bevoac_V5_3_Production_Ready_Ultime.docx",
+      "sha256": "3fb710b11def50d05b7cfdbad2ab0c3bca45778baceca554cbd48ffc387fbd4f",
+      "size": 396621,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/apim-v5-3.md",
+      "sha256": "92410fcb6c1b37421b7d12a7ded5d54a15bdecc3dbaff6907aec0bfaae67635a",
+      "size": 955,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/backup-restore-runbook-v5-2.md",
+      "sha256": "37a238f60b5a7ed50fdf175bcc3e69276cbea70f984ea41c6bec1a224a3be508",
+      "size": 1019,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/deployment-guide-v5-1.md",
+      "sha256": "46f43ecad7f393f95a3a37416d394629fc1dfbcc7b024d0e978f3c3c5440b0df",
+      "size": 2235,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/dlq-operations-v5-1.md",
+      "sha256": "65a502bf16778d9e7580b0f137290930350db0ae928ecd2020568cf3913abd7c",
+      "size": 1610,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/load-test-multitenant-v5-2.md",
+      "sha256": "05a4951690001ec112e8c09d05c63c0986739c21a2b04077a3aeeb28d6eb8b74",
+      "size": 1029,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/load-test-multitenant-v5-3.md",
+      "sha256": "61c9753d42127bb59679f9b0f6aa5afd16572ebcb92b23c73bff5d08ec7eefcd",
+      "size": 858,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/outbox-publisher-v5-3.md",
+      "sha256": "bdac0ae03de86d2d5b4c5f648b79f23d1ddda266c9efab74d4eb0d0b9b4d957e",
+      "size": 1399,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/pentest-readiness-v5-2.md",
+      "sha256": "99d2c8cd1b5ec20181f554054a9e18b08e3cc2050ac916924b7768cbb52b5008",
+      "size": 889,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/pilot-hardening-runbook-v5-2.md",
+      "sha256": "38ebded9fea9d93c161160016839cb5363f73112d4ac18a9571768290f10e413",
+      "size": 2557,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/pilot-validation-runbook-v5-2.md",
+      "sha256": "d906a25755ffb162c833bb17758d6e0cb0fe7f3c0fa6d186a1159f8a3fa0011a",
+      "size": 6573,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/private-network-terraform-v5-2.md",
+      "sha256": "b0005e6a737deea70bf1e7ec136d4f29cc36255e8f31b79aad123cfc45467bdf",
+      "size": 1190,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/production-acceptance-v5-3.md",
+      "sha256": "bccbd207aa5573783e2f5c64915094b342949b791c0a6de41fb4a4fa71caa680",
+      "size": 3333,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/release-validation-v5-1.md",
+      "sha256": "d04c943a3f7fed8e8e5f3f50df29e3d7dd59ab555e77329dd20bce424f1cab58",
+      "size": 2602,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/retention-operations-v5-1.md",
+      "sha256": "23e59abd9da302ea28f35fc7a64464272315840f6e361fbc82bf9f424ea600fc",
+      "size": 1536,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/rls-decision-record-v5-2.md",
+      "sha256": "465aa27af4a377d41fe55be86933951eb75fdaeb10fa08a81e02ba601171c2e3",
+      "size": 999,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v4-v5_3/runbook 2.md",
+      "sha256": "0b0d29745f321cf7756461fa8700fc947d1caf6af4505c303d1048bbf4aee7b5",
+      "size": 14207,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v5-3-0/apim-v5-3.md",
+      "sha256": "81791c5354280ae3424566dcb6b6c698abeabe0113e32f5f7efc36c8280a6523",
+      "size": 1099,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v5-3-0/document-inventory-v5-3-rebase.md",
+      "sha256": "747c3d6863116ccd34c189005fbafbeb97c2d5c3af851dc4c13f4dd5cb7b8dc8",
+      "size": 798,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v5-3-0/document-inventory-v5-3.md",
+      "sha256": "4b72c551e07e0772816b620a97d9e9bee985beadcd904c8e3e43c4719b67021a",
+      "size": 1445,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v5-3-0/release-evidence-v5-3.md",
+      "sha256": "5b9531691b8c89214821c360050db1d44ede3bc28dd14c591ed05b59b7c23120",
+      "size": 794,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v5-3-0/runbook-alignment-v5-2-to-v5-3.md",
+      "sha256": "6ac548bccdbc93874d4a7caa8e9da18c38ef82042565a45f24f2bb6d75058266",
+      "size": 728,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v5-3-0/runbook-v5-3-production-ready-rebase-v4-2-client-b2b.md",
+      "sha256": "4ce1a42582729e70b3f2553eda06da289827cbf74bfd5d5717a4c5ffe3ba6f44",
+      "size": 1177,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v5-3-0/runbook-v5-3-production-ready.md",
+      "sha256": "08cb41dddf5126585c841c178b29412ce11d94781a234e624021a9de83e28c1c",
+      "size": 6689,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v6-1-1/Runbook_Bevoac_V6_1_1_Production_Ready_Client_B2B.md",
+      "sha256": "a8fe9d0f3e7f286fd5ee8a0cc825524ad25589fd3f1096d0f0c57f9e7f93f6ca",
+      "size": 64947,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v6-1-2/Guide_From_Scratch_Bevoac_V6_1_2_R2.docx",
+      "sha256": "7b13f2ed5441d1da6303be7bd69b78f7f517578e37216d37e36623f7e0648246",
+      "size": 433217,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v6-1-2/Runbook_Bevoac_V6_1_2_Production.docx",
+      "sha256": "f147f9f9a72799b381ca879aa71c207463ebf40d7513f34b6d33d18a940dc23d",
+      "size": 559309,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v6-1-2/Runbook_Bevoac_V6_1_2_Production_ENTERPRISE_HARDENED.docx",
+      "sha256": "997f0f89638c0aff1aebe89bc6fa978114178915d76804bb24b5694c234feb04",
+      "size": 40264,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v6-1-2/Runbook_Bevoac_V6_1_2_Production_ENTERPRISE_HARDENED.md",
+      "sha256": "727004c01ce98610f93bbd7313cd7a7fae015797e3091b160720942792f031f9",
+      "size": 6030,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v6-1-2/Runbook_Bevoac_V6_1_2_Production_Enterprise_Ready_R2.docx",
+      "sha256": "73f0cb57959507c688624788471ea48fa1ddfc5dd6072efa956a6460ab329427",
+      "size": 1448482,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v6_1/Runbook_Bevoac_V6_1_1.md",
+      "sha256": "0cf054ea2865e4c7dad424f0e945a3f5e1983632cc5d5dee847f25cecd93d712",
+      "size": 72377,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v6_1/Runbook_Bevoac_V6_1_1_Production_v0.docx",
+      "sha256": "dd24840620fa7481b4d835bc1fb7a81ea7270edecdbda7607fe8451ebbbbeaf9",
+      "size": 539323,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v6_1/Runbook_Bevoac_V6_1_1_Production_v1.docx",
+      "sha256": "8e4ca3ded2edf00ab70a8123a014478656a594bb1309a6f98c76942be55235ce",
+      "size": 546273,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/operations/legacy-v6_1/Runbook_Bevoac_V6_1_1_Production_v2.docx",
+      "sha256": "1a3767fa48edb4faccf4e61b45eb84c2b288b309422964f1f5b23b584377cec0",
+      "size": 551790,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/scripts/checkHeaders.updated 2.js",
+      "sha256": "d437d920df6c71a06bc693b1ee0b9fb20460ab08a532642252bd17d12a55a415",
+      "size": 2118,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/scripts/checkHeaders.updated.js",
+      "sha256": "d437d920df6c71a06bc693b1ee0b9fb20460ab08a532642252bd17d12a55a415",
+      "size": 2118,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/scripts/network-guard.updated 2.js",
+      "sha256": "68f1186dfede7ff8c223093facd5f454e29923985922e0892163198fb4d45991",
+      "size": 7200,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/scripts/network-guard.updated.js",
+      "sha256": "68f1186dfede7ff8c223093facd5f454e29923985922e0892163198fb4d45991",
+      "size": 7200,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/scripts/purge-dlq 2.js",
+      "sha256": "afa0b16e3fe36a082d853852660abb0042d00897dca05f47573d47fce4c44b60",
+      "size": 5486,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/scripts/purge-dlq.js",
+      "sha256": "afa0b16e3fe36a082d853852660abb0042d00897dca05f47573d47fce4c44b60",
+      "size": 5486,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/scripts/sync-contracts 2.js",
+      "sha256": "7d22d3783b0a9fff47f4641ada336cd21660024b00824b61541e5c9563ce2193",
+      "size": 1491,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/scripts/sync-contracts.js",
+      "sha256": "7d22d3783b0a9fff47f4641ada336cd21660024b00824b61541e5c9563ce2193",
+      "size": 1491,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/technical/api-contract-v5-1.md",
+      "sha256": "f3f0803f013ecab64cebae5a8607e52207ff735f22a31cb6fd7fbf91c156b15b",
+      "size": 4621,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/technical/architecture-v5-1.md",
+      "sha256": "271acd591277a79c6f6a38a4ae5f9fdfd97484557e4742ccd2883f009a10cccb",
+      "size": 3276,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/technical/data-model-v5-1.md",
+      "sha256": "a5cc34d208a9776b8df1f1c58a4113a7aa7ab2e47771fad71b95d78c173f269f",
+      "size": 2918,
+      "classification": "historical-archive"
+    },
+    {
+      "path": "docs/archive_source_reference/technical/security-model-v5-1.md",
+      "sha256": "ace5af3c4aa827eb770d830a68049eaed4621815ae4d8965815a4ef8e94b0bef",
+      "size": 3247,
+      "classification": "historical-archive"
     },
     {
       "path": "docs/client/client-presentation-safe-v6-1-2.md",
       "sha256": "6def4e7fe6a60eb914507febe617e2c152aab6e00ab3271dee48c470309dd2db",
-      "size": 630
+      "size": 630,
+      "classification": "retained-supporting-or-historical"
+    },
+    {
+      "path": "docs/client/client-presentation-safe-v6-2.md",
+      "sha256": "ac44f34f94f0cd86638f4510b4fc5cbe7421da5de3e845b7cffbf292377cbe2b",
+      "size": 1419,
+      "classification": "canonical-v6.2"
     },
     {
       "path": "docs/commercial/market-positioning-sourced.md",
       "sha256": "3dc6bc188df3abe1d73e7f3182d5a584b8c5196cbe71e2aaf48298c9a3e4a0c7",
-      "size": 3534
+      "size": 3534,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/commercial/pricing-model-v6-1-2.md",
       "sha256": "f87151d5d287d62b2b16ab042f7118f429e3b449dd111c9c4f274f6c038ca275",
-      "size": 395
+      "size": 395,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/apim_modes_v6_1_2.dot",
       "sha256": "102414645d1b4b66b9f6fd9b1f7214dc9ffae1828bde569b5bbc6e1375b41648",
-      "size": 859
+      "size": 859,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/apim_modes_v6_1_2.png",
       "sha256": "6c4218ca1778a1bfe165ae2c0c6bfa5102a64f94ef6dd3bfa52e7206556da36e",
-      "size": 39134
+      "size": 39134,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/architecture_v6_1_2.dot",
       "sha256": "80a39ad883e27b3c72697e7d4e323c244a5b3df90a2f2b218b8f7fedf2ea756a",
-      "size": 1201
+      "size": 1201,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/architecture_v6_1_2.png",
       "sha256": "9a04b4d779a7430ebef9c610a65f975398c95d671e5a0e2bbc7c265c8a436d4c",
-      "size": 78891
+      "size": 78891,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/ci_validation_v6_1_2.dot",
       "sha256": "d720dcd9d2de90563a7cb965be3649acf2266cbaa2bc40ea79bb50436afac686",
-      "size": 1075
+      "size": 1075,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/ci_validation_v6_1_2.png",
       "sha256": "b16a38e0252ece209b574f5cc82dc6d6aa243c5b95d1e9a327b527e2c8fad499",
-      "size": 74224
+      "size": 74224,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/deployment_v6_1_2.dot",
       "sha256": "9eb6f940c8550f9475196e0f534e90317b3f1eaef5e61fcd94e0666f6e6cd497",
-      "size": 916
+      "size": 916,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/deployment_v6_1_2.png",
       "sha256": "defe96f8c77c0faecd6e5575fc80491eefec1473f8f8332f0edf82b02343d7ea",
-      "size": 37209
+      "size": 37209,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/observability_v6_1_2.dot",
       "sha256": "05b375d335955baba2cefc5f844aeb2ad4c3548c289967ae5624c80f099831d5",
-      "size": 835
+      "size": 835,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/observability_v6_1_2.png",
       "sha256": "7fe03735828e14a54d22a879846ef9e3e343c64ed29c661593ddafc3a0e12b0b",
-      "size": 38967
+      "size": 38967,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/onboarding_azure_v6_1_2.dot",
       "sha256": "24054ffc22e130e8384a4ec3ebb8b8ae5fd73757573db27337d78b61248f0198",
-      "size": 783
+      "size": 783,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/onboarding_azure_v6_1_2.png",
       "sha256": "ae2a17d954f59c1ba55b57c56bc7bb236ae41d74be965ace86e09df00437e639",
-      "size": 32214
+      "size": 32214,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/outbox_publisher_v6_1_2.dot",
       "sha256": "866e1705e471ee8ef358e56b3864c0061cca168ef1a775e4daa17edafc84e3ac",
-      "size": 906
+      "size": 906,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/outbox_publisher_v6_1_2.png",
       "sha256": "5afe4bdf7e4d769891748d44d8c14001e5fdfa68d3029235abd7e3ed6fff9175",
-      "size": 37136
+      "size": 37136,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/reporting_v6_1_2.dot",
       "sha256": "b21034a43c30566b7f4e41d93d57492a4a6d786aa6039f2d31993c834eab6d0e",
-      "size": 751
+      "size": 751,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/reporting_v6_1_2.png",
       "sha256": "a814245da45e15e11819e3fdaaa7846b368358e9703fb54c2ea28f582aea080f",
-      "size": 33192
+      "size": 33192,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/runtime_roles_v6_1_2.dot",
       "sha256": "9532f9aedc303c72c4f23f622f1a8315d91b63cf72da80ff22c8c83b8b830cb1",
-      "size": 1000
+      "size": 1000,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/runtime_roles_v6_1_2.png",
       "sha256": "99a4e42d00b59a455fe37e8c999afec6b80444d351b2035ec34dbd188498cdb1",
-      "size": 60613
+      "size": 60613,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/scan_lifecycle_v6_1_2.dot",
       "sha256": "5ab5ad93ec7d3832a9e42d567068b6a7ae47b117d52b27a8f9c89f6ea24d9520",
-      "size": 1184
+      "size": 1184,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/scan_lifecycle_v6_1_2.png",
       "sha256": "1c9376d9dbe0c6a5d0e74494950f98749e8549d2e3d90a4b457338101e598a0a",
-      "size": 63832
+      "size": 63832,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/tenant_isolation_v6_1_2.dot",
       "sha256": "45332c635d2793e23cc8fccfb4e002d684fe8e25f842557f80bfb862507f23c0",
-      "size": 891
+      "size": 891,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/tenant_isolation_v6_1_2.png",
       "sha256": "85d9366f0c14a39902d1f23f574799deadbde1e6384b604e54accab01b0c9b70",
-      "size": 38923
+      "size": 38923,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/terraform_keyvault_v6_1_2.dot",
       "sha256": "89315e3750fda2e25c27464384e8dda3684700da696d037f87a41e87fd18e276",
-      "size": 830
+      "size": 830,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/terraform_keyvault_v6_1_2.png",
       "sha256": "23575c6ed6fb7f94382d133f3c43df5d30267a38d2e432dce2833635d0324ade",
-      "size": 43067
+      "size": 43067,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/terraform_private_network_v6_1_2.dot",
       "sha256": "621660c9d3467847fd38408579fcc60a25c953f346f291478440c0e69fa54916",
-      "size": 997
+      "size": 997,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/diagrams/terraform_private_network_v6_1_2.png",
       "sha256": "98f307515b810e14de66639e7627adfddd01e14d055b26b69c5619d4467d54b3",
-      "size": 55651
+      "size": 55651,
+      "classification": "retained-supporting-or-historical"
+    },
+    {
+      "path": "docs/evidence/FINDINGS_CLOSURE_V6_2.csv",
+      "sha256": "4a2facee5bbe5a019e9414ae63c5db1b39b0306898d0e8057a488d76d5ec33db",
+      "size": 9235,
+      "classification": "canonical-v6.2"
+    },
+    {
+      "path": "docs/evidence/FINDINGS_CLOSURE_V6_2.md",
+      "sha256": "ff32a82c23e29340337fdd33d1fc472e9e86dda6c2f1044d996e3e2b6d41c226",
+      "size": 4442,
+      "classification": "canonical-v6.2"
+    },
+    {
+      "path": "docs/evidence/SOURCE_VALIDATION_V6_2_0.md",
+      "sha256": "2c52978b1fa9ec446a1ab794693c9057b96f952bd06163112fbc2a53d5ec52fa",
+      "size": 3292,
+      "classification": "canonical-v6.2"
     },
     {
       "path": "docs/mermaid/apim_modes_v6_1_2.mmd",
       "sha256": "045447f797be859cac606fffece5f20a830a0718a066d98ab4edc45a6390a52e",
-      "size": 352
+      "size": 352,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/mermaid/architecture_v6_1_2.mmd",
       "sha256": "e4621dbee6b811c116df68ca70f4d755d808746e7ac8b57b31c43d43bbac4f3b",
-      "size": 619
+      "size": 619,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/mermaid/ci_validation_v6_1_2.mmd",
       "sha256": "d1acabfd0ec091f2bec15d483475e5d610c8c685a621055ed81db1358b6c08da",
-      "size": 631
+      "size": 631,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/mermaid/deployment_v6_1_2.mmd",
       "sha256": "d2abfe302ec842042d6decc30eafa7284cd957ae18cd47b1c425d20bdb372c06",
-      "size": 405
+      "size": 405,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/mermaid/from_scratch_v6_1_2.mmd",
       "sha256": "9441ed560a33cce1e4bc886723081c492a4380ea822d819edd3ea5490f75c195",
-      "size": 601
+      "size": 601,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/mermaid/observability_v6_1_2.mmd",
       "sha256": "1c570828ed56894fbb62136fe009dd010462dc746fb3a848c03b7c32392ceb4d",
-      "size": 381
+      "size": 381,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/mermaid/onboarding_azure_v6_1_2.mmd",
       "sha256": "da84f560b9a50d54f733966626c4dc5ab08085fd4243006807d6ff5f3555577f",
-      "size": 406
+      "size": 406,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/mermaid/outbox_publisher_v6_1_2.mmd",
       "sha256": "a272c4b6bd58ee173cb27b01d7ed438bdea62f998a541bd7b06cbdaa5d746c1a",
-      "size": 331
+      "size": 331,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/mermaid/reporting_v6_1_2.mmd",
       "sha256": "986dcdc0a0754d8780f76d10aef7522a9898e1265116e592b3eb3a6fcaaa1d58",
-      "size": 302
+      "size": 302,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/mermaid/retention_alerting_v6_1_2.mmd",
       "sha256": "807e4a2fb6de296577ebb9a1c3e63dc0b75f94f1f5a7cdb4dc41c28b5c713d32",
-      "size": 339
+      "size": 339,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/mermaid/runtime_roles_v6_1_2.mmd",
       "sha256": "a32de9f8647a00bb443096fb109b4d0b2b3caa39e36f816aaa4a58eb72ddb765",
-      "size": 488
+      "size": 488,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/mermaid/scan_lifecycle_v6_1_2.mmd",
       "sha256": "a3494953540e16acce52dd62e364715e7b7a8a1f90378565d47d4c7c37ab67b8",
-      "size": 615
+      "size": 615,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/mermaid/security_proof_strategy_v6_1_2.mmd",
       "sha256": "25b7f7352e58d393466211c391f6a2700dbb8933bd194442306fdfed80f7c5c0",
-      "size": 366
+      "size": 366,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/mermaid/tenant_isolation_v6_1_2.mmd",
       "sha256": "6cf8c057b12b7ba0c5807cd5615a37e5979bcbf4ef04377282c18d0d4fce1a1a",
-      "size": 481
+      "size": 481,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/mermaid/terraform_keyvault_v6_1_2.mmd",
       "sha256": "83bcc70a5c56ace8bee9821f2189e027bdf37161ea68bcccf8b0911719357a1f",
-      "size": 425
+      "size": 425,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/mermaid/terraform_private_network_v6_1_2.mmd",
       "sha256": "c154709d915ea58d2384e49a0ddb91901c35be0a86303774bba26d28ec018d00",
-      "size": 560
+      "size": 560,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/multicloud/MULTICLOUD_READINESS_V6_1_3.md",
       "sha256": "b22397fc2312b64ea16b46f2f26d99eef95aa1728646686b90bcea52abc456dd",
-      "size": 1965
+      "size": 1965,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/operations/Bevoac_V6_1_3_Enterprise_Release_Deployment_Guide.docx",
       "sha256": "e26122ce283b561a910dab08b10eeda776543320dfd9438ae5db78575307efd6",
-      "size": 45028
+      "size": 45028,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/operations/Guide_From_Scratch_Bevoac_V6_1_2_R3.docx",
       "sha256": "6d503100caf26de1901f1391215d82b1828bee11aecffcb25c3028b633911309",
-      "size": 819702
+      "size": 819702,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/operations/NOTICE_Obsolescence_Runbook_Enterprise_Hardened_V6_1_2.docx",
       "sha256": "2087c6bf6d0dc3bbbc9a819e75a0ff9abcb9234e9e0b2568cf494ec2ba990a13",
-      "size": 40503
+      "size": 40503,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/operations/RELEASE_NOTES_V6_1_3.md",
       "sha256": "5cc378faef77ef28545c8f4321589c973ffb6ac1e35f733388f13b4f3390c4c1",
-      "size": 2975
+      "size": 2975,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/operations/Runbook_Bevoac_V6_1_2_Production_Enterprise_Ready_R3.docx",
       "sha256": "6729acfa5d52dd14840176817b2b26e687fb51217f275055c951666467e9864a",
-      "size": 2330963
+      "size": 2330963,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/operations/apim-v6-1-2.md",
       "sha256": "43a61bf91703e1d68c6470f3b6b8d7cdb4d444c54f75ade355547f40fa180054",
-      "size": 880
+      "size": 880,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/operations/azure-monitor-v6-1-2.md",
       "sha256": "e7e7dbf5c7670b0a9a5778e5447064b91a080417b260e3e7e5c449e2a0d2e4cb",
-      "size": 803
+      "size": 803,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/operations/ci-release-lock-v6-1-2.md",
       "sha256": "44f6ec1ade45c132a041453007b5304a4bcd6e048160d44d8fa1428d545b4669",
-      "size": 970
+      "size": 970,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/operations/document-inventory-v6-1-2.md",
       "sha256": "d7b196b2354f4a8d23879f29f99681ea1d5c08ddf59b9cba9bf42a6cde8d9611",
-      "size": 563
+      "size": 563,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/operations/from-scratch-v6-1-2.md",
       "sha256": "62da773f9c2c5e7e08109775fa537ef0e28999d501b9158335c39e9239e86d31",
-      "size": 2603
+      "size": 2603,
+      "classification": "retained-supporting-or-historical"
+    },
+    {
+      "path": "docs/operations/incident-response-v6-2.md",
+      "sha256": "0c8eb6094b252b6e2829e2b19561b213b1aa2fb704aeef8689bcafa865a98b05",
+      "size": 908,
+      "classification": "canonical-v6.2"
     },
     {
       "path": "docs/operations/legacy-docs-migration-v6-1-2.md",
       "sha256": "55fc4d98aa17f566b958a4043bbcdfc1ecf0361958c5873d2bc3454e0a6d1975",
-      "size": 669
+      "size": 669,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/operations/load-test-multitenant-v6-1-2.md",
       "sha256": "74d6b031e93dde4a87eb6da4085b7e10f92054b0bab590137ce5ceb3a609279c",
-      "size": 752
+      "size": 752,
+      "classification": "retained-supporting-or-historical"
+    },
+    {
+      "path": "docs/operations/monitoring-alerting-v6-2.md",
+      "sha256": "2a182283404362a8a62634ec83404ee14752ffe872676ab5e60ffa1f7cccc382",
+      "size": 851,
+      "classification": "canonical-v6.2"
     },
     {
       "path": "docs/operations/outbox-publisher-v6-1-2.md",
       "sha256": "cbe4a4f2c69b5cd62c868fb1472d10c1913d77b3a0a5dd37d095573ed7c73941",
-      "size": 964
+      "size": 964,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/operations/postgres-backup-restore-v6-1-2.md",
       "sha256": "fe51e561381022c71112d799507b372367bc298f6b44f05558d2a2269c839c7e",
-      "size": 637
+      "size": 637,
+      "classification": "retained-supporting-or-historical"
+    },
+    {
+      "path": "docs/operations/postgres-backup-restore-v6-2.md",
+      "sha256": "653c212be6b67d6ae98d7a5e0cd7e358bfc91cd7a15375ef67db998382145691",
+      "size": 744,
+      "classification": "canonical-v6.2"
     },
     {
       "path": "docs/operations/postgres-runtime-role-rls-v6-1-2.md",
       "sha256": "478e0ce3612902d9ae2f4d3c9536c457c93fb40969ecbe334f66c6f3504f8146",
-      "size": 1272
+      "size": 1272,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/operations/production-acceptance-v6-1-2.md",
       "sha256": "1ca2d69068324695f2e20c265b40a1a25755a11f2066381b82315bfd0dd87be8",
-      "size": 611
+      "size": 611,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/operations/release-evidence-v6-1-2.md",
       "sha256": "6e8a31ea36d5525cf999a591f6eb13812d61b77143c360f20659e25543512187",
-      "size": 489
+      "size": 489,
+      "classification": "retained-supporting-or-historical"
+    },
+    {
+      "path": "docs/operations/release-validation-v6-2.md",
+      "sha256": "dd8e649b6b2083f7f33825c1198694250b0ac3f520500df81291f1e63c679c44",
+      "size": 1452,
+      "classification": "canonical-v6.2"
     },
     {
       "path": "docs/operations/retention-policy-v6-1-2.md",
       "sha256": "16c2b04840226d0c5f303cdb5dc524599ff19ca181cbadea3a27bd1df5e752dc",
-      "size": 546
+      "size": 546,
+      "classification": "retained-supporting-or-historical"
+    },
+    {
+      "path": "docs/operations/runbook-v6-2.md",
+      "sha256": "4c9582d95149027a1e9c5cfc143f9163076ac9ea6e03dffaf35fb801ca471719",
+      "size": 2200,
+      "classification": "canonical-v6.2"
     },
     {
       "path": "docs/operations/tenant-isolation-v6-1-2.md",
       "sha256": "0807c6e4d9a6bdd295ace3edae0a4b8b912dc2070698e518387949927227e842",
-      "size": 627
+      "size": 627,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/operations/terraform-private-network-v6-1-2.md",
       "sha256": "afdb59bdf42601a4ae1fe5e0537ea7cdb8c33f74f4871edb2deff578d40b3788",
-      "size": 742
+      "size": 742,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/operations/validation-go-v6-1-2.md",
       "sha256": "0b924ace3e71705aadc50fb4e067e5d82566d7706586d67963fcb0c7f2acde8c",
-      "size": 723
+      "size": 723,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/pitch/Bevoac_Executive_Summary_example.pdf",
       "sha256": "60272ce75252571b9ef9f0cf44429d9b2fcdb7b75a01009b7bb26a5b2809f5ae",
-      "size": 108663
+      "size": 108663,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/pitch/Bevoac_Pitch_Client_demo.pptx",
       "sha256": "6d9eea1da7347d7a656b5b3d7a19bda2c55fc0e63dc1b3c3d63caf65d93e8527",
-      "size": 661398
+      "size": 661398,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/pitch/Pitch_client.md",
       "sha256": "f6ce72c698541fe7ece822f1c660924c2a9ea664a03dba664cc6df06dd2c9938",
-      "size": 2657
+      "size": 2657,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/pitch/Pitch_partenaire.md",
       "sha256": "de3b2fbc9b40379787990cca61c5b3889b93fb1e5b8d0d6d89319733ac9df468",
-      "size": 2962
+      "size": 2962,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/technical/api-contract-v6-1-2.md",
       "sha256": "30365ceec5d8e3dcb196541a05b4e9ea1c00f6853e36983bc69cd4479aa2fa13",
-      "size": 825
+      "size": 825,
+      "classification": "retained-supporting-or-historical"
+    },
+    {
+      "path": "docs/technical/api-contract-v6-2.md",
+      "sha256": "3abe308e4c97a7a1887e2d05bb9fb64195092431b76eb8c685bc21947101c363",
+      "size": 1530,
+      "classification": "canonical-v6.2"
     },
     {
       "path": "docs/technical/architecture-v6-1-2.md",
       "sha256": "28886dee09f7d3bcf7f2631d93848d770205fe95773ec02c17d55522ab4c4b68",
-      "size": 690
+      "size": 690,
+      "classification": "retained-supporting-or-historical"
+    },
+    {
+      "path": "docs/technical/architecture-v6-2.md",
+      "sha256": "a1f6b62f31a133976c1adf3540a2e6e3ac6f0e78ceab268c346b69a85efef8f8",
+      "size": 1597,
+      "classification": "canonical-v6.2"
     },
     {
       "path": "docs/technical/data-model-v6-1-2.md",
       "sha256": "6f7b43bf54763d708b3f9486a6acbfacf3f29ca3982e68be4e46e7158eadbf8a",
-      "size": 682
+      "size": 682,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/technical/infrastructure-azure-v6-1-2.md",
       "sha256": "6ab80600613765b11ee3167bbe173d5c2ad80860ed2857652567d96801d23819",
-      "size": 612
+      "size": 612,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/technical/reporting-json-pdf-v6-1-2.md",
       "sha256": "02c92699dbc909a28814e00c8f0135301225706ed48f6cb5626111e6c7985dd0",
-      "size": 454
+      "size": 454,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/technical/security-model-v6-1-2.md",
       "sha256": "67d557b58e37c1df3e4d3ccdb543ea04a64da55c76908c8116e0b59ba153893e",
-      "size": 583
+      "size": 583,
+      "classification": "retained-supporting-or-historical"
+    },
+    {
+      "path": "docs/technical/security-model-v6-2.md",
+      "sha256": "669a0d3a9253459ed6c6e4a5e793c5b83b95bc815bee47463af2cf2410ac348e",
+      "size": 3282,
+      "classification": "canonical-v6.2"
     },
     {
       "path": "docs/technical/versioning-and-status-v6-1-2.md",
       "sha256": "f5a951fe76c27439a5698ce4d7562f4cfc9f7fffea654e81ac026f6f5577d713",
-      "size": 1078
+      "size": 1078,
+      "classification": "retained-supporting-or-historical"
     },
     {
       "path": "docs/technical/worker-v6-1-2.md",
       "sha256": "b1318b25fe3bd906661136e1ae1b68acafe0653d5e3998374670ca258f82e942",
-      "size": 592
+      "size": 592,
+      "classification": "retained-supporting-or-historical"
+    },
+    {
+      "path": "docs/testing/test-strategy-v6-2.md",
+      "sha256": "3912dede2a218a8b361a7b2317b9a095f1d7cf8bca78b10843d3cee09bb66aad",
+      "size": 1489,
+      "classification": "canonical-v6.2"
     }
-  ],
-  "notes": [
-    "Historical documents are preserved under docs/archive and docs/archive_source_reference and are excluded from the active baseline.",
-    "Azure is the only runtime-enabled provider in V6.1.3; AWS and GCP remain fail-closed.",
-    "Live enterprise status requires the deployment and evidence gates supplied with the release."
   ]
 }

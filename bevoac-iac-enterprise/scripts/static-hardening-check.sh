@@ -26,7 +26,7 @@ for marker in \
   'service_url           = "${local.api_public_base_url_effective}/v1"' \
   'resource "azurerm_api_management_api_operation"' \
   'url_template = "/*"' \
-  'subscription_required = true' \
+  'subscription_required = var.apim_subscription_required' \
   '<rate-limit calls="60" renewal-period="60"' \
   '<validate-content unspecified-content-type-action="ignore" max-size="1048576" size-exceeded-action="prevent"' \
   'X-Correlation-Id' \
@@ -37,6 +37,38 @@ for marker in \
   grep -Fq "$marker" api-gateway-apim.tf || fail "APIM hardening marker is missing: $marker"
 done
 pass "APIM gateway hardening policies are declared."
+
+require_file "v620-apim-backend-boundary.tf"
+require_file "v620-controlled-production.tf"
+require_file "monitoring-v620.tf"
+require_file "release/v6.2.0-controlled-production.tfvars.example"
+require_fixed v620-apim-backend-boundary.tf 'resource "random_password" "apim_backend_token"' "APIM backend boundary credential is missing."
+require_fixed v620-apim-backend-boundary.tf 'value = random_password.apim_backend_token[0].result' "APIM named value must use the generated backend credential."
+require_fixed container-apps.tf 'APIM_BACKEND_BOUNDARY_REQUIRED' "API runtime does not require the APIM backend boundary."
+require_fixed container-apps.tf 'APIM_BACKEND_SHARED_SECRET' "API runtime does not receive the APIM backend credential."
+require_fixed v620-controlled-production.tf 'release_security_profile == "controlled_production"' "Controlled production profile is missing."
+require_fixed v620-controlled-production.tf '!var.service_bus_local_auth_enabled' "Controlled production must disable Service Bus local authentication."
+require_fixed v620-controlled-production.tf 'var.key_vault_network_default_action == "Deny"' "Controlled production must use Key Vault default Deny."
+require_fixed monitoring-v620.tf 'resource "azurerm_monitor_action_group" "operations"' "Terraform Action Group is missing."
+require_fixed monitoring-v620.tf 'resource "azurerm_monitor_diagnostic_setting" "critical"' "Critical diagnostic settings are missing."
+require_fixed monitoring-v620.tf 'resource "azurerm_monitor_activity_log_alert" "resource_group_delete"' "Activity Log deletion alert is missing."
+require_fixed release/v6.2.0-controlled-production.tfvars.example 'release_security_profile = "controlled_production"' "V6.2 release profile is missing."
+require_fixed v620-controlled-production.tf '!var.deploy_onboarding_frontend' "Controlled production must forbid the legacy static onboarding frontend."
+require_fixed release/v6.2.0-controlled-production.tfvars.example 'deploy_onboarding_frontend = false' "V6.2 release profile must disable the legacy static onboarding frontend."
+require_fixed frontend/index.html.tftpl 'DEMO ONLY' "Legacy static onboarding page must be explicitly classified as demo-only."
+require_fixed frontend/index.html.tftpl 'ne collecte aucune clé API' "Legacy static onboarding page must not request a client credential."
+if grep -Eq 'apiKey|fetch\(|sessionStorage|localStorage|authorization' frontend/index.html.tftpl; then
+  fail "Legacy static onboarding page must not contain an active credential or API flow."
+fi
+if ! awk '
+  /variable "deploy_onboarding_frontend"/ { in_block=1; next }
+  in_block && /default[[:space:]]*=[[:space:]]*false/ { found=1 }
+  in_block && /^}/ { exit(found ? 0 : 1) }
+  END { if (!in_block) exit 1 }
+' variables.tf; then
+  fail "The legacy static onboarding frontend must default to disabled."
+fi
+pass "V6.2 controlled-production boundary, monitoring and demo-only frontend controls are declared."
 
 for marker in \
   'output "service_bus_namespace_short"' \
@@ -86,7 +118,7 @@ pass "Container Apps rollback compatibility is explicitly staged."
 grep -Eq 'public_network_access_enabled[[:space:]]*=[[:space:]]*var.key_vault_public_network_access_enabled' main.tf || fail "Key Vault public network state must be phase-controlled."
 grep -Eq 'bypass[[:space:]]*=[[:space:]]*var.key_vault_network_bypass' main.tf || fail "Key Vault bypass must be phase-controlled."
 grep -Eq 'default_action[[:space:]]*=[[:space:]]*var.key_vault_network_default_action' main.tf || fail "Key Vault default action must be phase-controlled."
-grep -Eq 'ip_rules[[:space:]]*=[[:space:]]*var.key_vault_ip_rules' main.tf || fail "Key Vault IP rules must be phase-controlled."
+grep -Eq 'ip_rules[[:space:]]*=[[:space:]]*local.key_vault_ip_rules_effective' main.tf || fail "Key Vault effective IP rules must be controlled."
 grep -Eq 'virtual_network_subnet_ids[[:space:]]*=[[:space:]]*var.key_vault_virtual_network_subnet_ids' main.tf || fail "Key Vault VNet rules must be phase-controlled."
 require_fixed variables-v6-1-3.tf 'variable "key_vault_public_network_access_enabled"' "Key Vault public network variable is missing."
 require_fixed variables-v6-1-3.tf 'variable "key_vault_network_bypass"' "Key Vault bypass variable is missing."

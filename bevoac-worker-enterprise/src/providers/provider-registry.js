@@ -32,7 +32,7 @@ const PROVIDER_STATUS = Object.freeze({
     productionStatus: 'roadmap',
     reason:
       'GCP is declared for architectural compatibility only and has no ' +
-      'runtime scanner or onboarding implementation in V6.1.3.'
+      'runtime scanner or onboarding implementation in V6.2.0.'
   })
 });
 
@@ -55,7 +55,7 @@ function assertProviderRuntimeEnabled(provider) {
   if (!status.runtimeEnabled || !status.scannerImplemented) {
     throw new Error(
       `Cloud provider ${normalized} is not runtime-enabled in Bevoac ` +
-      `V6.1.3: ${status.reason || 'scanner not implemented'}`
+      `V6.2.0: ${status.reason || 'scanner not implemented'}`
     );
   }
 

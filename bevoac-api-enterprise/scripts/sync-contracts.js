@@ -9,12 +9,14 @@ const workerRoot = path.join(repositoryRoot, 'bevoac-worker-enterprise');
 
 const apiContracts = {
   request: path.join(apiRoot, 'contracts', 'scan-request.schema.json'),
-  version: path.join(apiRoot, 'contracts', 'scan-message-version.json')
+  version: path.join(apiRoot, 'contracts', 'scan-message-version.json'),
+  modules: path.join(apiRoot, 'contracts', 'module-catalog.json')
 };
 
 const workerContracts = {
   request: path.join(workerRoot, 'contracts', 'scan-request.schema.json'),
-  version: path.join(workerRoot, 'contracts', 'scan-message-version.json')
+  version: path.join(workerRoot, 'contracts', 'scan-message-version.json'),
+  modules: path.join(workerRoot, 'contracts', 'module-catalog.json')
 };
 
 function requireFile(file, label) {
@@ -41,6 +43,7 @@ function assertSame(label, files) {
 
 requireFile(apiContracts.request, 'API scan request contract');
 requireFile(apiContracts.version, 'API scan message version');
+requireFile(apiContracts.modules, 'API module catalog');
 
 const apiSchema = readJson(apiContracts.request);
 const apiVersionDocument = readJson(apiContracts.version);
@@ -64,6 +67,7 @@ if (process.argv.includes('--api-only')) {
 
 requireFile(workerContracts.request, 'Worker scan request contract');
 requireFile(workerContracts.version, 'Worker scan message version');
+requireFile(workerContracts.modules, 'Worker module catalog');
 
 assertSame(
   'scan-request.schema.json',
@@ -74,5 +78,17 @@ assertSame(
   'scan-message-version.json',
   [apiContracts.version, workerContracts.version]
 );
+
+assertSame(
+  'module-catalog.json',
+  [apiContracts.modules, workerContracts.modules]
+);
+
+const moduleCatalog = readJson(apiContracts.modules);
+const schemaModules = apiSchema.properties?.modules?.items?.enum || [];
+const catalogModules = (moduleCatalog.modules || []).map((entry) => entry.name);
+if (JSON.stringify([...schemaModules].sort()) !== JSON.stringify([...catalogModules].sort())) {
+  throw new Error('scan request module enum does not match module-catalog.json');
+}
 
 console.log('API and worker contracts are synchronized.');

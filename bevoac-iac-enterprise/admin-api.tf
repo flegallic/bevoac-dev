@@ -97,6 +97,10 @@ resource "azurerm_container_app" "admin_api" {
         value = var.admin_oidc_audience
       }
       env {
+        name  = "ADMIN_OIDC_TENANT_ID"
+        value = var.admin_oidc_tenant_id
+      }
+      env {
         name  = "ADMIN_OIDC_REQUIRED_ROLES"
         value = var.admin_oidc_required_roles
       }

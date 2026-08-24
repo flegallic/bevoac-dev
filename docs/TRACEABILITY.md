@@ -1,42 +1,62 @@
-# Traçabilité V6.1.2-R3 / V6.1.3
+# Traçabilité V6.1.3 → V6.2.0
 
-## Source
+## Baseline source
 
-| Référence | Portée | Statut |
-|---|---|---|
-| `f01945f...` | baseline runtime-role hardening | historique validé |
-| `f37c066` | suppression de `app.service_context` | poussé et testé |
-| `d542684381c0120f6b9e95e02bc97c1cce355712` | documentation R3 / source export V6.1.2 | baseline d’entrée V6.1.3 |
-| V6.1.3 | runtime/IaC/CI/provider boundary | release candidate à accepter |
+| Item | Value |
+|---|---|
+| Baseline commit | `d9b85ad728a9f1252ca2acd0b9421cd5ec9a7ba4` |
+| Baseline source SHA-256 | `f2448c3a71e05fc06e95457fa59035f3b4e7512c9085162ff026f5a4f091a588` |
+| Baseline tag | `v6.1.3-final-deployment-safety` |
+| Candidate | `6.2.0-client-ready-controlled-production` |
 
-## Preuve PostgreSQL jetable
+## Database
 
-| Contrôle | Résultat |
-|---|---:|
-| PostgreSQL | 16.14 |
-| Migrations | 8 |
-| Tables publiques | 16 |
-| Tables RLS forcées | 15 |
-| Policies | 29 |
-| Privilèges unitaires | 58 |
-| Couples rôle/table | 29 |
-| Logins réels testés | 6 |
-| Memberships runtime | 0 |
-| Données temporaires persistantes | 0 |
+- Previous expected migrations: 8.
+- V6.2 expected migrations: 9.
+- New migration: `202608030001_v620_request_integrity_worker_resilience.sql`.
+- The full PG16 gate must rebuild from zero and validate runtime roles, RLS, policies, grants, idempotency and worker states.
 
-Cette preuve démontre le modèle. V6.1.3 la rejoue en CI et exige la même structure sur PostgreSQL Azure avant promotion.
+## Source-remediation groups
 
-## Refactoring V6.1.3
+| Group | Scope |
+|---|---|
+| A | release validator and evidence truth |
+| B | tenant context and RLS safety |
+| C | idempotency, HTTP and fail-closed config |
+| D | module catalog and Resource Graph pagination |
+| E | worker retry/error/cancellation semantics |
+| F | APIM boundary and HTTP security |
+| G | CI, supply chain and observability IaC |
+| H | frontend demo-only classification |
 
-- API/worker versionnés `6.1.3-production-ready`;
-- identité PostgreSQL par workload;
-- outbox et rétention sur identités dédiées;
-- administration dans un runtime interne;
-- scaler Service Bus worker par Managed Identity;
-- migration en deux phases pour préserver le rollback;
-- intégrations API/worker sur PostgreSQL réel sans appels cloud;
-- adapter provider V1, AWS/GCP fail-closed.
+## Live proof still required
 
-## Preuve live requise
+- Node 24 complete tests;
+- PostgreSQL 16 integration;
+- Terraform validation and reviewed plan;
+- diagnostics and alert notification;
+- APIM direct-versus-gateway smoke;
+- Service Bus Entra-only transition;
+- secret rotation;
+- restore drill;
+- load test;
+- security review/pentest;
+- tenant client acceptance;
+- rollback rehearsal.
 
-L’état enterprise n’est validé qu’après archivage des éléments suivants : commit et digests d’images, plans Terraform, huit migrations, six utilisateurs réellement câblés, identités/RBAC, Key Vault/PostgreSQL privés, Service Bus local auth désactivé, APIM, santé candidat, trafic 5/25/100, rollback, backlog/DLQ et smoke métier.
+The evidence index must bind each proof to the candidate Git commit, image digests, Terraform plan SHA and execution timestamp.
+## V6.2 consolidated package controls
+
+- `SOURCE_BASELINE.json` records the immutable source baseline;
+- `REMEDIATION_CLOSURE_MATRIX.md` maps the ten priority findings to source and tests;
+- `SOURCE_SHA256SUMS` is generated only after the final source tree is frozen;
+- `VERIFY_SOURCE_PACKAGE.sh` verifies every manifested source file;
+- the legacy static onboarding page is disabled and credential-free.
+
+## Validation source R2
+
+- `docs/evidence/SOURCE_VALIDATION_V6_2_0.md` consolide les résultats statiques du candidat ;
+- `scripts/ci/relative-import-gate.py` vérifie chaque import relatif littéral ;
+- le worker persiste et rembourse les messages invalides identifiables avant DLQ ;
+- le compteur Service Bus est traité comme one-based ;
+- les providers déclarés mais non activés sont persistés en état terminal puis dead-lettered.

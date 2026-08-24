@@ -176,6 +176,7 @@ async function main() {
       CREATE TABLE IF NOT EXISTS scan_request_idempotency (
         tenant_id UUID NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
         idempotency_key VARCHAR(255) NOT NULL,
+        request_fingerprint CHAR(64),
         scan_id UUID NOT NULL REFERENCES scans(id) ON DELETE CASCADE,
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         PRIMARY KEY (tenant_id, idempotency_key)
@@ -190,6 +191,9 @@ async function main() {
       );
 
       ALTER TABLE scans ADD COLUMN IF NOT EXISTS resource_count INTEGER;
+      ALTER TABLE scans ADD COLUMN IF NOT EXISTS error_code VARCHAR(120);
+      ALTER TABLE scans ADD COLUMN IF NOT EXISTS error_correlation_id UUID;
+      ALTER TABLE scan_request_idempotency ADD COLUMN IF NOT EXISTS request_fingerprint CHAR(64);
       ALTER TABLE scans ADD COLUMN IF NOT EXISTS resource_limit INTEGER;
       ALTER TABLE billing_monthly_snapshots ADD COLUMN IF NOT EXISTS resource_limit INTEGER;
       ALTER TABLE tenant_azure_scopes ADD COLUMN IF NOT EXISTS display_name VARCHAR(255);

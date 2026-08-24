@@ -1,4 +1,5 @@
-const { guardedHead } = require('../../src/lib/network-guard');
+const { guardedHead, redactUrlForDisplay } = require('../../src/lib/network-guard');
+const { sanitizeString } = require('../../src/lib/result-sanitizer');
 
 function getHeader(headers, name) {
   const value = headers?.[String(name).toLowerCase()];
@@ -17,13 +18,14 @@ async function checkHeaders(targetUrl, options = {}) {
     const guarded = await guardedHead(targetUrl, {
       timeoutMs: options.timeoutMs || 10000,
       maxRedirects: options.maxRedirects ?? 2,
-      guardConfig: options.guardConfig || {}
+      guardConfig: options.guardConfig || {},
+      signal: options.signal || null
     });
 
     if (guarded.error) {
       return {
-        error: `Failed to fetch headers: ${guarded.error.message}`,
-        finalUrl: guarded.finalUrl || null,
+        error: sanitizeString(`Failed to fetch headers: ${guarded.error.message}`),
+        finalUrl: guarded.finalUrl ? redactUrlForDisplay(guarded.finalUrl) : null,
         resolvedAddresses: guarded.targetInfo?.resolvedAddresses || []
       };
     }
@@ -45,14 +47,14 @@ async function checkHeaders(targetUrl, options = {}) {
     return {
       score: computeScore(missing),
       statusCode: response.statusCode,
-      finalUrl: guarded.finalUrl,
+      finalUrl: redactUrlForDisplay(guarded.finalUrl),
       resolvedAddresses: guarded.targetInfo.resolvedAddresses,
       missing,
       headers_found: securityHeaders,
       server_leak: getHeader(response.headers, 'server') || getHeader(response.headers, 'x-powered-by') || null
     };
   } catch (error) {
-    return { error: `Failed to fetch headers: ${error.message}` };
+    return { error: sanitizeString(`Failed to fetch headers: ${error.message}`) };
   }
 }
 

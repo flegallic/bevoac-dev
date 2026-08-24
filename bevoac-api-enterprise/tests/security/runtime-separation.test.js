@@ -23,6 +23,7 @@ const MANAGED_ENV = [
   'PG_USER',
   'PG_PASSWORD',
   'PG_SSL_MODE',
+  'ALLOW_PG_SSL_REQUIRE_ROLLBACK',
   'OUTBOX_PUBLISHER_ENABLED',
   'OUTBOX_IMMEDIATE_PUBLISH_AFTER_REQUEST',
   'SERVICEBUS_AUTH_MODE',
@@ -35,7 +36,13 @@ const MANAGED_ENV = [
   'ADMIN_AUTH_MODE',
   'ADMIN_API_SECRET',
   'ADMIN_OIDC_ISSUER',
-  'ADMIN_OIDC_AUDIENCE'
+  'ADMIN_OIDC_AUDIENCE',
+  'ADMIN_OIDC_TENANT_ID',
+  'APIM_BACKEND_BOUNDARY_REQUIRED',
+  'APIM_BACKEND_SHARED_SECRET',
+  'SWAGGER_ENABLED',
+  'MICROSOFT_CLIENT_ID',
+  'MICROSOFT_CLIENT_SECRET'
 ];
 
 function withEnvironment(values, fn) {
@@ -84,7 +91,7 @@ function baseDatabaseEnvironment() {
     PG_DATABASE: 'postgres',
     PG_USER: 'runtime-role',
     PG_PASSWORD: 'runtime-password',
-    PG_SSL_MODE: 'require'
+    PG_SSL_MODE: 'verify-full'
   };
 }
 
@@ -142,7 +149,7 @@ test('runtime capabilities are explicit', () => {
 });
 
 test(
-  'public API does not require admin or Service Bus configuration when outbox is dedicated',
+  'public API does not require admin or Service Bus configuration when outbox is dedicated and requires its APIM boundary',
   () => withEnvironment(
     {
       ...baseDatabaseEnvironment(),
@@ -153,7 +160,14 @@ test(
       ONBOARDING_STATE_SECRET:
         '12345678901234567890123456789012',
       API_PUBLIC_BASE_URL:
-        'https://api.example.test'
+        'https://api.example.test',
+      APIM_BACKEND_BOUNDARY_REQUIRED: 'true',
+      APIM_BACKEND_SHARED_SECRET:
+        '0123456789abcdefghijklmnopqrstuvwxyz',
+      MICROSOFT_CLIENT_ID:
+        '00000000-0000-4000-8000-000000000001',
+      MICROSOFT_CLIENT_SECRET:
+        'not-a-real-microsoft-secret'
     },
     () => {
       const config = getConfig();
@@ -165,6 +179,11 @@ test(
 
       assert.equal(config.adminAuth, null);
       assert.equal(config.serviceBus, null);
+      assert.equal(config.apimBackendBoundary.required, true);
+      assert.equal(
+        config.apimBackendBoundary.sharedSecret,
+        '0123456789abcdefghijklmnopqrstuvwxyz'
+      );
 
       assert.equal(
         config.onboarding.redirectUri,
@@ -185,7 +204,9 @@ test(
       ADMIN_OIDC_ISSUER:
         'https://login.example.test/tenant/v2.0',
       ADMIN_OIDC_AUDIENCE:
-        'api://bevoac-admin'
+        'api://bevoac-admin',
+      ADMIN_OIDC_TENANT_ID:
+        '11111111-1111-4111-8111-111111111111'
     },
     () => {
       const config = getConfig();

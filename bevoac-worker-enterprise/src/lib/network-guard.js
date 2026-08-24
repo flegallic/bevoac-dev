@@ -113,6 +113,19 @@ function normalizeAndValidateUrl(input, guardConfig = {}) {
   return parsed;
 }
 
+function redactUrlForDisplay(input) {
+  try {
+    const parsed = new URL(String(input || '').trim());
+    parsed.username = '';
+    parsed.password = '';
+    parsed.search = '';
+    parsed.hash = '';
+    return parsed.toString();
+  } catch (_) {
+    return '[invalid-url]';
+  }
+}
+
 async function resolvePublicAddresses(hostname) {
   const records = await dns.lookup(hostname, { all: true, verbatim: true });
   const addresses = records.map((record) => ({
@@ -179,20 +192,30 @@ function buildPinnedLookup(targetInfo) {
   };
 }
 
-function requestPinned(targetInfo, timeoutMs, method = 'HEAD') {
+function requestPinned(targetInfo, timeoutMs, method = 'HEAD', signal = null) {
   return new Promise((resolve) => {
     let lookup;
+    let settled = false;
+    let req;
+    const cleanup = () => signal?.removeEventListener?.('abort', onAbort);
+    const finish = (value) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      resolve(value);
+    };
+    const onAbort = () => req?.destroy(signal.reason || new Error('HTTPS request aborted.'));
 
     try {
       lookup = buildPinnedLookup(targetInfo);
     } catch (error) {
-      resolve({ error });
+      finish({ error });
       return;
     }
 
     const path = `${targetInfo.parsed.pathname || '/'}${targetInfo.parsed.search || ''}`;
 
-    const req = https.request(
+    req = https.request(
       {
         protocol: 'https:',
         hostname: targetInfo.hostname,
@@ -212,11 +235,16 @@ function requestPinned(targetInfo, timeoutMs, method = 'HEAD') {
       },
       (res) => {
         res.resume();
-        resolve(res);
+        finish(res);
       }
     );
 
-    req.on('error', (error) => resolve({ error }));
+    if (signal) {
+      if (signal.aborted) onAbort();
+      else signal.addEventListener('abort', onAbort, { once: true });
+    }
+
+    req.on('error', (error) => finish({ error }));
 
     req.on('timeout', () => {
       req.destroy(new Error(`HTTPS ${method} timeout after ${timeoutMs}ms`));
@@ -226,11 +254,11 @@ function requestPinned(targetInfo, timeoutMs, method = 'HEAD') {
   });
 }
 
-async function requestHeadersWithFallback(info, timeoutMs) {
-  let res = await requestPinned(info, timeoutMs, 'HEAD');
+async function requestHeadersWithFallback(info, timeoutMs, signal = null) {
+  let res = await requestPinned(info, timeoutMs, 'HEAD', signal);
 
   if (res && res.error) {
-    const getRes = await requestPinned(info, timeoutMs, 'GET');
+    const getRes = await requestPinned(info, timeoutMs, 'GET', signal);
     if (!getRes.error) {
       res = getRes;
     }
@@ -242,13 +270,14 @@ async function requestHeadersWithFallback(info, timeoutMs) {
 async function guardedHead(targetUrl, {
   timeoutMs = DEFAULT_TIMEOUT_MS,
   maxRedirects = DEFAULT_MAX_REDIRECTS,
-  guardConfig = {}
+  guardConfig = {},
+  signal = null
 } = {}) {
   let current = targetUrl;
 
   for (let redirect = 0; redirect <= maxRedirects; redirect += 1) {
     const info = await assertPublicHttpTarget(current, guardConfig);
-    const res = await requestHeadersWithFallback(info, timeoutMs);
+    const res = await requestHeadersWithFallback(info, timeoutMs, signal);
 
     if (res.error) {
       return { error: res.error, targetInfo: info, finalUrl: info.url };
@@ -274,5 +303,6 @@ module.exports = {
   guardedHead,
   isBlockedAddress,
   normalizeAndValidateUrl,
+  redactUrlForDisplay,
   resolvePublicAddresses
 };

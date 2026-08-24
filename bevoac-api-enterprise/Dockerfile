@@ -12,8 +12,10 @@ RUN npm ci --omit=dev --registry=https://registry.npmjs.org/ \
 
 COPY . .
 RUN npm run check:image
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack \
+  && rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack /usr/local/bin/yarn /usr/local/bin/yarnpkg /usr/local/bin/pnpm /usr/local/bin/pnpx
 RUN chown -R node:node /app
 USER node
 
 EXPOSE 8080
-CMD ["npm", "start"]
+CMD ["node", "src/server.js"]

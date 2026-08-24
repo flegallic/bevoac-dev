@@ -5,9 +5,18 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 CONFIG_FILE="${1:-$SCRIPT_DIR/prod.env}"
 
+if [[ "${CONFIRM_DEMO_ONLY_DEPLOY:-}" != "YES" ]]; then
+  cat >&2 <<'MSG'
+BLOCKED: this frontend is DEMO-ONLY in Bevoac V6.2.0.
+It is not a customer production portal and it must not receive customer API keys.
+Set CONFIRM_DEMO_ONLY_DEPLOY=YES only for an explicitly approved demo deployment.
+MSG
+  exit 2
+fi
+
 if [[ ! -f "$CONFIG_FILE" ]]; then
-  echo "Missing config file: $CONFIG_FILE"
-  echo "Create it from: $SCRIPT_DIR/prod.env.example"
+  echo "Missing config file: $CONFIG_FILE" >&2
+  echo "Create it from: $SCRIPT_DIR/prod.env.example" >&2
   exit 1
 fi
 
@@ -24,48 +33,36 @@ required_vars=(
   MANAGED_IDENTITY_NAME
   FRONTEND_IMAGE_NAME
   FRONTEND_IMAGE_TAG
-  BEVOAC_API_URL
-  BEVOAC_ALLOWED_API_HOSTS
-  BEVOAC_API_KEY_HEADER
 )
 
 for var_name in "${required_vars[@]}"; do
   if [[ -z "${!var_name:-}" ]]; then
-    echo "Missing required variable: $var_name"
+    echo "Missing required variable: $var_name" >&2
     exit 1
   fi
 done
 
-if ! command -v az >/dev/null 2>&1; then
-  echo "Azure CLI is required."
+command -v az >/dev/null 2>&1 || { echo "Azure CLI is required." >&2; exit 1; }
+command -v docker >/dev/null 2>&1 || { echo "Docker is required." >&2; exit 1; }
+
+if [[ "$FRONTEND_IMAGE_TAG" == "latest" ]]; then
+  echo "FRONTEND_IMAGE_TAG=latest is forbidden." >&2
   exit 1
 fi
-
-if ! command -v docker >/dev/null 2>&1; then
-  echo "Docker is required."
-  exit 1
-fi
-
-echo "Checking Azure account..."
-az account show >/dev/null
 
 IMAGE="$ACR_LOGIN_SERVER/$FRONTEND_IMAGE_NAME:$FRONTEND_IMAGE_TAG"
 
-echo "Checking existing Azure resources..."
+echo "DEMO_ONLY_DEPLOYMENT=true"
+echo "Checking Azure account and existing resources..."
+az account show >/dev/null
 az group show -n "$AZURE_RESOURCE_GROUP" >/dev/null
 az acr show -g "$AZURE_RESOURCE_GROUP" -n "$ACR_NAME" >/dev/null
 az containerapp env show -g "$AZURE_RESOURCE_GROUP" -n "$CONTAINER_APP_ENV" >/dev/null
 
-echo "Logging in to ACR: $ACR_NAME"
 az acr login --name "$ACR_NAME"
-
-echo "Building image: $IMAGE"
 docker build --platform linux/amd64 -t "$IMAGE" "$PROJECT_DIR"
-
-echo "Pushing image: $IMAGE"
 docker push "$IMAGE"
 
-echo "Ensuring managed identity exists: $MANAGED_IDENTITY_NAME"
 if ! az identity show -g "$AZURE_RESOURCE_GROUP" -n "$MANAGED_IDENTITY_NAME" >/dev/null 2>&1; then
   az identity create -g "$AZURE_RESOURCE_GROUP" -n "$MANAGED_IDENTITY_NAME" >/dev/null
 fi
@@ -74,30 +71,20 @@ IDENTITY_ID="$(az identity show -g "$AZURE_RESOURCE_GROUP" -n "$MANAGED_IDENTITY
 PRINCIPAL_ID="$(az identity show -g "$AZURE_RESOURCE_GROUP" -n "$MANAGED_IDENTITY_NAME" --query principalId -o tsv)"
 ACR_ID="$(az acr show -g "$AZURE_RESOURCE_GROUP" -n "$ACR_NAME" --query id -o tsv)"
 
-echo "Ensuring AcrPull permission is assigned..."
-if ! az role assignment list \
-  --assignee "$PRINCIPAL_ID" \
-  --scope "$ACR_ID" \
-  --query "[?roleDefinitionName=='AcrPull'] | length(@)" \
-  -o tsv | grep -q '^1$'; then
-  az role assignment create \
-    --assignee "$PRINCIPAL_ID" \
-    --role AcrPull \
-    --scope "$ACR_ID" >/dev/null
+if [[ "$(az role assignment list --assignee "$PRINCIPAL_ID" --scope "$ACR_ID" --query "[?roleDefinitionName=='AcrPull'] | length(@)" -o tsv)" != "1" ]]; then
+  az role assignment create --assignee "$PRINCIPAL_ID" --role AcrPull --scope "$ACR_ID" >/dev/null
 fi
 
+COMMON_ARGS=(
+  -g "$AZURE_RESOURCE_GROUP"
+  -n "$CONTAINER_APP_NAME"
+  --image "$IMAGE"
+  --set-env-vars BEVOAC_FRONTEND_MODE=demo-only
+)
+
 if az containerapp show -g "$AZURE_RESOURCE_GROUP" -n "$CONTAINER_APP_NAME" >/dev/null 2>&1; then
-  echo "Updating Container App: $CONTAINER_APP_NAME"
-  az containerapp update \
-    -g "$AZURE_RESOURCE_GROUP" \
-    -n "$CONTAINER_APP_NAME" \
-    --image "$IMAGE" \
-    --set-env-vars \
-      BEVOAC_API_URL="$BEVOAC_API_URL" \
-      BEVOAC_ALLOWED_API_HOSTS="$BEVOAC_ALLOWED_API_HOSTS" \
-      BEVOAC_API_KEY_HEADER="$BEVOAC_API_KEY_HEADER" >/dev/null
+  az containerapp update "${COMMON_ARGS[@]}" >/dev/null
 else
-  echo "Creating Container App: $CONTAINER_APP_NAME"
   az containerapp create \
     -g "$AZURE_RESOURCE_GROUP" \
     -n "$CONTAINER_APP_NAME" \
@@ -107,18 +94,13 @@ else
     --ingress external \
     --registry-server "$ACR_LOGIN_SERVER" \
     --user-assigned "$IDENTITY_ID" \
-    --env-vars \
-      BEVOAC_API_URL="$BEVOAC_API_URL" \
-      BEVOAC_ALLOWED_API_HOSTS="$BEVOAC_ALLOWED_API_HOSTS" \
-      BEVOAC_API_KEY_HEADER="$BEVOAC_API_KEY_HEADER" >/dev/null
+    --env-vars BEVOAC_FRONTEND_MODE=demo-only >/dev/null
 fi
 
-FQDN="$(az containerapp show \
-  -g "$AZURE_RESOURCE_GROUP" \
-  -n "$CONTAINER_APP_NAME" \
-  --query properties.configuration.ingress.fqdn \
-  -o tsv)"
+FQDN="$(az containerapp show -g "$AZURE_RESOURCE_GROUP" -n "$CONTAINER_APP_NAME" --query properties.configuration.ingress.fqdn -o tsv)"
+DIGEST="$(az acr repository show-manifests --name "$ACR_NAME" --repository "$FRONTEND_IMAGE_NAME" --query "[?tags[?@=='$FRONTEND_IMAGE_TAG']].digest | [0]" -o tsv)"
 
-echo
-echo "Deployment complete."
-echo "Frontend URL: https://$FQDN"
+echo "DEMO_FRONTEND_URL=https://$FQDN"
+echo "FRONTEND_IMAGE=$IMAGE"
+echo "FRONTEND_IMAGE_DIGEST=$DIGEST"
+echo "CUSTOMER_PRODUCTION_PORTAL=false"

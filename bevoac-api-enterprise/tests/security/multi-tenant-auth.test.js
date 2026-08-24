@@ -27,26 +27,26 @@ test('scan lookup is always scoped by scanId and tenantId', async () => {
   const scanId = '11111111-1111-4111-8111-111111111111';
   const tenantId = '22222222-2222-4222-8222-222222222222';
   await service.getScanByIdAndTenant(scanId, tenantId, { includeResult: false });
-  assert.equal(client.calls.length, 3);
+  assert.equal(client.calls.length, 4);
 
-  // 1. Le contexte RLS du tenant est positionné avant la lecture.
-  assert.match(
-    client.calls[0].sql,
-    /set_config\('app\.current_tenant_id'/
-  );
-  assert.deepEqual(client.calls[0].params, [tenantId, false]);
+  // 1. La transaction démarre avant de poser le contexte tenant local.
+  assert.match(client.calls[0].sql, /^BEGIN$/);
 
-  // 2. La requête métier reste obligatoirement filtrée
-  // par scanId et tenantId.
+  // 2. Le contexte RLS du tenant est transaction-local.
   assert.match(
     client.calls[1].sql,
-    /WHERE s\.id = \$1 AND s\.tenant_id = \$2/
+    /set_config\('app\.current_tenant_id'/
   );
-  assert.deepEqual(client.calls[1].params, [scanId, tenantId]);
+  assert.deepEqual(client.calls[1].params, [tenantId, true]);
 
-  // 3. Le contexte RLS est nettoyé après la lecture.
+  // 3. La requête métier reste obligatoirement filtrée
+  // par scanId et tenantId.
   assert.match(
     client.calls[2].sql,
-    /set_config\('app\.current_tenant_id', '', false\)/
+    /WHERE s\.id = \$1 AND s\.tenant_id = \$2/
   );
+  assert.deepEqual(client.calls[2].params, [scanId, tenantId]);
+
+  // 4. COMMIT efface automatiquement la valeur SET LOCAL.
+  assert.match(client.calls[3].sql, /^COMMIT$/);
 });

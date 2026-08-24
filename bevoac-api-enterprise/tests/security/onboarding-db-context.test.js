@@ -95,27 +95,26 @@ test(
       'string'
     );
 
-    assert.equal(client.calls.length, 3);
+    assert.equal(client.calls.length, 4);
+
+    assert.match(client.calls[0].sql, /^BEGIN$/);
 
     assert.match(
-      client.calls[0].sql,
+      client.calls[1].sql,
       /app\.current_tenant_id/
     );
 
     assert.deepEqual(
-      client.calls[0].params,
-      [tenantId, false]
-    );
-
-    assert.match(
-      client.calls[1].sql,
-      /INSERT INTO azure_onboarding_sessions/
+      client.calls[1].params,
+      [tenantId, true]
     );
 
     assert.match(
       client.calls[2].sql,
-      /set_config\('app\.current_tenant_id', '', false\)/
+      /INSERT INTO azure_onboarding_sessions/
     );
+
+    assert.match(client.calls[3].sql, /^COMMIT$/);
   }
 );
 
