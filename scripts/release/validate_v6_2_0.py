@@ -548,22 +548,34 @@ def validate_ci(root: Path) -> None:
             "PostgreSQL, migrations and tenant isolation",
             "Terraform syntax, hardening and policy",
             "tf-vars: bevoac-iac-enterprise/release/v6.2.0-controlled-production.tfvars.example",
-            "CodeQL JavaScript and TypeScript",
-            "actions: read",
-            "upload: never",
-            "upload-database: false",
-            "scripts/ci/codeql-sarif-gate.py",
+            "JavaScript and TypeScript SAST policy",
+            "actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd",
+            "actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e",
+            "hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e",
+            "scripts/ci/js-ts-sast-gate.py",
+            "js-ts-sast.sarif",
             "Container image build and vulnerability scan",
             "BEVOAC_ENTERPRISE_GATES_OK=true",
         ],
         "enterprise workflow",
     )
+    forbidden_workflow_tokens = (
+        "actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683",
+        "actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020",
+        "hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd",
+        "github/codeql-action/",
+        "codeql-sarif-gate.py",
+    )
+    for token in forbidden_workflow_tokens:
+        if token in workflow:
+            raise ValidationError(f"deprecated or unavailable workflow integration remains active: {token}")
     for relative in (
         "scripts/ci/source-security-gate.sh",
         "scripts/ci/relative-import-gate.py",
         "scripts/ci/secret-pattern-scan.py",
         "scripts/ci/docs-gate.py",
         "scripts/ci/terraform-static-reference-check.py",
+        "scripts/ci/js-ts-sast-gate.py",
         "scripts/release/test_v6_2_0_local.sh",
         "scripts/release/release_v6_2_0.sh",
         "scripts/release/collect_v6_2_0_evidence.sh",

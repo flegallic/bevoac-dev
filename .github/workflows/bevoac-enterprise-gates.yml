@@ -22,7 +22,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -41,10 +41,10 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           persist-credentials: false
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -104,10 +104,10 @@ jobs:
           --health-timeout 5s
           --health-retries 20
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           persist-credentials: false
-      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Install runtime dependencies
@@ -128,10 +128,10 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           persist-credentials: false
-      - uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e
         with:
           terraform_version: 1.14.7
       - name: Terraform format and validate
@@ -153,34 +153,26 @@ jobs:
           tf-vars: bevoac-iac-enterprise/release/v6.2.0-controlled-production.tfvars.example
           format: table
 
-  codeql:
-    name: CodeQL JavaScript and TypeScript
+  sast:
+    name: JavaScript and TypeScript SAST policy
     runs-on: ubuntu-latest
     permissions:
-      actions: read
       contents: read
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           persist-credentials: false
-      - uses: github/codeql-action/init@d1ba80a13dd99fba24a470575428917156a28b43
-        with:
-          languages: javascript-typescript
-          queries: security-extended
-      - name: Run CodeQL analysis without Code Scanning upload
-        id: codeql-analyze
-        uses: github/codeql-action/analyze@d1ba80a13dd99fba24a470575428917156a28b43
-        with:
-          output: codeql-sarif
-          upload: never
-          upload-database: false
-      - name: Enforce CodeQL SARIF HIGH/CRITICAL policy
-        run: python3 scripts/ci/codeql-sarif-gate.py codeql-sarif
+      - name: Self-test deterministic SAST policy
+        run: python3 scripts/ci/js-ts-sast-gate.py --self-test
+      - name: Enforce JavaScript and TypeScript security policy
+        run: |
+          mkdir -p evidence/sast
+          python3 scripts/ci/js-ts-sast-gate.py --repo . --sarif evidence/sast/js-ts-sast.sarif
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: always()
         with:
-          name: codeql-sarif
-          path: codeql-sarif/*.sarif
+          name: js-ts-sast-sarif
+          path: evidence/sast/js-ts-sast.sarif
           if-no-files-found: error
           retention-days: 30
 
@@ -203,7 +195,7 @@ jobs:
             context: bevoac-frontend-enterprise
             image: bevoac-frontend-enterprise:ci
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           persist-credentials: false
       - name: Build image
@@ -221,7 +213,7 @@ jobs:
   complete:
     name: Enterprise gate complete
     if: always()
-    needs: [source-policy, application, postgres-enterprise, terraform, codeql, images]
+    needs: [source-policy, application, postgres-enterprise, terraform, sast, images]
     runs-on: ubuntu-latest
     steps:
       - name: Enforce all mandatory jobs
@@ -230,10 +222,10 @@ jobs:
           APPLICATION: ${{ needs.application.result }}
           POSTGRES: ${{ needs.postgres-enterprise.result }}
           TERRAFORM: ${{ needs.terraform.result }}
-          CODEQL: ${{ needs.codeql.result }}
+          SAST: ${{ needs.sast.result }}
           IMAGES: ${{ needs.images.result }}
         run: |
-          for result in "$SOURCE_POLICY" "$APPLICATION" "$POSTGRES" "$TERRAFORM" "$CODEQL" "$IMAGES"; do
+          for result in "$SOURCE_POLICY" "$APPLICATION" "$POSTGRES" "$TERRAFORM" "$SAST" "$IMAGES"; do
             test "$result" = "success"
           done
           echo "BEVOAC_ENTERPRISE_GATES_OK=true"

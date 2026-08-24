@@ -45,7 +45,7 @@
 - Node 24 API/worker gates;
 - frontend demo-only build/typecheck;
 - PostgreSQL 16/RLS integration;
-- CodeQL;
+- deterministic JavaScript/TypeScript SAST policy with SARIF evidence;
 - dependency audit and SBOM;
 - Trivy IaC/image scans;
 - secret and documentation gates;

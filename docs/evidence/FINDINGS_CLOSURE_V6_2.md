@@ -37,7 +37,7 @@
 | AUTH-002 | production shared-secret admin path removed | LOCALLY_STATIC_VALIDATED |
 | ONB-001 | authenticated encrypted opaque state, replay/session DB check and fragment-only safe redirect | LOCALLY_STATIC_VALIDATED |
 | ONB-002 | HTTPS and allowed-origin startup validation | LOCALLY_STATIC_VALIDATED |
-| CI-001 | frontend, CodeQL, SCA, SBOM, Trivy, secret/IaC/docs gates | CI_OR_LIVE_PROOF_REQUIRED |
+| CI-001 | frontend, JavaScript/TypeScript SAST, SCA, SBOM, Trivy, secret/IaC/docs gates | CI_OR_LIVE_PROOF_REQUIRED |
 | CI-002 | literal relative import resolution gate | LOCALLY_STATIC_VALIDATED |
 | IAC-OBS-001 | Action Group, diagnostics, metric/activity alerts and production preconditions | CI_OR_LIVE_PROOF_REQUIRED |
 | DOC-002 | canonical V6.2 corpus and documentation gate | SOURCE_IMPLEMENTED |
