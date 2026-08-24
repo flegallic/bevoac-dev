@@ -1,50 +1,85 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
+set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-MANIFEST="$ROOT/SOURCE_SHA256SUMS"
-
-sha256_file() {
-  if command -v shasum >/dev/null 2>&1; then
-    shasum -a 256 "$1" | awk '{print $1}'
-  elif command -v sha256sum >/dev/null 2>&1; then
-    sha256sum "$1" | awk '{print $1}'
-  else
-    echo "SOURCE_PACKAGE_VERIFY_ERROR=no SHA-256 command available" >&2
-    return 1
-  fi
-}
-
-if [[ ! -f "$MANIFEST" ]]; then
-  echo "SOURCE_PACKAGE_VERIFY_ERROR=missing SOURCE_SHA256SUMS" >&2
-  exit 1
-fi
-
 cd "$ROOT"
-failed=0
-checked=0
 
-while IFS= read -r line; do
-  [[ -z "$line" ]] && continue
-  expected="${line%%  *}"
-  relative="${line#*  }"
-  if [[ ! -f "$relative" ]]; then
-    echo "SOURCE_PACKAGE_MISSING=$relative" >&2
-    failed=1
-    continue
-  fi
-  actual="$(sha256_file "$relative")"
-  if [[ "$actual" != "$expected" ]]; then
-    echo "SOURCE_PACKAGE_MISMATCH=$relative" >&2
-    failed=1
-  fi
-  checked=$((checked + 1))
-done < "$MANIFEST"
+MANIFEST="SOURCE_SHA256SUMS"
 
-if [[ "$failed" -ne 0 ]]; then
-  echo "SOURCE_PACKAGE_VERIFICATION_OK=false" >&2
+if [ ! -f "$MANIFEST" ]; then
+  echo "SOURCE_PACKAGE_VERIFICATION_OK=false"
+  echo "FAILURE=manifest_missing"
   exit 2
 fi
 
-echo "SOURCE_PACKAGE_FILES_VERIFIED=$checked"
+TMP_EXPECTED="$(mktemp)"
+TMP_ACTUAL="$(mktemp)"
+
+cleanup() {
+  rm -f "$TMP_EXPECTED" "$TMP_ACTUAL"
+}
+trap cleanup EXIT
+
+# Canonical release inventory:
+# every Git-tracked file except the manifest itself.
+git ls-files -z |
+  python3 -c '
+import sys
+items = [p.decode("utf-8") for p in sys.stdin.buffer.read().split(b"\0") if p]
+for p in sorted(items):
+    if p != "SOURCE_SHA256SUMS":
+        print(p)
+' > "$TMP_EXPECTED"
+
+awk '{$1=""; sub(/^ /,""); print}' "$MANIFEST" | LC_ALL=C sort > "$TMP_ACTUAL"
+
+if ! cmp -s "$TMP_EXPECTED" "$TMP_ACTUAL"; then
+  echo "SOURCE_PACKAGE_INVENTORY_OK=false"
+
+  comm -23 "$TMP_EXPECTED" "$TMP_ACTUAL" |
+    while IFS= read -r path; do
+      [ -n "$path" ] && echo "SOURCE_PACKAGE_MANIFEST_MISSING=$path"
+    done
+
+  comm -13 "$TMP_EXPECTED" "$TMP_ACTUAL" |
+    while IFS= read -r path; do
+      [ -n "$path" ] && echo "SOURCE_PACKAGE_MANIFEST_EXTRA=$path"
+    done
+
+  echo "SOURCE_PACKAGE_VERIFICATION_OK=false"
+  exit 3
+fi
+
+echo "SOURCE_PACKAGE_INVENTORY_OK=true"
+
+FAIL=0
+COUNT=0
+
+while IFS= read -r line; do
+  expected_hash="${line%%  *}"
+  path="${line#*  }"
+
+  if [ ! -f "$path" ]; then
+    echo "SOURCE_PACKAGE_MISSING=$path"
+    FAIL=1
+    continue
+  fi
+
+  actual_hash="$(shasum -a 256 "$path" | awk '{print $1}')"
+
+  if [ "$actual_hash" != "$expected_hash" ]; then
+    echo "SOURCE_PACKAGE_MISMATCH=$path"
+    FAIL=1
+  fi
+
+  COUNT=$((COUNT + 1))
+done < "$MANIFEST"
+
+echo "SOURCE_PACKAGE_FILES_VERIFIED=$COUNT"
+
+if [ "$FAIL" -ne 0 ]; then
+  echo "SOURCE_PACKAGE_VERIFICATION_OK=false"
+  exit 4
+fi
+
 echo "SOURCE_PACKAGE_VERIFICATION_OK=true"
