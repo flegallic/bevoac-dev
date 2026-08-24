@@ -23,6 +23,7 @@ jobs:
       - name: Build DEMO-ONLY frontend
         working-directory: bevoac-frontend-enterprise
         run: |
-          npm install --ignore-scripts --no-audit --no-fund
+          npm ci --no-audit --no-fund
+          npm run typegen
           npm run typecheck
           npm run build

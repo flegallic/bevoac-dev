@@ -314,6 +314,8 @@ def validate_runtime(root: Path) -> None:
     direct_resource_graph_clients = []
     for path in worker.rglob("*.js"):
         relative = path.relative_to(worker).as_posix()
+        if FORBIDDEN_ARTIFACT_RE.search(relative):
+            continue
         if relative in {"src/lib/resource-graph.js", "src/lib/resource-preflight.js"}:
             continue
         if "ResourceGraphClient" in path.read_text(encoding="utf-8", errors="ignore"):
@@ -366,8 +368,21 @@ def validate_runtime(root: Path) -> None:
 
     frontend_route = read(frontend / "app/api/bevoac/route.ts")
     require(frontend_route, ["DEMO_ONLY_FRONTEND", "status: 410", "Cache-Control"], "frontend demo-only API")
-    require(read(worker / "Dockerfile"), ["FROM node:24-alpine", "npm ci --omit=dev"], "worker container reproducibility")
-    require(read(frontend / "Dockerfile"), ["FROM node:24-alpine", "npm run build"], "frontend Node baseline")
+    require(
+        read(api / "Dockerfile"),
+        ["FROM node:24-alpine", "npm ci --omit=dev", "/usr/local/lib/node_modules/npm", 'CMD ["node", "src/server.js"]'],
+        "api container reproducibility and runtime hardening",
+    )
+    require(
+        read(worker / "Dockerfile"),
+        ["FROM node:24-alpine", "npm ci --omit=dev", "/usr/local/lib/node_modules/npm", 'CMD ["node", "src/index.js"]'],
+        "worker container reproducibility and runtime hardening",
+    )
+    require(
+        read(frontend / "Dockerfile"),
+        ["FROM node:24-alpine", "npm ci --no-audit --no-fund", "/usr/local/lib/node_modules/npm", "npm run build"],
+        "frontend Node baseline and runtime hardening",
+    )
     require(
         read(root / "bevoac-api-enterprise/src/services/azure-onboarding-service.js"),
         ["'/v1/onboarding/azure/result'", "fragmentParams"],
@@ -528,9 +543,16 @@ def validate_ci(root: Path) -> None:
         [
             "Source, secrets and documentation policy",
             "Demo frontend build and typecheck",
+            "bevoac-frontend-enterprise/package-lock.json",
+            "npm run typegen",
             "PostgreSQL, migrations and tenant isolation",
             "Terraform syntax, hardening and policy",
+            "tf-vars: bevoac-iac-enterprise/release/v6.2.0-controlled-production.tfvars.example",
             "CodeQL JavaScript and TypeScript",
+            "actions: read",
+            "upload: never",
+            "upload-database: false",
+            "scripts/ci/codeql-sarif-gate.py",
             "Container image build and vulnerability scan",
             "BEVOAC_ENTERPRISE_GATES_OK=true",
         ],
@@ -682,14 +704,15 @@ def main() -> int:
             run(["npm", "run", "check"], root / relative, env)
             run(["npm", "test"], root / relative, env)
         run(
-            ["npm", "install", "--ignore-scripts", "--no-audit", "--no-fund"],
+            ["npm", "ci", "--no-audit", "--no-fund"],
             root / "bevoac-frontend-enterprise",
             env,
         )
+        run(["npm", "run", "typegen"], root / "bevoac-frontend-enterprise", env)
         run(["npm", "run", "typecheck"], root / "bevoac-frontend-enterprise", env)
         run(["npm", "run", "build"], root / "bevoac-frontend-enterprise", env)
         run([terraform, "fmt", "-check", "-recursive"], root / "bevoac-iac-enterprise", env)
-        run([terraform, "init", "-backend=false"], root / "bevoac-iac-enterprise", env)
+        run([terraform, "init", "-backend=false", "-lockfile=readonly"], root / "bevoac-iac-enterprise", env)
         run([terraform, "validate"], root / "bevoac-iac-enterprise", env)
         run(["bash", "scripts/static-hardening-check.sh"], root / "bevoac-iac-enterprise", env)
 

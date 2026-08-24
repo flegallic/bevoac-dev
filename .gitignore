@@ -74,7 +74,8 @@ web_modules/
 .cache
 .parcel-cache
 
-# Next.js build output
+# Next.js generated TypeScript entrypoint and build output
+/bevoac-frontend-enterprise/next-env.d.ts
 .next
 out
 
