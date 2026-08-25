@@ -101,6 +101,10 @@ resource "azurerm_role_assignment" "api_pg_secret_reader" {
   principal_id                     = azurerm_user_assigned_identity.api.principal_id
   principal_type                   = "ServicePrincipal"
   skip_service_principal_aad_check = true
+
+  lifecycle {
+    ignore_changes = [skip_service_principal_aad_check]
+  }
 }
 
 resource "azurerm_role_assignment" "api_microsoft_secret_reader" {
@@ -109,6 +113,10 @@ resource "azurerm_role_assignment" "api_microsoft_secret_reader" {
   principal_id                     = azurerm_user_assigned_identity.api.principal_id
   principal_type                   = "ServicePrincipal"
   skip_service_principal_aad_check = true
+
+  lifecycle {
+    ignore_changes = [skip_service_principal_aad_check]
+  }
 }
 
 resource "azurerm_role_assignment" "api_onboarding_secret_reader" {
@@ -117,6 +125,10 @@ resource "azurerm_role_assignment" "api_onboarding_secret_reader" {
   principal_id                     = azurerm_user_assigned_identity.api.principal_id
   principal_type                   = "ServicePrincipal"
   skip_service_principal_aad_check = true
+
+  lifecycle {
+    ignore_changes = [skip_service_principal_aad_check]
+  }
 }
 
 # Rollback compatibility for legacy API revisions. Removed only during security finalization.
@@ -127,6 +139,10 @@ resource "azurerm_role_assignment" "api_legacy_admin_secret_reader" {
   principal_id                     = azurerm_user_assigned_identity.api.principal_id
   principal_type                   = "ServicePrincipal"
   skip_service_principal_aad_check = true
+
+  lifecycle {
+    ignore_changes = [skip_service_principal_aad_check]
+  }
 }
 
 # Worker: runtime password and Microsoft credential. Service Bus uses managed identity; no SAS/KEDA secret.
@@ -136,6 +152,10 @@ resource "azurerm_role_assignment" "worker_pg_secret_reader" {
   principal_id                     = azurerm_user_assigned_identity.worker.principal_id
   principal_type                   = "ServicePrincipal"
   skip_service_principal_aad_check = true
+
+  lifecycle {
+    ignore_changes = [skip_service_principal_aad_check]
+  }
 }
 
 resource "azurerm_role_assignment" "worker_microsoft_secret_reader" {
@@ -144,6 +164,10 @@ resource "azurerm_role_assignment" "worker_microsoft_secret_reader" {
   principal_id                     = azurerm_user_assigned_identity.worker.principal_id
   principal_type                   = "ServicePrincipal"
   skip_service_principal_aad_check = true
+
+  lifecycle {
+    ignore_changes = [skip_service_principal_aad_check]
+  }
 }
 
 # Rollback compatibility for legacy worker revisions. Removed with the legacy Service Bus secret.
@@ -154,6 +178,10 @@ resource "azurerm_role_assignment" "worker_servicebus_secret_reader" {
   principal_id                     = azurerm_user_assigned_identity.worker.principal_id
   principal_type                   = "ServicePrincipal"
   skip_service_principal_aad_check = true
+
+  lifecycle {
+    ignore_changes = [skip_service_principal_aad_check]
+  }
 }
 
 # Dedicated outbox identity.
@@ -163,6 +191,10 @@ resource "azurerm_role_assignment" "outbox_pg_secret_reader" {
   principal_id                     = azurerm_user_assigned_identity.outbox.principal_id
   principal_type                   = "ServicePrincipal"
   skip_service_principal_aad_check = true
+
+  lifecycle {
+    ignore_changes = [skip_service_principal_aad_check]
+  }
 }
 
 resource "azurerm_role_assignment" "outbox_acr_pull" {
@@ -171,6 +203,10 @@ resource "azurerm_role_assignment" "outbox_acr_pull" {
   principal_id                     = azurerm_user_assigned_identity.outbox.principal_id
   principal_type                   = "ServicePrincipal"
   skip_service_principal_aad_check = true
+
+  lifecycle {
+    ignore_changes = [skip_service_principal_aad_check]
+  }
 }
 
 resource "azurerm_role_assignment" "outbox_sb_sender" {
@@ -179,6 +215,10 @@ resource "azurerm_role_assignment" "outbox_sb_sender" {
   principal_id                     = azurerm_user_assigned_identity.outbox.principal_id
   principal_type                   = "ServicePrincipal"
   skip_service_principal_aad_check = true
+
+  lifecycle {
+    ignore_changes = [skip_service_principal_aad_check]
+  }
 }
 
 # Dedicated retention identity.
@@ -188,6 +228,10 @@ resource "azurerm_role_assignment" "retention_pg_secret_reader" {
   principal_id                     = azurerm_user_assigned_identity.retention.principal_id
   principal_type                   = "ServicePrincipal"
   skip_service_principal_aad_check = true
+
+  lifecycle {
+    ignore_changes = [skip_service_principal_aad_check]
+  }
 }
 
 resource "azurerm_role_assignment" "retention_acr_pull" {
@@ -196,6 +240,10 @@ resource "azurerm_role_assignment" "retention_acr_pull" {
   principal_id                     = azurerm_user_assigned_identity.retention.principal_id
   principal_type                   = "ServicePrincipal"
   skip_service_principal_aad_check = true
+
+  lifecycle {
+    ignore_changes = [skip_service_principal_aad_check]
+  }
 }
 
 # Reserved identity for the future isolated administration API.
@@ -205,6 +253,10 @@ resource "azurerm_role_assignment" "admin_api_pg_secret_reader" {
   principal_id                     = azurerm_user_assigned_identity.admin_api.principal_id
   principal_type                   = "ServicePrincipal"
   skip_service_principal_aad_check = true
+
+  lifecycle {
+    ignore_changes = [skip_service_principal_aad_check]
+  }
 }
 
 resource "azurerm_role_assignment" "admin_api_acr_pull" {
@@ -213,6 +265,10 @@ resource "azurerm_role_assignment" "admin_api_acr_pull" {
   principal_id                     = azurerm_user_assigned_identity.admin_api.principal_id
   principal_type                   = "ServicePrincipal"
   skip_service_principal_aad_check = true
+
+  lifecycle {
+    ignore_changes = [skip_service_principal_aad_check]
+  }
 }
 
 resource "time_sleep" "wait_for_dedicated_workload_roles" {

@@ -34,6 +34,10 @@ resource "azurerm_storage_blob" "frontend_index" {
   })
 
   depends_on = [azurerm_storage_account_static_website.frontend]
+
+  lifecycle {
+    ignore_changes = [source_content]
+  }
 }
 
 resource "azurerm_storage_blob" "frontend_success" {
