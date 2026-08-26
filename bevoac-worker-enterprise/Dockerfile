@@ -1,4 +1,5 @@
 FROM node:24-alpine
+RUN apk add --no-cache --upgrade libcrypto3 libssl3
 
 RUN apk add --no-cache nmap ca-certificates
 WORKDIR /usr/src/app

@@ -1,9 +1,11 @@
 FROM node:24-alpine AS deps
+RUN apk add --no-cache --upgrade libcrypto3 libssl3
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci --no-audit --no-fund
 
 FROM node:24-alpine AS builder
+RUN apk add --no-cache --upgrade libcrypto3 libssl3
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
@@ -11,6 +13,7 @@ COPY . .
 RUN npm run build
 
 FROM node:24-alpine AS runner
+RUN apk add --no-cache --upgrade libcrypto3 libssl3
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
