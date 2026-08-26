@@ -7,6 +7,13 @@ API="$ROOT/bevoac-api-enterprise"
 ARTIFACTS="${V620_RELEASE_ARTIFACTS:-$ROOT/artifacts/v6.2.0-release}"
 PLAN_FILE="${V620_PLAN_FILE:-$ARTIFACTS/terraform-v6.2.0.tfplan}"
 PLAN_SHA_FILE="$PLAN_FILE.sha256"
+
+V620_TERRAFORM_BACKEND_STORAGE="stbevoacprodtfstate"
+V620_TERRAFORM_BACKEND_CONTAINER="tfstate"
+V620_TERRAFORM_BACKEND_KEY="bevoac-prod.tfstate"
+V620_TERRAFORM_SUBSCRIPTION_ID="1f75d3e8-9e7c-4900-815c-44822cb9be01"
+V620_TERRAFORM_TENANT_ID="eebbcba2-8fa7-41fc-9193-77cf53650e76"
+
 mkdir -p "$ARTIFACTS"
 
 need() {
@@ -34,6 +41,63 @@ validate_source() {
   bash scripts/release/test_v6_2_0_local.sh
 }
 
+
+require_prod_terraform_backend() {
+  need az
+
+  local current_subscription
+  local current_tenant
+  local state_exists
+
+  current_subscription="$(az account show --query id -o tsv 2>/dev/null)" || {
+    echo "BLOCKED=azure_cli_not_authenticated" >&2
+    exit 1
+  }
+
+  current_tenant="$(az account show --query tenantId -o tsv 2>/dev/null)" || {
+    echo "BLOCKED=azure_cli_tenant_unavailable" >&2
+    exit 1
+  }
+
+  [[ "$current_subscription" == "$V620_TERRAFORM_SUBSCRIPTION_ID" ]] || {
+    echo "BLOCKED=wrong_azure_subscription" >&2
+    exit 1
+  }
+
+  [[ "$current_tenant" == "$V620_TERRAFORM_TENANT_ID" ]] || {
+    echo "BLOCKED=wrong_azure_tenant" >&2
+    exit 1
+  }
+
+  export ARM_USE_AZUREAD=true
+  export ARM_USE_CLI=true
+  export ARM_SUBSCRIPTION_ID="$V620_TERRAFORM_SUBSCRIPTION_ID"
+  export ARM_TENANT_ID="$V620_TERRAFORM_TENANT_ID"
+
+  state_exists="$(
+    az storage blob exists \
+      --account-name "$V620_TERRAFORM_BACKEND_STORAGE" \
+      --container-name "$V620_TERRAFORM_BACKEND_CONTAINER" \
+      --name "$V620_TERRAFORM_BACKEND_KEY" \
+      --auth-mode login \
+      --only-show-errors \
+      --query exists \
+      -o tsv
+  )" || {
+    echo "BLOCKED=terraform_backend_data_plane_unavailable" >&2
+    exit 1
+  }
+
+  [[ "$state_exists" == "true" ]] || {
+    echo "BLOCKED=authoritative_terraform_state_missing" >&2
+    exit 1
+  }
+
+  echo "TERRAFORM_BACKEND_AUTH=MicrosoftEntraID"
+  echo "TERRAFORM_BACKEND_STATE_PRESENT=true"
+  echo "TERRAFORM_BACKEND_CONTEXT_OK=true"
+}
+
 validate_full() {
   cd "$ROOT"
   ./validate_release.sh --full
@@ -52,8 +116,13 @@ plan() {
     *) echo "BLOCKED=TFVARS_FILE_must_be_absolute" >&2; exit 1 ;;
   esac
 
+  require_prod_terraform_backend
+
   terraform -chdir="$IAC" fmt -check -recursive
-  terraform -chdir="$IAC" init
+  terraform -chdir="$IAC" init \
+    -reconfigure \
+    -input=false \
+    -lockfile=readonly
   terraform -chdir="$IAC" validate
   terraform -chdir="$IAC" plan \
     -input=false \
@@ -95,7 +164,17 @@ apply_plan() {
     echo "BLOCKED=EXPECTED_PLAN_SHA256_mismatch" >&2
     exit 1
   }
-  terraform -chdir="$IAC" apply -input=false -lock-timeout=60s "$PLAN_FILE"
+  require_prod_terraform_backend
+
+  terraform -chdir="$IAC" init \
+    -reconfigure \
+    -input=false \
+    -lockfile=readonly
+
+  terraform -chdir="$IAC" apply \
+    -input=false \
+    -lock-timeout=60s \
+    "$PLAN_FILE"
   echo "APPLIED_PLAN_SHA256=$actual"
   echo "TERRAFORM_APPLIED=true"
 }
