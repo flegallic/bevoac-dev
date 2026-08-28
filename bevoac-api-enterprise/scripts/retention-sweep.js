@@ -43,23 +43,32 @@ function retentionParams({ failedDays, days }) {
 
 async function countCandidates(client, { failedDays, days }) {
   const result = await client.query(
-    `SELECT
-       COUNT(*)::int AS total,
-       COUNT(*) FILTER (WHERE s.status = 'DONE')::int AS done,
-       COUNT(*) FILTER (WHERE s.status = 'FAILED')::int AS failed,
-       jsonb_object_agg(plan_code, count_by_plan) FILTER (WHERE plan_code IS NOT NULL) AS done_by_plan
-     FROM (
-       SELECT lower(coalesce(t.plan_code, 'standard')) AS plan_code, COUNT(*)::int AS count_by_plan
+    `WITH candidates AS (
+       SELECT
+         s.status,
+         lower(coalesce(t.plan_code, 'standard')) AS plan_code
        FROM scans s
-       INNER JOIN tenants t ON t.id = s.tenant_id
-       WHERE s.status = 'DONE'
-         AND s.completed_at < NOW() - ((${retentionCaseSql('t')}) || ' days')::interval
-       GROUP BY lower(coalesce(t.plan_code, 'standard'))
-     ) p
-     RIGHT JOIN scans s ON true
-     LEFT JOIN tenants t ON t.id = s.tenant_id
-     WHERE (s.status = 'DONE' AND s.completed_at < NOW() - ((${retentionCaseSql('t')}) || ' days')::interval)
-        OR (s.status = 'FAILED' AND s.completed_at < NOW() - ($1::int || ' days')::interval)`,
+       LEFT JOIN tenants t ON t.id = s.tenant_id
+       WHERE (s.status = 'DONE' AND s.completed_at < NOW() - ((${retentionCaseSql('t')}) || ' days')::interval)
+          OR (s.status = 'FAILED' AND s.completed_at < NOW() - ($1::int || ' days')::interval)
+     )
+     SELECT
+       COUNT(*)::int AS total,
+       COUNT(*) FILTER (WHERE status = 'DONE')::int AS done,
+       COUNT(*) FILTER (WHERE status = 'FAILED')::int AS failed,
+       COALESCE(
+         (
+           SELECT jsonb_object_agg(p.plan_code, p.count_by_plan)
+           FROM (
+             SELECT c.plan_code, COUNT(*)::int AS count_by_plan
+             FROM candidates c
+             WHERE c.status = 'DONE'
+             GROUP BY c.plan_code
+           ) p
+         ),
+         '{}'::jsonb
+       ) AS done_by_plan
+     FROM candidates`,
     retentionParams({ failedDays, days })
   );
   return result.rows[0] || { total: 0, done: 0, failed: 0, done_by_plan: {} };
