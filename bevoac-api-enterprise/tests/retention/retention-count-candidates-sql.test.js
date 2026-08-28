@@ -4,6 +4,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const {
   countCandidates,
+  deleteExpiredScans,
   runRetentionSweep
 } = require('../../scripts/retention-sweep');
 
@@ -69,8 +70,24 @@ test(
 
     assert.deepEqual(
       params,
-      [90, 180, 30, 90, 180, 180, 180]
+      [90, 180, 30, 90, 180, 180]
     );
+
+    const placeholderNumbers = [
+      ...new Set(
+        [...sql.matchAll(/\$(\d+)/g)].map(
+          (match) => Number(match[1])
+        )
+      )
+    ].sort((left, right) => left - right);
+
+    assert.deepEqual(
+      placeholderNumbers,
+      [1, 2, 3, 4, 5, 6]
+    );
+
+    assert.match(sql, /ELSE\s+\$2::int/i);
+    assert.doesNotMatch(sql, /\$7::int/i);
 
     assert.deepEqual(result, {
       total: 4,
@@ -148,5 +165,50 @@ test(
       ),
       false
     );
+  }
+);
+
+test(
+  'deleteExpiredScans uses the same contiguous typed parameter contract',
+  async () => {
+    const calls = [];
+
+    const client = {
+      async query(sql, params) {
+        calls.push({ sql, params });
+        return { rowCount: 0 };
+      }
+    };
+
+    const deleted = await deleteExpiredScans(client, {
+      failedDays: 90,
+      days: retentionDays
+    });
+
+    assert.equal(deleted, 0);
+    assert.equal(calls.length, 1);
+
+    const [{ sql, params }] = calls;
+
+    assert.deepEqual(
+      params,
+      [90, 180, 30, 90, 180, 180]
+    );
+
+    const placeholderNumbers = [
+      ...new Set(
+        [...sql.matchAll(/\$(\d+)/g)].map(
+          (match) => Number(match[1])
+        )
+      )
+    ].sort((left, right) => left - right);
+
+    assert.deepEqual(
+      placeholderNumbers,
+      [1, 2, 3, 4, 5, 6]
+    );
+
+    assert.match(sql, /ELSE\s+\$2::int/i);
+    assert.doesNotMatch(sql, /\$7::int/i);
   }
 );

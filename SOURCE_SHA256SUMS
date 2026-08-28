@@ -74,7 +74,7 @@ b34196714a6d79302e75a6f4c809969cce56234c367b38cea55aa1d09b6dc1c6  bevoac-api-ent
 d9fedc954876028ef11e791fbfaa19b831cf691fe162c2e84d7b4c9e8afd9c2d  bevoac-api-enterprise/scripts/register-tenant-scope.js
 47a9d3b469bb1d51698d885f32b1187e52ec03edd3ccab7eadb442c4dfddedc8  bevoac-api-enterprise/scripts/register-web-target.js
 9d63cd628167adb8d84aa9eb781c14ae238e060306f223d3b10cd00d3c50ce73  bevoac-api-enterprise/scripts/reset-db.js
-34a47121e9f6039b392ab825857473c2e086aa77d88f80ffdec2d2bbe92dd9ff  bevoac-api-enterprise/scripts/retention-sweep.js
+7d91e80e1965b4a2143651f430c1721ff4e14be5fbd9ee85ac239e23ecb3ea6b  bevoac-api-enterprise/scripts/retention-sweep.js
 d86103c788e43920c47b9c77c164b715a6dfb68f865338ec8013be513335c719  bevoac-api-enterprise/scripts/run-tests.js
 b0bf1df27d581d98056c92215cd6172340dbb2db1509e473854f6ca87fdae8c0  bevoac-api-enterprise/scripts/runtime-deps-check.js
 8555f40657aa0e9346cd7dce46e55a8cf101dd3b383f486bf3199d9575244221  bevoac-api-enterprise/scripts/sync-contracts.js
@@ -123,7 +123,7 @@ b12193217f016e1426972f1a6d0715c5eb7bd6b2988f076e27121e1bc8a65dc5  bevoac-api-ent
 15f8c073cc6dc12a0d1c33049473dec4c29090baeba753252c5c6f2d5d6125f0  bevoac-api-enterprise/tests/enterprise-hardening.test.js
 9b0c82498214d61a8ea0dd85f3e1cd2a6ac32fd73222f12a8df0d12e628638c0  bevoac-api-enterprise/tests/integration/public-api-postgres.integration.test.js
 4ff834f54307c123cea58ffb32b40ab458d145d08842bf5285ac4584cc6c3d02  bevoac-api-enterprise/tests/pdf/kpi-scorecard-pdf.test.js
-e18d8ebd3b306ff7b5f3f2f07632704ef385c1077705f460ea620f691968c278  bevoac-api-enterprise/tests/retention/retention-count-candidates-sql.test.js
+035f9cc1c49f2aa35fbc2a9d715a58120327292cbb0e4a3b955e9cb7714150b8  bevoac-api-enterprise/tests/retention/retention-count-candidates-sql.test.js
 95285496460b87acfce986aed49e7e0da00eff4a2cb6ad4f2ba987e5e307019d  bevoac-api-enterprise/tests/retention/retention-policy.test.js
 83e15470d329c0ee2a7a3446065a7e41ce0e4cc3b5b4e5bf9aa3ed4ae76e6760  bevoac-api-enterprise/tests/security/admin-billing-schema-v620.test.js
 cef622793d772f425ac70895bc0cc94b5118c812ef92a32330125af3bb8dffc8  bevoac-api-enterprise/tests/security/admin-role-v620.test.js
