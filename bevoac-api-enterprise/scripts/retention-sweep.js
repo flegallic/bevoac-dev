@@ -33,12 +33,12 @@ function retentionCaseSql(tableAlias = 't') {
     WHEN 'standard' THEN $4::int
     WHEN 'business' THEN $5::int
     WHEN 'payg' THEN $6::int
-    ELSE $7::int
+    ELSE $2::int
   END`;
 }
 
 function retentionParams({ failedDays, days }) {
-  return [failedDays, days.fallback, days.free, days.standard, days.business, days.payg, days.fallback];
+  return [failedDays, days.fallback, days.free, days.standard, days.business, days.payg];
 }
 
 async function countCandidates(client, { failedDays, days }) {
