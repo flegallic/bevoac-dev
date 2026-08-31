@@ -74,7 +74,18 @@ output "db_admin_public_ip" {
 }
 
 output "onboarding_success_url" {
-  value = local.onboarding_success_url
+  description = "External success URL injected into the API. Empty in api mode so the runtime uses /v1/onboarding/azure/result."
+  value       = local.onboarding_success_url
+}
+
+output "onboarding_result_mode" {
+  description = "Effective onboarding result mode after compatibility fallback resolution."
+  value       = local.onboarding_result_mode_effective
+}
+
+output "onboarding_result_target" {
+  description = "Effective callback result target: the API result path or the retained static success URL."
+  value       = local.onboarding_result_target
 }
 
 output "retention_job_name" {

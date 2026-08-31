@@ -73,8 +73,19 @@ variable "deploy_container_apps" {
 
 variable "deploy_onboarding_frontend" {
   type        = bool
-  description = "Deploy the legacy static onboarding helper. It is demo-only and must remain false for the V6.2 controlled-production profile."
+  description = "Deploy or retain the legacy static onboarding helper. It remains demo-only and may be kept during a controlled rollback window."
   default     = false
+}
+
+variable "onboarding_result_mode" {
+  type        = string
+  description = "Active onboarding callback result target. Use api for the credential-free API result page or legacy_static for the retained static success page."
+  default     = "legacy_static"
+
+  validation {
+    condition     = contains(["api", "legacy_static"], lower(trimspace(var.onboarding_result_mode)))
+    error_message = "onboarding_result_mode must be either 'api' or 'legacy_static'."
+  }
 }
 
 variable "frontend_brand_name" {

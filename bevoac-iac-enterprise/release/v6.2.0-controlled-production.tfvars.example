@@ -7,7 +7,10 @@ release_security_profile = "controlled_production"
 
 # V7 private networking is deliberately deferred.
 
-# Legacy static onboarding helper is not a production portal and is disabled.
+# Controlled production uses the credential-free API result page. The legacy
+# static helper remains disabled by default; a transition overlay may retain it
+# temporarily for rollback without making it the active result target.
+onboarding_result_mode     = "api"
 deploy_onboarding_frontend = false
 
 enable_private_endpoints      = false

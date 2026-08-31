@@ -36,14 +36,26 @@ required_output() {
   printf '%s' "$value"
 }
 
+optional_output() {
+  local name="$1"
+  local value
+  value="$(terraform output -raw "$name" 2>/dev/null || true)"
+  if [ "$value" = "null" ]; then
+    value=""
+  fi
+  printf '%s' "$value"
+}
+
 RG="$(required_output resource_group_name)"
 KV_NAME="$(required_output key_vault_name)"
 PG_HOST="$(required_output postgres_fqdn)"
 SB_FQ_NAMESPACE="$(required_output service_bus_namespace)"
-FRONTEND_URL="$(required_output frontend_url)"
+FRONTEND_URL="$(optional_output frontend_url)"
 API_BASE_URL="$(required_output onboarding_redirect_uri)"
 ONBOARDING_REDIRECT_URI="$(required_output onboarding_redirect_callback_uri)"
-ONBOARDING_FRONTEND_SUCCESS_URL="$(required_output onboarding_success_url)"
+ONBOARDING_FRONTEND_SUCCESS_URL="$(optional_output onboarding_success_url)"
+ONBOARDING_RESULT_MODE="$(optional_output onboarding_result_mode)"
+ONBOARDING_RESULT_TARGET="$(optional_output onboarding_result_target)"
 
 FRONTEND_BASE_URL="${FRONTEND_URL%/}"
 SB_NAMESPACE="${SB_FQ_NAMESPACE%%.servicebus.windows.net}"
@@ -141,7 +153,10 @@ cat <<MSG
 API_PUBLIC_BASE_URL=$API_BASE_URL
 ONBOARDING_REDIRECT_URI=$ONBOARDING_REDIRECT_URI
 ONBOARDING_FRONTEND_SUCCESS_URL=$ONBOARDING_FRONTEND_SUCCESS_URL
+ONBOARDING_RESULT_MODE=$ONBOARDING_RESULT_MODE
+ONBOARDING_RESULT_TARGET=$ONBOARDING_RESULT_TARGET
 
 Use API_PUBLIC_BASE_URL in the frontend API field.
+When ONBOARDING_FRONTEND_SUCCESS_URL is empty, the API uses /v1/onboarding/azure/result.
 Register ONBOARDING_REDIRECT_URI in Microsoft Entra App Registration.
 MSG
