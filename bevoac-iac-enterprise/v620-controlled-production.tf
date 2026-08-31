@@ -38,6 +38,8 @@ resource "terraform_data" "v620_controlled_production_preconditions" {
     monitoring_required               = var.require_production_monitoring
     dedicated_admin_api               = var.enable_dedicated_admin_api
     legacy_static_onboarding_frontend = var.deploy_onboarding_frontend
+    onboarding_result_mode_requested  = local.onboarding_result_mode_requested
+    onboarding_result_mode_effective  = local.onboarding_result_mode_effective
   }
 
   lifecycle {
@@ -98,8 +100,8 @@ resource "terraform_data" "v620_controlled_production_preconditions" {
 
 
     precondition {
-      condition     = !local.controlled_production_profile || !var.deploy_onboarding_frontend
-      error_message = "V6.2 controlled production forbids the legacy static onboarding frontend. Use the API onboarding workflow and credential-free API result page."
+      condition     = !local.controlled_production_profile || local.onboarding_result_mode_requested == "api"
+      error_message = "V6.2 controlled production requires the credential-free API onboarding result page. Legacy static storage may be retained for rollback, but it must not be the active callback result target."
     }
 
     precondition {

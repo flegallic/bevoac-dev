@@ -11,13 +11,14 @@ Frontend statique de démonstration client. Il ne construit pas lui-même l'URL 
 5. Le navigateur redirige vers Microsoft.
 6. Microsoft retourne vers `https://<api_fqdn>/v1/onboarding/azure/callback`.
 7. L'API vérifie `state`, TTL, session, `api_key_id`, admin consent, puis liste les subscriptions accessibles.
-8. L'API alimente `tenant_azure_scopes` et redirige vers `success.html`.
+8. L'API alimente `tenant_azure_scopes`, puis redirige vers la page API `/v1/onboarding/azure/result` en mode `api`, ou vers `success.html` en mode `legacy_static`.
 
 ## Prérequis
 
 - `api_public_base_url` doit être renseigné avant la démo client.
 - L'URI `https://<api_fqdn>/v1/onboarding/azure/callback` doit être déclarée dans l'app registration Microsoft Entra.
-- `ONBOARDING_FRONTEND_SUCCESS_URL` doit pointer vers `success.html`.
+- En mode `api`, `ONBOARDING_FRONTEND_SUCCESS_URL` reste vide et l'API utilise `/v1/onboarding/azure/result`.
+- En mode `legacy_static`, `ONBOARDING_FRONTEND_SUCCESS_URL` pointe vers `success.html` et son origine doit rester dans `ALLOWED_ORIGINS`.
 - Le service principal Bevoac doit recevoir le RBAC nécessaire chez le client après consentement.
 
 ## Sécurité

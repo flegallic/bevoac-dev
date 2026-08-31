@@ -416,7 +416,7 @@ def validate_iac(root: Path) -> None:
     )
     require(
         read(iac / "v620-controlled-production.tf"),
-        ["controlled_production", "local_auth", "key_vault_ip_rules_effective", "monitoring", "!var.deploy_onboarding_frontend"],
+        ["controlled_production", "local_auth", "key_vault_ip_rules_effective", "monitoring", "onboarding_result_mode_requested", 'local.onboarding_result_mode_requested == "api"'],
         "controlled production profile",
     )
     require(
@@ -441,7 +441,7 @@ def validate_iac(root: Path) -> None:
     )
     require(
         read(iac / "release/v6.2.0-controlled-production.tfvars.example"),
-        ["release_security_profile = \"controlled_production\"", "service_bus_local_auth_enabled", "enable_apim_backend_boundary", "monitor_notification_email", "deploy_onboarding_frontend = false"],
+        ["release_security_profile = \"controlled_production\"", "service_bus_local_auth_enabled", "enable_apim_backend_boundary", "monitor_notification_email", "onboarding_result_mode", "deploy_onboarding_frontend"],
         "V6.2 profile",
     )
 

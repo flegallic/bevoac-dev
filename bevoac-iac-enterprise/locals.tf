@@ -7,12 +7,17 @@ locals {
   api_container_app_name    = "ca-${local.name_suffix}-api"
   worker_container_app_name = "ca-${local.name_suffix}-worker"
 
+  onboarding_result_mode_requested = lower(trimspace(var.onboarding_result_mode))
+
   frontend_origin           = var.deploy_onboarding_frontend ? trimsuffix(try(azurerm_storage_account.frontend[0].primary_web_endpoint, ""), "/") : ""
   allowed_origins_effective = distinct(compact(concat(var.allowed_origins, local.frontend_origin != "" ? [local.frontend_origin] : [])))
   allowed_origins_csv       = join(",", local.allowed_origins_effective)
 
-  onboarding_base_url    = var.frontend_custom_domain != "" ? "https://${var.frontend_custom_domain}" : local.frontend_origin
-  onboarding_success_url = local.onboarding_base_url != "" ? "${local.onboarding_base_url}/success.html" : ""
+  onboarding_base_url              = var.frontend_custom_domain != "" ? "https://${var.frontend_custom_domain}" : local.frontend_origin
+  onboarding_legacy_success_url    = local.onboarding_base_url != "" ? "${local.onboarding_base_url}/success.html" : ""
+  onboarding_result_mode_effective = local.onboarding_result_mode_requested == "legacy_static" && local.onboarding_legacy_success_url == "" ? "api" : local.onboarding_result_mode_requested
+  onboarding_success_url           = local.onboarding_result_mode_effective == "legacy_static" ? local.onboarding_legacy_success_url : ""
+  onboarding_result_target         = local.onboarding_result_mode_effective == "api" ? "/v1/onboarding/azure/result" : local.onboarding_legacy_success_url
 
   # Operator-provided public API base URL.
   # Use only for a stable custom domain, for example https://api-poc.bevoac.fr.
