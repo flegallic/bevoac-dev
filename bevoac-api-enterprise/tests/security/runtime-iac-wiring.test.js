@@ -91,3 +91,20 @@ test('network and Service Bus hardening are explicit staged release profiles', (
   assert.match(main, /ip_rules\s*=\s*local\.key_vault_ip_rules_effective/);
   assert.match(main, /virtual_network_subnet_ids\s*=\s*var\.key_vault_virtual_network_subnet_ids/);
 });
+
+test('API revision suffix is emitted only for a distinct candidate', () => {
+  const apps = read('bevoac-iac-enterprise/container-apps.tf');
+
+  assert.match(
+    apps,
+    /api_candidate_revision_requested\s*=\s*\([\s\S]{0,180}var\.api_revision_suffix\s*!=\s*""[\s\S]{0,180}var\.api_revision_suffix\s*!=\s*var\.api_stable_revision_suffix[\s\S]{0,80}\)/,
+  );
+  assert.match(
+    apps,
+    /for_each\s*=\s*var\.api_stable_revision_suffix\s*!=\s*""\s*&&\s*local\.api_candidate_revision_requested\s*\?\s*\[1\]\s*:\s*\[\]/,
+  );
+  assert.match(
+    apps,
+    /revision_suffix\s*=\s*local\.api_candidate_revision_requested\s*\?\s*var\.api_revision_suffix\s*:\s*null/,
+  );
+});
