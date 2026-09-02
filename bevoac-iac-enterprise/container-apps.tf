@@ -47,6 +47,15 @@ locals {
     { name = "APIM_BACKEND_SHARED_SECRET", secret_name = "apim-backend-token" }
   ] : [])
 
+  # A revision suffix is emitted only while a distinct candidate is being
+  # created. Once stable and candidate converge after promotion, omitting the
+  # template suffix prevents unrelated plans from requesting a duplicate API
+  # revision while retaining explicit traffic pinning to the stable revision.
+  api_candidate_revision_requested = (
+    var.api_revision_suffix != "" &&
+    var.api_revision_suffix != var.api_stable_revision_suffix
+  )
+
   worker_env_plain = [
     { name = "NODE_ENV", value = "production" },
     { name = "LOG_LEVEL", value = "info" },
@@ -191,7 +200,7 @@ resource "azurerm_container_app" "api" {
 
     # Release: create the candidate at zero percent until the rollout gate.
     dynamic "traffic_weight" {
-      for_each = var.api_stable_revision_suffix != "" && var.api_revision_suffix != var.api_stable_revision_suffix ? [1] : []
+      for_each = var.api_stable_revision_suffix != "" && local.api_candidate_revision_requested ? [1] : []
       content {
         percentage      = 0
         latest_revision = false
@@ -201,7 +210,7 @@ resource "azurerm_container_app" "api" {
   }
 
   template {
-    revision_suffix = var.api_revision_suffix != "" ? var.api_revision_suffix : null
+    revision_suffix = local.api_candidate_revision_requested ? var.api_revision_suffix : null
     min_replicas    = 1
     max_replicas    = 5
 

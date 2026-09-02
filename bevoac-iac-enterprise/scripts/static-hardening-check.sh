@@ -109,6 +109,12 @@ require_fixed container-apps.tf 'custom_rule_type = "azure-servicebus"' "Worker 
 grep -Eq 'identity_id[[:space:]]*=[[:space:]]*azurerm_user_assigned_identity.worker.id' container-apps.tf || fail "Worker scale rule must use Managed Identity."
 pass "API and worker runtime identities are explicit."
 
+require_fixed container-apps.tf 'api_candidate_revision_requested = (' "API candidate revision predicate is missing."
+require_fixed container-apps.tf 'var.api_revision_suffix != var.api_stable_revision_suffix' "API candidate revision predicate must require a suffix distinct from stable."
+require_fixed container-apps.tf 'for_each = var.api_stable_revision_suffix != "" && local.api_candidate_revision_requested ? [1] : []' "API candidate traffic must be emitted only for a distinct non-empty candidate."
+require_fixed container-apps.tf 'revision_suffix = local.api_candidate_revision_requested ? var.api_revision_suffix : null' "API template revision suffix must be omitted in steady state."
+pass "API revision creation and steady-state traffic semantics are explicit."
+
 for file in container-apps.tf outbox-publisher.tf retention-job.tf; do
   require_fixed "$file" 'var.retain_legacy_containerapp_rollback_compatibility' "$file does not stage legacy Container Apps rollback compatibility."
 done
