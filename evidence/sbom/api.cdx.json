@@ -2,7 +2,7 @@
   "$schema": "https://cyclonedx.org/schema/bom-1.6.schema.json",
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:c2601cdc-a95b-5247-91b3-80b646f6efda",
+  "serialNumber": "urn:uuid:4da98fa6-bcc1-5036-b98e-797319b57222",
   "version": 1,
   "metadata": {
     "tools": {
@@ -3275,10 +3275,10 @@
     },
     {
       "type": "library",
-      "bom-ref": "urn:bevoac:npm:d8d132c98651e8bc710ab30881c5b981d81b42641884537c0f54a6e11b0bdcb5",
+      "bom-ref": "urn:bevoac:npm:82046c6aab5914dd36650571e8b150d8fed74ef6bd6e7b89a48d0339fbffdcf6",
       "name": "fast-uri",
-      "version": "4.1.2",
-      "purl": "pkg:npm/fast-uri@4.1.2",
+      "version": "4.1.3",
+      "purl": "pkg:npm/fast-uri@4.1.3",
       "properties": [
         {
           "name": "bevoac:npm:lock-path",
@@ -3296,7 +3296,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "4f21a605c6c34d95dc6f6723e4c57cf43ac5e360cabdbdf2e430d4361f7988ef8831e033324552c4ad4f651ad122973dca0f14d8684675ba1f35ad0b4bf6b807"
+          "content": "efeef61babcbb7b8e335ab3c4a64804f1daa7b24488f17aa3b78b82249834f196a61944a00d84e7b56e7a2f729e16666bec62ba7ad16caa3f21ea811897d325f"
         }
       ],
       "licenses": [
@@ -3309,7 +3309,7 @@
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/fast-uri/-/fast-uri-4.1.2.tgz"
+          "url": "https://registry.npmjs.org/fast-uri/-/fast-uri-4.1.3.tgz"
         }
       ]
     },
@@ -3395,10 +3395,10 @@
     },
     {
       "type": "library",
-      "bom-ref": "urn:bevoac:npm:5dec6cf560850d257ba2d014820c52c481e60254f091087b4cb66a79cc36f15a",
+      "bom-ref": "urn:bevoac:npm:2c099283b9a4b20706dbd030905bab882f16600dfe8bce64119742c6fbcf5f11",
       "name": "fast-uri",
-      "version": "3.1.5",
-      "purl": "pkg:npm/fast-uri@3.1.5",
+      "version": "3.1.6",
+      "purl": "pkg:npm/fast-uri@3.1.6",
       "properties": [
         {
           "name": "bevoac:npm:lock-path",
@@ -3416,7 +3416,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "807c00d4ef4b0c870aba730a84e6d2fc78a6c2d7a13b59cf50408a02ee53a4a81a3b5f5f716125e1b96259ed635b1545bc85f3b498e34382fc5d0d4453d7fb27"
+          "content": "ec871a975bc510caf4a276d5cc40c8ade336d88e24856f9fcf240fc2f005581a758b076c852651b0be238d1bcf1bd24fd6e8aa30746da3e614e91dbf0b30f3e5"
         }
       ],
       "licenses": [
@@ -3429,7 +3429,7 @@
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.5.tgz"
+          "url": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.6.tgz"
         }
       ]
     },
@@ -3555,10 +3555,10 @@
     },
     {
       "type": "library",
-      "bom-ref": "urn:bevoac:npm:74a68f0f38f84da5050f4c505cc85c723cbcb27f688e7231a61e89b9e42e5dd2",
+      "bom-ref": "urn:bevoac:npm:6ab83f42352ccc6f9eb661ad3a7f443bcb16fb9b1faf9d0cd896279e554ab9df",
       "name": "fastify",
-      "version": "5.10.0",
-      "purl": "pkg:npm/fastify@5.10.0",
+      "version": "5.12.1",
+      "purl": "pkg:npm/fastify@5.12.1",
       "properties": [
         {
           "name": "bevoac:npm:lock-path",
@@ -3576,7 +3576,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "03d2f4ce2b961901e010456017775abd0f6f6c3f7722e5fe968d88b316a9426bb96ff63fca79fd9bd2b9247b7d76fc895ce15ce62374664e461c43aa9f38568e"
+          "content": "1568beb50bf0c51fcf7915fb6769a17c4179a332778e7f5ab2289c973297352cc9447018714f76e1a20e280747149f9820a89e87772aaf523008ebd3af8d41dd"
         }
       ],
       "licenses": [
@@ -3589,7 +3589,7 @@
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/fastify/-/fastify-5.10.0.tgz"
+          "url": "https://registry.npmjs.org/fastify/-/fastify-5.12.1.tgz"
         }
       ]
     },
@@ -6948,10 +6948,10 @@
     },
     {
       "type": "library",
-      "bom-ref": "urn:bevoac:npm:62f3c5907d68fb983a069d66064cf1b86cfe21ac720f567efb914d4643db5a1c",
+      "bom-ref": "urn:bevoac:npm:873be23e44cfd2f623b87628296728ab3178506592ea480a9bd82c431037b8c7",
       "name": "process-warning",
-      "version": "5.0.0",
-      "purl": "pkg:npm/process-warning@5.0.0",
+      "version": "5.1.0",
+      "purl": "pkg:npm/process-warning@5.1.0",
       "properties": [
         {
           "name": "bevoac:npm:lock-path",
@@ -6969,7 +6969,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "6b7f6df40a47371d8be3e1c19d02aac711cdb35afb285f889ed77c43f8356d487aab4588a7dbe83d727fc748fe64be39285d6925df7eab68cb21131fbc4b2190"
+          "content": "8d049a547b0f82dcb0eb47b5ad0fc0fbf02b3c48ff4bca52fef167c866bf818157aca93fe91b83928a950d0e4d2393264b4d7af7c96d9409343680c134bba347"
         }
       ],
       "licenses": [
@@ -6982,7 +6982,7 @@
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/process-warning/-/process-warning-5.0.0.tgz"
+          "url": "https://registry.npmjs.org/process-warning/-/process-warning-5.1.0.tgz"
         }
       ]
     },
@@ -8676,8 +8676,8 @@
         "urn:bevoac:npm:2b6d133d8962c670019eac1f30c28b889a10b89db8d83e88cf305745b56541a2",
         "urn:bevoac:npm:2ed3f33f306eda584a4e8aab073645922024ed5d6bb33f60a6bcd9285554c686",
         "urn:bevoac:npm:320b38f8e90870bad76f6ce7a363daa178f744029e91d69be9a235b8c52b69a3",
+        "urn:bevoac:npm:6ab83f42352ccc6f9eb661ad3a7f443bcb16fb9b1faf9d0cd896279e554ab9df",
         "urn:bevoac:npm:6db944a8205b7129df79a52a7f0ca095598f99b725c41cf2241d93e6ce6ea516",
-        "urn:bevoac:npm:74a68f0f38f84da5050f4c505cc85c723cbcb27f688e7231a61e89b9e42e5dd2",
         "urn:bevoac:npm:81858345a267156102d6ff5d58d2d94f6733d8afe6100cca999244b7ba99295e",
         "urn:bevoac:npm:9898b06bed0d6388340da79952b1332a3ce62fc093c1a039fb4cc428672886d1",
         "urn:bevoac:npm:b7dc7a54e1321aebb18fbe4e689d0652f49044df41b1c162748c7c3d38ca3ed2",
@@ -8838,7 +8838,7 @@
     {
       "ref": "urn:bevoac:npm:c4c292a6d4a0fe39ca14edb7f6d37442d2de635260dd30cac0013a608e696390",
       "dependsOn": [
-        "urn:bevoac:npm:5dec6cf560850d257ba2d014820c52c481e60254f091087b4cb66a79cc36f15a",
+        "urn:bevoac:npm:2c099283b9a4b20706dbd030905bab882f16600dfe8bce64119742c6fbcf5f11",
         "urn:bevoac:npm:995ea6d01bc5f1323a37115fe30b054eb75e718c80a27f098a0726a76a68423e",
         "urn:bevoac:npm:b281da07b4a91f4fdfd9caf6b8f88f3154be7b05628f7c5e18622692c6548885"
       ]
@@ -8984,8 +8984,8 @@
     {
       "ref": "urn:bevoac:npm:995ea6d01bc5f1323a37115fe30b054eb75e718c80a27f098a0726a76a68423e",
       "dependsOn": [
+        "urn:bevoac:npm:2c099283b9a4b20706dbd030905bab882f16600dfe8bce64119742c6fbcf5f11",
         "urn:bevoac:npm:3210868558632b164eb1a609663d02cf316e171c17b1d5044859c962288b970f",
-        "urn:bevoac:npm:5dec6cf560850d257ba2d014820c52c481e60254f091087b4cb66a79cc36f15a",
         "urn:bevoac:npm:ad8f8a815edfa42f4c8ce8ae3a3dc266117e4f4cc82296594b6e0b0150ccc937",
         "urn:bevoac:npm:be9836bdbabfa4e5d82d1b50b43f06bad9c4a0aad7a38fd2050cfd9c5916f36f"
       ]
@@ -9208,14 +9208,14 @@
       "dependsOn": [
         "urn:bevoac:npm:04e22682b11784757fd2a6d2be2fc7e1cfdaa896914230cad685ae6e4cb144b0",
         "urn:bevoac:npm:0d97b99adcea64f3332976ca7ea7dc923e3ccbc21c1db1f58ef407b257ebb247",
+        "urn:bevoac:npm:82046c6aab5914dd36650571e8b150d8fed74ef6bd6e7b89a48d0339fbffdcf6",
         "urn:bevoac:npm:995ea6d01bc5f1323a37115fe30b054eb75e718c80a27f098a0726a76a68423e",
         "urn:bevoac:npm:b281da07b4a91f4fdfd9caf6b8f88f3154be7b05628f7c5e18622692c6548885",
-        "urn:bevoac:npm:d8d132c98651e8bc710ab30881c5b981d81b42641884537c0f54a6e11b0bdcb5",
         "urn:bevoac:npm:f866d9cc9ecaf6060ab72f797e6f4d3f91bc7f45132398a278fd00abd6fc95d1"
       ]
     },
     {
-      "ref": "urn:bevoac:npm:d8d132c98651e8bc710ab30881c5b981d81b42641884537c0f54a6e11b0bdcb5",
+      "ref": "urn:bevoac:npm:82046c6aab5914dd36650571e8b150d8fed74ef6bd6e7b89a48d0339fbffdcf6",
       "dependsOn": []
     },
     {
@@ -9229,7 +9229,7 @@
       "dependsOn": []
     },
     {
-      "ref": "urn:bevoac:npm:5dec6cf560850d257ba2d014820c52c481e60254f091087b4cb66a79cc36f15a",
+      "ref": "urn:bevoac:npm:2c099283b9a4b20706dbd030905bab882f16600dfe8bce64119742c6fbcf5f11",
       "dependsOn": []
     },
     {
@@ -9255,7 +9255,7 @@
       "dependsOn": []
     },
     {
-      "ref": "urn:bevoac:npm:74a68f0f38f84da5050f4c505cc85c723cbcb27f688e7231a61e89b9e42e5dd2",
+      "ref": "urn:bevoac:npm:6ab83f42352ccc6f9eb661ad3a7f443bcb16fb9b1faf9d0cd896279e554ab9df",
       "dependsOn": [
         "urn:bevoac:npm:0490203582adf9d5554f94acdde20c12b1aee5b17288799e11a90b4505c1cc21",
         "urn:bevoac:npm:04e22682b11784757fd2a6d2be2fc7e1cfdaa896914230cad685ae6e4cb144b0",
@@ -9264,8 +9264,8 @@
         "urn:bevoac:npm:4639f168d849001e533a30cba43c2ed36f652e7efa15f0279d454d0043139a34",
         "urn:bevoac:npm:4cbcfe741e71895843c77b008a51061df961f64ed2553c17c0cf73012fffc1ae",
         "urn:bevoac:npm:5e7e671d17172c655e061cfc471124e875453d608bf24e039b8e3698de146d1b",
-        "urn:bevoac:npm:62f3c5907d68fb983a069d66064cf1b86cfe21ac720f567efb914d4643db5a1c",
         "urn:bevoac:npm:76555b61c2640474d5980f6ce880d3b3cc059a4a837418036ed9e6eb7547bba0",
+        "urn:bevoac:npm:873be23e44cfd2f623b87628296728ab3178506592ea480a9bd82c431037b8c7",
         "urn:bevoac:npm:afc00dc43c93e3f9468a473280dd30a59c765d8085e09865b6ed9bac12020f32",
         "urn:bevoac:npm:b23c860092b4503d8d26bf88e9b1b4bb6e09a144145d27c98bf0c4abe1f2abba",
         "urn:bevoac:npm:c4c292a6d4a0fe39ca14edb7f6d37442d2de635260dd30cac0013a608e696390",
@@ -9483,7 +9483,7 @@
       "ref": "urn:bevoac:npm:d05428f807e718f74f533c3ae17ed639f4567488fe77f5d430e47b9f2a585287",
       "dependsOn": [
         "urn:bevoac:npm:04e22682b11784757fd2a6d2be2fc7e1cfdaa896914230cad685ae6e4cb144b0",
-        "urn:bevoac:npm:5dec6cf560850d257ba2d014820c52c481e60254f091087b4cb66a79cc36f15a",
+        "urn:bevoac:npm:2c099283b9a4b20706dbd030905bab882f16600dfe8bce64119742c6fbcf5f11",
         "urn:bevoac:npm:a44fb5e07935d0ac856eb62ee37ce2559da9fe4f85896a517b55b4d97c04273a"
       ]
     },
@@ -9695,7 +9695,7 @@
         "urn:bevoac:npm:0b76f5c8f39c65389c26e58ce83589ea2e5cabae79a1d1994c1b64a826de6d88",
         "urn:bevoac:npm:1f0faab08ce34c3f1437fb3c37a2b42ba66c504e1555b1907e809fd62e7b23a8",
         "urn:bevoac:npm:44ae1f21ee28b3d330dd2fd5aea63a527b2049a4b02ffe9b7833d60695d93e6e",
-        "urn:bevoac:npm:62f3c5907d68fb983a069d66064cf1b86cfe21ac720f567efb914d4643db5a1c",
+        "urn:bevoac:npm:873be23e44cfd2f623b87628296728ab3178506592ea480a9bd82c431037b8c7",
         "urn:bevoac:npm:8ebc6ad3badf0406b4d80b1c14ab43c4f4e5666fe1b69a74aa0561fb1d823d1f",
         "urn:bevoac:npm:9409093598a885323c8bc9aeafb565df9c4b85dc7712f39281da10b7d8b922e0",
         "urn:bevoac:npm:a162c4072d42528b9eeaa08065ac454c9c3412673b67351ca241ebf2a7a72c7f",
@@ -9764,7 +9764,7 @@
       "dependsOn": []
     },
     {
-      "ref": "urn:bevoac:npm:62f3c5907d68fb983a069d66064cf1b86cfe21ac720f567efb914d4643db5a1c",
+      "ref": "urn:bevoac:npm:873be23e44cfd2f623b87628296728ab3178506592ea480a9bd82c431037b8c7",
       "dependsOn": []
     },
     {

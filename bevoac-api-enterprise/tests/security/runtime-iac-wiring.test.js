@@ -108,3 +108,44 @@ test('API revision suffix is emitted only for a distinct candidate', () => {
     /revision_suffix\s*=\s*local\.api_candidate_revision_requested\s*\?\s*var\.api_revision_suffix\s*:\s*null/,
   );
 });
+
+test('monitoring alert cardinality is known before Action Group creation', () => {
+  const monitoring = read('bevoac-iac-enterprise/monitoring-v620.tf');
+  const metrics = read('bevoac-iac-enterprise/monitor-alerts.tf');
+  const outputs = read('bevoac-iac-enterprise/outputs.tf');
+
+  assert.match(
+    monitoring,
+    /monitoring_notification_channel_configured\s*=\s*\([\s\S]{0,220}trimspace\(var\.monitor_action_group_id\)\s*!=\s*""[\s\S]{0,220}trimspace\(var\.monitor_notification_email\)\s*!=\s*""[\s\S]{0,80}\)/,
+  );
+
+  assert.equal(
+    [...monitoring.matchAll(/var\.enable_baseline_activity_alerts\s*&&\s*local\.monitoring_notification_channel_configured\s*\?\s*1\s*:\s*0/g)].length,
+    3,
+  );
+  assert.equal(
+    [...metrics.matchAll(/local\.monitoring_notification_channel_configured\s*\?\s*1\s*:\s*0/g)].length,
+    5,
+  );
+  assert.equal(
+    [...monitoring.matchAll(/action_group_id\s*=\s*local\.monitor_action_group_id_effective/g)].length,
+    3,
+  );
+  assert.equal(
+    [...metrics.matchAll(/action_group_id\s*=\s*local\.monitor_action_group_id_effective/g)].length,
+    5,
+  );
+
+  assert.doesNotMatch(
+    monitoring,
+    /count\s*=.*local\.monitor_action_group_id_effective\s*!=\s*""/,
+  );
+  assert.doesNotMatch(
+    metrics,
+    /count\s*=.*local\.monitor_action_group_id_effective\s*!=\s*""/,
+  );
+  assert.match(
+    outputs,
+    /output\s+"monitor_action_group_id"\s*\{[\s\S]{0,220}value\s*=\s*local\.monitor_action_group_id_effective/,
+  );
+});

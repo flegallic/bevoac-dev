@@ -42,7 +42,7 @@
   "bevoacReleaseRevision": "R2.1",
   "overrides": {
     "ajv": {
-      "fast-uri": "3.1.5"
+      "fast-uri": "3.1.6"
     },
     "fast-xml-parser": "5.10.1"
   },
