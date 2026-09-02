@@ -52,6 +52,14 @@ require_fixed v620-controlled-production.tf 'var.key_vault_network_default_actio
 require_fixed monitoring-v620.tf 'resource "azurerm_monitor_action_group" "operations"' "Terraform Action Group is missing."
 require_fixed monitoring-v620.tf 'resource "azurerm_monitor_diagnostic_setting" "critical"' "Critical diagnostic settings are missing."
 require_fixed monitoring-v620.tf 'resource "azurerm_monitor_activity_log_alert" "resource_group_delete"' "Activity Log deletion alert is missing."
+require_fixed monitoring-v620.tf 'monitoring_notification_channel_configured = (' "Plan-time monitoring notification predicate is missing."
+require_fixed monitoring-v620.tf 'var.enable_baseline_activity_alerts && local.monitoring_notification_channel_configured ? 1 : 0' "Activity Log alert counts must use the plan-time known notification predicate."
+require_fixed monitor-alerts.tf 'local.monitoring_notification_channel_configured ? 1 : 0' "Metric alert counts must use the plan-time known notification predicate."
+require_fixed outputs.tf 'value       = local.monitor_action_group_id_effective' "Monitoring output must expose the effective Action Group ID."
+if grep -Eq 'count[[:space:]]*=.*local\.monitor_action_group_id_effective[[:space:]]*!=[[:space:]]*""' monitoring-v620.tf monitor-alerts.tf; then
+  fail "Monitoring resource counts must not depend on the apply-time Action Group ID."
+fi
+pass "Monitoring resource cardinality is plan-time stable and the effective Action Group ID is exported."
 require_fixed release/v6.2.0-controlled-production.tfvars.example 'release_security_profile = "controlled_production"' "V6.2 release profile is missing."
 require_fixed variables.tf 'variable "onboarding_result_mode"' "Onboarding result mode variable is missing."
 require_fixed variables.tf 'contains(["api", "legacy_static"], lower(trimspace(var.onboarding_result_mode)))' "Onboarding result mode validation is missing."

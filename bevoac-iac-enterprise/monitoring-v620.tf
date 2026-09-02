@@ -5,6 +5,14 @@ locals {
     : try(azurerm_monitor_action_group.operations[0].id, "")
   )
 
+  # Resource instance counts must be known during planning. This predicate is
+  # derived only from operator inputs, whereas the effective Action Group ID is
+  # allowed to remain unknown until Terraform creates the Action Group.
+  monitoring_notification_channel_configured = (
+    trimspace(var.monitor_action_group_id) != "" ||
+    trimspace(var.monitor_notification_email) != ""
+  )
+
   diagnostic_targets_base = {
     postgresql = {
       name = "postgresql"
@@ -118,7 +126,7 @@ resource "azurerm_monitor_diagnostic_setting" "critical" {
 }
 
 resource "azurerm_monitor_activity_log_alert" "resource_group_delete" {
-  count               = var.enable_baseline_activity_alerts && local.monitor_action_group_id_effective != "" ? 1 : 0
+  count               = var.enable_baseline_activity_alerts && local.monitoring_notification_channel_configured ? 1 : 0
   name                = "alert-${local.name_suffix}-resource-group-delete"
   resource_group_name = azurerm_resource_group.rg.name
   location            = "global"
@@ -138,7 +146,7 @@ resource "azurerm_monitor_activity_log_alert" "resource_group_delete" {
 }
 
 resource "azurerm_monitor_activity_log_alert" "role_assignment_write" {
-  count               = var.enable_baseline_activity_alerts && local.monitor_action_group_id_effective != "" ? 1 : 0
+  count               = var.enable_baseline_activity_alerts && local.monitoring_notification_channel_configured ? 1 : 0
   name                = "alert-${local.name_suffix}-role-assignment-write"
   resource_group_name = azurerm_resource_group.rg.name
   location            = "global"
@@ -158,7 +166,7 @@ resource "azurerm_monitor_activity_log_alert" "role_assignment_write" {
 }
 
 resource "azurerm_monitor_activity_log_alert" "role_assignment_delete" {
-  count               = var.enable_baseline_activity_alerts && local.monitor_action_group_id_effective != "" ? 1 : 0
+  count               = var.enable_baseline_activity_alerts && local.monitoring_notification_channel_configured ? 1 : 0
   name                = "alert-${local.name_suffix}-role-assignment-delete"
   resource_group_name = azurerm_resource_group.rg.name
   location            = "global"

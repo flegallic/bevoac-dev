@@ -104,6 +104,6 @@ output "apim_subscription_required" {
 }
 
 output "monitor_action_group_id" {
-  description = "Azure Monitor action group ID used by metric alerts."
-  value       = var.monitor_action_group_id
+  description = "Effective Azure Monitor Action Group ID used by Bevoac alerts."
+  value       = local.monitor_action_group_id_effective
 }

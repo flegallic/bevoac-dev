@@ -1,5 +1,5 @@
 resource "azurerm_monitor_metric_alert" "servicebus_deadletter" {
-  count               = local.monitor_action_group_id_effective != "" ? 1 : 0
+  count               = local.monitoring_notification_channel_configured ? 1 : 0
   name                = "alert-${local.name_suffix}-servicebus-dlq"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_servicebus_namespace.sb.id]
@@ -28,7 +28,7 @@ resource "azurerm_monitor_metric_alert" "servicebus_deadletter" {
 }
 
 resource "azurerm_monitor_metric_alert" "servicebus_active_backlog" {
-  count               = local.monitor_action_group_id_effective != "" ? 1 : 0
+  count               = local.monitoring_notification_channel_configured ? 1 : 0
   name                = "alert-${local.name_suffix}-servicebus-backlog"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_servicebus_namespace.sb.id]
@@ -57,7 +57,7 @@ resource "azurerm_monitor_metric_alert" "servicebus_active_backlog" {
 }
 
 resource "azurerm_monitor_metric_alert" "postgres_cpu" {
-  count               = local.monitor_action_group_id_effective != "" ? 1 : 0
+  count               = local.monitoring_notification_channel_configured ? 1 : 0
   name                = "alert-${local.name_suffix}-postgres-cpu"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_postgresql_flexible_server.postgres.id]
@@ -81,7 +81,7 @@ resource "azurerm_monitor_metric_alert" "postgres_cpu" {
 }
 
 resource "azurerm_monitor_metric_alert" "postgres_memory" {
-  count               = local.monitor_action_group_id_effective != "" ? 1 : 0
+  count               = local.monitoring_notification_channel_configured ? 1 : 0
   name                = "alert-${local.name_suffix}-postgres-memory"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_postgresql_flexible_server.postgres.id]
@@ -105,7 +105,7 @@ resource "azurerm_monitor_metric_alert" "postgres_memory" {
 }
 
 resource "azurerm_monitor_metric_alert" "postgres_storage" {
-  count               = local.monitor_action_group_id_effective != "" ? 1 : 0
+  count               = local.monitoring_notification_channel_configured ? 1 : 0
   name                = "alert-${local.name_suffix}-postgres-storage"
   resource_group_name = azurerm_resource_group.rg.name
   scopes              = [azurerm_postgresql_flexible_server.postgres.id]
