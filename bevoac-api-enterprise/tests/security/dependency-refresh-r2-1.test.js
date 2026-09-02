@@ -19,10 +19,11 @@ test('R2.1 removes Swagger UI and its static-file runtime surface', () => {
 });
 
 test('R2.1 pins the targeted API transitive security fixes', () => {
+  assert.equal(packageJson.dependencies.fastify, '5.12.1');
   assert.equal(packageJson.overrides['find-my-way'], '9.7.0');
   assert.equal(packageJson.overrides['fast-xml-parser'], '5.10.1');
-  assert.equal(packageJson.overrides.ajv['fast-uri'], '3.1.5');
-  assert.equal(packageJson.overrides['@fastify/ajv-compiler']['fast-uri'], '3.1.5');
-  assert.equal(packageJson.overrides['json-schema-resolver']['fast-uri'], '3.1.5');
-  assert.equal(packageJson.overrides['fast-json-stringify']['fast-uri'], '4.1.2');
+  assert.equal(packageJson.overrides.ajv['fast-uri'], '3.1.6');
+  assert.equal(packageJson.overrides['@fastify/ajv-compiler']['fast-uri'], '3.1.6');
+  assert.equal(packageJson.overrides['json-schema-resolver']['fast-uri'], '3.1.6');
+  assert.equal(packageJson.overrides['fast-json-stringify']['fast-uri'], '4.1.3');
 });

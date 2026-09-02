@@ -42,6 +42,6 @@ test('R2.1 worker lock excludes the deprecated ms-rest Resource Graph chain', ()
 });
 
 test('R2.1 pins worker URI and XML transitive security fixes', () => {
-  assert.equal(packageJson.overrides.ajv['fast-uri'], '3.1.5');
+  assert.equal(packageJson.overrides.ajv['fast-uri'], '3.1.6');
   assert.equal(packageJson.overrides['fast-xml-parser'], '5.10.1');
 });

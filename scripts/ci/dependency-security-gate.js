@@ -62,8 +62,8 @@ function checkFastUri(versions, scope) {
       fail(`${scope}:fast-uri-unparseable:${version}`);
       continue;
     }
-    if (parsed[0] === 3) assertAtLeast(`${scope}:fast-uri`, version, '3.1.5');
-    else if (parsed[0] === 4) assertAtLeast(`${scope}:fast-uri`, version, '4.1.2');
+    if (parsed[0] === 3) assertAtLeast(`${scope}:fast-uri`, version, '3.1.6');
+    else if (parsed[0] === 4) assertAtLeast(`${scope}:fast-uri`, version, '4.1.3');
     else fail(`${scope}:fast-uri-unapproved-major:${version}`);
   }
 }
@@ -94,6 +94,10 @@ assertNoPackage(apiVersions, '@fastify/static', 'api');
 for (const version of apiVersions.get('brace-expansion') || []) assertAtLeast('api:brace-expansion', version, '5.0.9');
 for (const version of apiVersions.get('fast-xml-parser') || []) assertAtLeast('api:fast-xml-parser', version, '5.10.1');
 for (const version of apiVersions.get('find-my-way') || []) assertAtLeast('api:find-my-way', version, '9.7.0');
+const apiFastifyVersions = apiVersions.get('fastify') || [];
+if (apiPackage.dependencies?.fastify !== '5.12.1') fail('api:fastify-direct-pin-mismatch');
+if (apiFastifyVersions.length !== 1) fail(`api:fastify-version-count:${apiFastifyVersions.length}`);
+for (const version of apiFastifyVersions) assertAtLeast('api:fastify', version, '5.12.1');
 checkFastUri(apiVersions, 'api');
 
 if (workerPackage.dependencies?.['@azure/arm-resourcegraph']) fail('worker:arm-resourcegraph-direct-dependency-present');

@@ -2,7 +2,7 @@
   "$schema": "https://cyclonedx.org/schema/bom-1.6.schema.json",
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:75630bb7-d4f3-58f9-9819-7dbc5137fef3",
+  "serialNumber": "urn:uuid:f504dced-094e-5b3c-a495-a08078536125",
   "version": 1,
   "metadata": {
     "tools": {
@@ -2795,10 +2795,10 @@
     },
     {
       "type": "library",
-      "bom-ref": "urn:bevoac:npm:5dec6cf560850d257ba2d014820c52c481e60254f091087b4cb66a79cc36f15a",
+      "bom-ref": "urn:bevoac:npm:2c099283b9a4b20706dbd030905bab882f16600dfe8bce64119742c6fbcf5f11",
       "name": "fast-uri",
-      "version": "3.1.5",
-      "purl": "pkg:npm/fast-uri@3.1.5",
+      "version": "3.1.6",
+      "purl": "pkg:npm/fast-uri@3.1.6",
       "properties": [
         {
           "name": "bevoac:npm:lock-path",
@@ -2816,7 +2816,7 @@
       "hashes": [
         {
           "alg": "SHA-512",
-          "content": "807c00d4ef4b0c870aba730a84e6d2fc78a6c2d7a13b59cf50408a02ee53a4a81a3b5f5f716125e1b96259ed635b1545bc85f3b498e34382fc5d0d4453d7fb27"
+          "content": "ec871a975bc510caf4a276d5cc40c8ade336d88e24856f9fcf240fc2f005581a758b076c852651b0be238d1bcf1bd24fd6e8aa30746da3e614e91dbf0b30f3e5"
         }
       ],
       "licenses": [
@@ -2829,7 +2829,7 @@
       "externalReferences": [
         {
           "type": "distribution",
-          "url": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.5.tgz"
+          "url": "https://registry.npmjs.org/fast-uri/-/fast-uri-3.1.6.tgz"
         }
       ]
     },
@@ -7338,8 +7338,8 @@
     {
       "ref": "urn:bevoac:npm:995ea6d01bc5f1323a37115fe30b054eb75e718c80a27f098a0726a76a68423e",
       "dependsOn": [
+        "urn:bevoac:npm:2c099283b9a4b20706dbd030905bab882f16600dfe8bce64119742c6fbcf5f11",
         "urn:bevoac:npm:3210868558632b164eb1a609663d02cf316e171c17b1d5044859c962288b970f",
-        "urn:bevoac:npm:5dec6cf560850d257ba2d014820c52c481e60254f091087b4cb66a79cc36f15a",
         "urn:bevoac:npm:ad8f8a815edfa42f4c8ce8ae3a3dc266117e4f4cc82296594b6e0b0150ccc937",
         "urn:bevoac:npm:be9836bdbabfa4e5d82d1b50b43f06bad9c4a0aad7a38fd2050cfd9c5916f36f"
       ]
@@ -7500,7 +7500,7 @@
       "dependsOn": []
     },
     {
-      "ref": "urn:bevoac:npm:5dec6cf560850d257ba2d014820c52c481e60254f091087b4cb66a79cc36f15a",
+      "ref": "urn:bevoac:npm:2c099283b9a4b20706dbd030905bab882f16600dfe8bce64119742c6fbcf5f11",
       "dependsOn": []
     },
     {
