@@ -20,13 +20,20 @@ resource "azurerm_storage_account_static_website" "frontend" {
   error_404_document = "index.html"
 }
 
+data "azurerm_storage_container" "frontend_web" {
+  count              = var.deploy_onboarding_frontend ? 1 : 0
+  name               = "$web"
+  storage_account_id = azurerm_storage_account.frontend[0].id
+
+  depends_on = [azurerm_storage_account_static_website.frontend]
+}
+
 resource "azurerm_storage_blob" "frontend_index" {
-  count                  = var.deploy_onboarding_frontend ? 1 : 0
-  name                   = "index.html"
-  storage_account_name   = azurerm_storage_account.frontend[0].name
-  storage_container_name = "$web"
-  type                   = "Block"
-  content_type           = "text/html"
+  count                = var.deploy_onboarding_frontend ? 1 : 0
+  name                 = "index.html"
+  storage_container_id = data.azurerm_storage_container.frontend_web[0].id
+  type                 = "Block"
+  content_type         = "text/html"
   source_content = templatefile("${path.module}/frontend/index.html.tftpl", {
     brand_name    = var.frontend_brand_name
     support_email = var.frontend_support_email
@@ -41,12 +48,11 @@ resource "azurerm_storage_blob" "frontend_index" {
 }
 
 resource "azurerm_storage_blob" "frontend_success" {
-  count                  = var.deploy_onboarding_frontend ? 1 : 0
-  name                   = "success.html"
-  storage_account_name   = azurerm_storage_account.frontend[0].name
-  storage_container_name = "$web"
-  type                   = "Block"
-  content_type           = "text/html"
+  count                = var.deploy_onboarding_frontend ? 1 : 0
+  name                 = "success.html"
+  storage_container_id = data.azurerm_storage_container.frontend_web[0].id
+  type                 = "Block"
+  content_type         = "text/html"
   source_content = templatefile("${path.module}/frontend/success.html.tftpl", {
     brand_name    = var.frontend_brand_name
     support_email = var.frontend_support_email
