@@ -46,10 +46,20 @@ locals {
     : local.api_public_base_url_from_generated_aca_fqdn
   )
 
+  # Optional dedicated public origin for the production onboarding flow.
+  # Keep this independent from api_public_base_url_effective so APIM continues
+  # to target the technical ACA API origin.
+  onboarding_public_base_url_configured = trimsuffix(trimspace(var.onboarding_public_base_url), "/")
+  onboarding_public_base_url_effective = (
+    local.onboarding_public_base_url_configured != ""
+    ? local.onboarding_public_base_url_configured
+    : local.api_public_base_url_effective
+  )
+
   # Full Microsoft Entra redirect URI registered in the App Registration and injected into the API runtime.
   onboarding_redirect_callback_uri_effective = (
-    local.api_public_base_url_effective != ""
-    ? "${local.api_public_base_url_effective}/v1/onboarding/azure/callback"
+    local.onboarding_public_base_url_effective != ""
+    ? "${local.onboarding_public_base_url_effective}/v1/onboarding/azure/callback"
     : ""
   )
 }

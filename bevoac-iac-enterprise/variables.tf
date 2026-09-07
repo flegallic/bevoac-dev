@@ -165,6 +165,37 @@ variable "api_public_base_url" {
   }
 }
 
+variable "onboarding_public_base_url" {
+  type        = string
+  description = "Optional dedicated HTTPS origin for the production onboarding callback and result flow. Leave empty to preserve the existing API public base URL."
+  default     = ""
+
+  validation {
+    condition     = var.onboarding_public_base_url == "" || can(regex("^https://[^/]+/?$", trimspace(var.onboarding_public_base_url)))
+    error_message = "onboarding_public_base_url must be empty or an HTTPS origin without a path, for example https://onboarding.example.com."
+  }
+}
+
+variable "onboarding_custom_domain" {
+  type        = string
+  description = "Optional Azure Container Apps custom hostname dedicated to production onboarding, without scheme or path."
+  default     = ""
+
+  validation {
+    condition = (
+      var.onboarding_custom_domain == "" ||
+      can(regex("^[A-Za-z0-9.-]+$", trimspace(var.onboarding_custom_domain)))
+    )
+    error_message = "onboarding_custom_domain must be empty or a hostname without scheme or path, for example onboarding.example.com."
+  }
+}
+
+variable "onboarding_managed_certificate_name" {
+  type        = string
+  description = "Azure Container Apps managed certificate name associated with onboarding_custom_domain. Leave empty when no onboarding custom domain is managed."
+  default     = ""
+}
+
 variable "onboarding_state_secret" {
   type        = string
   description = "Optional high-entropy HMAC secret for Microsoft admin-consent state validation. Leave empty to let Terraform generate one."
