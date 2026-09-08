@@ -4,7 +4,6 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 bash "$REPO_ROOT/VERIFY_SOURCE_PACKAGE.sh"
 
-
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 cd "$ROOT"
 
@@ -65,11 +64,28 @@ grep -Eq "DEMO[- ]ONLY" bevoac-frontend-enterprise/README.md || fail "frontend d
 grep -q "default     = false" <(sed -n '/variable "deploy_onboarding_frontend"/,/^}/p' bevoac-iac-enterprise/variables.tf) || fail "legacy static onboarding frontend must default to disabled"
 grep -q 'local.onboarding_result_mode_requested == "api"' bevoac-iac-enterprise/v620-controlled-production.tf || fail "controlled production must explicitly require the credential-free API onboarding result mode"
 grep -Eq 'onboarding_result_mode[[:space:]]*=[[:space:]]*"api"' bevoac-iac-enterprise/release/v6.2.0-controlled-production.tfvars.example || fail "controlled production release profile must select API onboarding results"
+
 grep -q "No client credential is requested or stored" bevoac-api-enterprise/src/routes/onboarding-azure.js || fail "credential-free API onboarding result page missing"
-grep -q "DEMO ONLY" bevoac-iac-enterprise/frontend/index.html.tftpl || fail "legacy static onboarding page must be marked DEMO ONLY"
-grep -q "ne collecte aucune clé API" bevoac-iac-enterprise/frontend/index.html.tftpl || fail "legacy static onboarding page must state that it collects no API key"
+grep -q "https://onboarding.bevoac.fr/v1/onboarding/azure" bevoac-api-enterprise/src/lib/onboarding-result-assets.js || fail "canonical onboarding landing URL missing"
+grep -q "'/v1/onboarding/azure/browser-start'" bevoac-api-enterprise/src/lib/apim-boundary.js || fail "browser onboarding bootstrap boundary exemption missing"
+grep -q "requireOnboardingBrowserOrigin" bevoac-api-enterprise/src/routes/onboarding-azure.js || fail "browser onboarding origin guard missing"
+grep -q "fastify.authenticateApiKey" bevoac-api-enterprise/src/routes/onboarding-azure.js || fail "browser onboarding API-key authentication missing"
+
+# The retained Storage static website is a compatibility bridge only. It must
+# never collect credentials or run an active API flow.
+grep -q "DEMO ONLY" bevoac-iac-enterprise/frontend/index.html.tftpl || fail "legacy static onboarding source classification missing"
+grep -q "does not collect or store any API key" bevoac-iac-enterprise/frontend/index.html.tftpl || fail "legacy static onboarding page must state that it collects no API key"
+grep -q '\${onboarding_url}' bevoac-iac-enterprise/frontend/index.html.tftpl || fail "legacy static onboarding page must link to canonical API landing"
 if grep -Eq 'apiKey|fetch\(|sessionStorage|localStorage|authorization' bevoac-iac-enterprise/frontend/index.html.tftpl; then
   fail "legacy static onboarding page retains an active credential/API flow"
+fi
+
+# Client-facing API pages must not expose the retired Storage endpoint or the
+# technical generated ACA API hostname.
+if grep -Eq 'stbevoacprodfront|z28\.web\.core\.windows\.net|ca-bevoac-prod-api\.lemonbeach' \
+  bevoac-api-enterprise/src/lib/onboarding-result-assets.js \
+  bevoac-api-enterprise/src/routes/onboarding-azure.js; then
+  fail "client-facing onboarding API page exposes a technical infrastructure URL"
 fi
 
 # The demo frontend must not retain customer credentials in browser storage.

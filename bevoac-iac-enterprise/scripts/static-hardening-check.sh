@@ -68,7 +68,8 @@ require_fixed v620-controlled-production.tf 'local.onboarding_result_mode_reques
 grep -Eq 'onboarding_result_mode[[:space:]]*=[[:space:]]*"api"' release/v6.2.0-controlled-production.tfvars.example || fail "V6.2 release profile must select the API onboarding result page."
 grep -Eq 'deploy_onboarding_frontend[[:space:]]*=[[:space:]]*false' release/v6.2.0-controlled-production.tfvars.example || fail "V6.2 release profile must keep the legacy static helper disabled by default."
 require_fixed frontend/index.html.tftpl 'DEMO ONLY' "Legacy static onboarding page must be explicitly classified as demo-only."
-require_fixed frontend/index.html.tftpl 'ne collecte aucune clé API' "Legacy static onboarding page must not request a client credential."
+require_fixed frontend/index.html.tftpl 'does not collect or store any API key' "Legacy static onboarding page must not request a client credential."
+require_fixed frontend/index.html.tftpl '${onboarding_url}' "Legacy static onboarding page must link to the canonical API-hosted landing."
 if grep -Eq 'apiKey|fetch\(|sessionStorage|localStorage|authorization' frontend/index.html.tftpl; then
   fail "Legacy static onboarding page must not contain an active credential or API flow."
 fi

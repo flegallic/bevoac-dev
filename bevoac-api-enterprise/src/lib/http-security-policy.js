@@ -1,7 +1,8 @@
 'use strict';
 
 const {
-  ONBOARDING_RESULT_CSP
+  ONBOARDING_RESULT_CSP,
+  ONBOARDING_LANDING_CSP
 } = require('./onboarding-result-assets');
 
 const NO_STORE_PREFIXES = Object.freeze([
@@ -11,6 +12,7 @@ const NO_STORE_PREFIXES = Object.freeze([
   '/v1/admin'
 ]);
 
+const ONBOARDING_LANDING_PATH = '/v1/onboarding/azure';
 const ONBOARDING_RESULT_PATH = '/v1/onboarding/azure/result';
 const DEFAULT_CONTENT_SECURITY_POLICY =
   "default-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'";
@@ -25,9 +27,17 @@ function shouldDisableCaching(value) {
 }
 
 function contentSecurityPolicyForRequest(value) {
-  return normalizedPath(value) === ONBOARDING_RESULT_PATH
-    ? ONBOARDING_RESULT_CSP
-    : DEFAULT_CONTENT_SECURITY_POLICY;
+  const path = normalizedPath(value);
+
+  if (path === ONBOARDING_LANDING_PATH) {
+    return ONBOARDING_LANDING_CSP;
+  }
+
+  if (path === ONBOARDING_RESULT_PATH) {
+    return ONBOARDING_RESULT_CSP;
+  }
+
+  return DEFAULT_CONTENT_SECURITY_POLICY;
 }
 
 function headersForRequest({ url, requestId, production = false }) {
@@ -56,6 +66,7 @@ function headersForRequest({ url, requestId, production = false }) {
 
 module.exports = {
   NO_STORE_PREFIXES,
+  ONBOARDING_LANDING_PATH,
   ONBOARDING_RESULT_PATH,
   DEFAULT_CONTENT_SECURITY_POLICY,
   normalizedPath,

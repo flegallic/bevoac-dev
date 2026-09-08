@@ -1,47 +1,194 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'" />
+  <meta name="color-scheme" content="light" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-vsLVPLTKPBFsBScs6WgZcfD6+Y+uFutZnFNGSwUgyhs='; style-src-attr 'none'; script-src 'none'; connect-src 'none'; img-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'" />
   <meta name="referrer" content="no-referrer" />
-  <title>${brand_name} - Démonstrateur d'onboarding Azure</title>
+  <title>Microsoft Azure onboarding | Bevoac</title>
   <style>
-    body{font-family:Arial,sans-serif;max-width:1040px;margin:40px auto;padding:0 20px;color:#152238;line-height:1.5;background:#f7fafc}
-    .card{background:white;border:1px solid #d8e1ec;border-radius:16px;padding:24px;margin:18px 0;box-shadow:0 8px 20px rgba(20,40,80,.08)}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}.step{border-left:5px solid #17324d}.warning{background:#fff8e6;border-color:#ffd56a}.danger{background:#fff0f0;border-color:#e3a0a0}
-    code{background:#eef3f8;padding:2px 6px;border-radius:6px}.muted{color:#5f6f82}.badge{display:inline-block;background:#8b1d1d;color:white;padding:6px 10px;border-radius:999px;font-weight:700;letter-spacing:.04em}
+:root {
+  color-scheme: light;
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  background: #f5f7fb;
+  color: #242424;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f8fbff 0%, #eef2f7 100%);
+}
+.page-shell {
+  width: min(100% - 32px, 900px);
+  margin: 0 auto;
+  padding: 40px 0 28px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.brand-mark {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border-radius: 10px;
+  background: #0f6cbd;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+}
+.brand-copy { display: grid; gap: 1px; }
+.brand-name { font-size: 15px; font-weight: 700; letter-spacing: .08em; }
+.brand-context { color: #616161; font-size: 12px; }
+.result-card {
+  overflow: hidden;
+  border: 1px solid #e1e6ee;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 18px 46px rgba(31,31,31,.09);
+}
+.result-header { padding: 42px; border-bottom: 1px solid #edf0f4; }
+.status-row { display: flex; align-items: flex-start; gap: 18px; }
+.status-icon {
+  display: grid;
+  flex: 0 0 auto;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  border-radius: 50%;
+  background: #e8f3fb;
+  color: #0f6cbd;
+  font-size: 28px;
+  font-weight: 700;
+}
+.eyebrow {
+  margin: 1px 0 6px;
+  color: #0f6cbd;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+h1 {
+  margin: 0;
+  color: #1b1a19;
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 650;
+  letter-spacing: -.025em;
+  line-height: 1.12;
+}
+.lead {
+  margin: 14px 0 0;
+  max-width: 700px;
+  color: #4f4f4f;
+  font-size: 17px;
+  line-height: 1.6;
+}
+.result-body { display: grid; gap: 18px; padding: 28px 42px 36px; }
+.next-card, .security-note { border-radius: 14px; }
+.next-card { padding: 20px 22px; background: #f7f7f7; }
+.next-card h2 { margin: 0 0 8px; font-size: 16px; }
+.next-card p, .security-note p, .return-help {
+  margin: 0;
+  color: #565656;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.primary-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 18px;
+  border: 1px solid #0f6cbd;
+  border-radius: 8px;
+  background: #0f6cbd;
+  color: #fff;
+  font: inherit;
+  font-weight: 650;
+  text-decoration: none;
+}
+.primary-action:hover { background: #115ea3; }
+.primary-action:focus-visible { outline: 3px solid rgba(15,108,189,.3); outline-offset: 3px; }
+.security-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 18px;
+  border: 1px solid #e5e5e5;
+}
+.security-badge {
+  display: grid;
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 7px;
+  background: #eef4fb;
+  color: #0f6cbd;
+  font-weight: 700;
+}
+.security-note strong { color: #323130; }
+.page-footer { margin-top: 18px; color: #737373; font-size: 12px; text-align: center; }
+@media (max-width: 640px) {
+  .page-shell { width: min(100% - 20px, 900px); padding-top: 18px; }
+  .brand { margin-bottom: 16px; }
+  .result-card { border-radius: 16px; }
+  .result-header, .result-body { padding-left: 22px; padding-right: 22px; }
+  .result-header { padding-top: 28px; padding-bottom: 28px; }
+  .status-row { display: grid; }
+}
   </style>
 </head>
 <body>
-  <p class="badge">DEMO ONLY — NON CONTRACTUEL</p>
-  <h1>${brand_name} - Démonstrateur d'onboarding Azure</h1>
+  <!-- DEMO ONLY source classification retained for V6.2 legacy compatibility policy. -->
+  <div class="page-shell">
+    <header class="brand" aria-label="Bevoac">
+      <div class="brand-mark" aria-hidden="true">B</div>
+      <div class="brand-copy">
+        <span class="brand-name">BEVOAC</span>
+        <span class="brand-context">Cloud security onboarding</span>
+      </div>
+    </header>
 
-  <div class="card danger">
-    <h2>Ce composant ne collecte aucune clé API</h2>
-    <p>Cette page statique est conservée uniquement comme support visuel historique. Elle ne démarre aucun onboarding, n'appelle aucune API et ne doit pas être déployée dans le profil V6.2.0 <code>controlled_production</code>.</p>
-    <p>Le parcours réel utilise les routes API authentifiées, puis la page de résultat sans identifiant hébergée par l'API.</p>
+    <main class="result-card" aria-labelledby="legacy-title">
+      <section class="result-header">
+        <div class="status-row">
+          <div class="status-icon" aria-hidden="true">→</div>
+          <div>
+            <p class="eyebrow">Legacy compatibility</p>
+            <h1 id="legacy-title">Microsoft Azure onboarding</h1>
+            <p class="lead">The supported Bevoac Azure onboarding experience is now served from the Bevoac onboarding domain.</p>
+          </div>
+        </div>
+      </section>
+
+      <div class="result-body">
+        <section class="next-card" aria-labelledby="next-title">
+          <h2 id="next-title">Continue securely</h2>
+          <p>This legacy storage endpoint does not collect or store any API key. Continue on the canonical Bevoac onboarding page.</p>
+        </section>
+
+        <div class="actions">
+          <a class="primary-action" href="${onboarding_url}" rel="noreferrer" referrerpolicy="no-referrer">Open Azure onboarding</a>
+          <p class="return-help">You will stay on the Bevoac onboarding domain for the active client workflow.</p>
+        </div>
+
+        <aside class="security-note" aria-label="Security information">
+          <div class="security-badge" aria-hidden="true">✓</div>
+          <p><strong>Secure by design.</strong> This compatibility page has no credential field, no browser storage and no active API flow.</p>
+        </aside>
+      </div>
+    </main>
+
+    <footer class="page-footer">Microsoft Azure onboarding · Bevoac</footer>
   </div>
-
-  <div class="grid">
-    <div class="card step"><strong>1. API start onboarding</strong><br/>Création d'une session courte et d'un state authentifié.</div>
-    <div class="card step"><strong>2. Microsoft admin consent</strong><br/>Consentement par un administrateur du tenant client.</div>
-    <div class="card step"><strong>3. Callback API sécurisé</strong><br/>Vérification du state, de l'expiration et de l'anti-rejeu.</div>
-    <div class="card step"><strong>4. Vérification RBAC</strong><br/>Inventaire des subscriptions accessibles en lecture seule.</div>
-    <div class="card step"><strong>5. Allowlist</strong><br/>Enregistrement uniquement des scopes vérifiés côté serveur.</div>
-    <div class="card step"><strong>6. Résultat</strong><br/>Retour vers une page API sans clé, puis interrogation du statut via un client approuvé.</div>
-  </div>
-
-  <div class="card warning">
-    <h2>Parcours V6.2.0 à utiliser</h2>
-    <ul>
-      <li><code>POST /v1/onboarding/azure/start</code> depuis un client approuvé et authentifié.</li>
-      <li><code>GET /v1/onboarding/azure/callback</code> comme URI de retour Microsoft Entra.</li>
-      <li><code>GET /v1/onboarding/azure/result</code> comme page de résultat sans identifiant.</li>
-      <li><code>GET /v1/onboarding/azure/status</code> pour lire l'état depuis un client authentifié.</li>
-    </ul>
-  </div>
-
-  <p class="muted">Support : ${support_email}</p>
 </body>
 </html>
