@@ -89,7 +89,7 @@ const ONBOARDING_LANDING_HTML = `<!doctype html>
           <h2>Start Azure onboarding</h2>
           <div class="field-group">
             <label class="field-label" for="api-key">Bevoac client API key</label>
-            <input class="credential-input" id="api-key" name="apiKey" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="512" placeholder="bev_live_…" required>
+            <input class="credential-input" id="api-key" name="apiKey" type="password" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="512" placeholder="biv_live_…" required>
             <p class="field-help">The key is used only for this request to create the onboarding session. This page does not store it in cookies, local storage, session storage or browser history, and it is never sent to Microsoft.</p>
           </div>
           <div class="form-actions">
