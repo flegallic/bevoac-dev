@@ -2,9 +2,12 @@
 
 const { createHash } = require('crypto');
 
-// Versioned, server-owned destination. Never derive it from request or fragment data.
-// This is the public Bevoac website, not an authenticated client portal.
-const ONBOARDING_RESULT_RETURN_URL = 'https://bevoac.fr/';
+const ONBOARDING_LANDING_URL =
+  'https://onboarding.bevoac.fr/v1/onboarding/azure';
+
+// Versioned, server-owned destination. Never derive it from request,
+// query-string or fragment data.
+const ONBOARDING_RESULT_RETURN_URL = ONBOARDING_LANDING_URL;
 
 const ONBOARDING_RESULT_STYLE = `
 :root {
@@ -135,6 +138,7 @@ h1 {
   font-weight: 650;
 }
 .primary-action:hover { background: #115ea3; }
+.primary-action:disabled { cursor: wait; opacity: .65; }
 .primary-action:focus-visible { outline: 3px solid rgba(15,108,189,.3); outline-offset: 3px; }
 .security-note {
   display: flex;
@@ -170,6 +174,73 @@ h1 {
 }
 `.trim();
 
+const ONBOARDING_LANDING_STYLE = `${ONBOARDING_RESULT_STYLE}
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.step-card {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 16px;
+  border: 1px solid #e1e6ee;
+  border-radius: 12px;
+  background: #fff;
+}
+.step-number {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 8px;
+  background: #eef4fb;
+  color: #0f6cbd;
+  font-weight: 700;
+}
+.step-card strong { display: block; margin: 1px 0 4px; color: #323130; }
+.step-card p { margin: 0; color: #616161; font-size: 13px; line-height: 1.5; }
+.form-card {
+  display: grid;
+  gap: 14px;
+  padding: 22px;
+  border: 1px solid #dce6f1;
+  border-radius: 14px;
+  background: #f7fbff;
+}
+.form-card h2 { margin: 0; font-size: 18px; }
+.field-group { display: grid; gap: 7px; }
+.field-label { color: #323130; font-size: 14px; font-weight: 650; }
+.credential-input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #b7c7d8;
+  border-radius: 8px;
+  background: #fff;
+  color: #242424;
+  font: inherit;
+}
+.credential-input:focus-visible {
+  outline: 3px solid rgba(15,108,189,.22);
+  outline-offset: 2px;
+  border-color: #0f6cbd;
+}
+.field-help, .form-status {
+  margin: 0;
+  color: #565656;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.form-status[data-state="error"] { color: #a4262c; font-weight: 600; }
+.form-status[data-state="success"] { color: #107c10; font-weight: 600; }
+.form-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+@media (max-width: 640px) {
+  .steps-grid { grid-template-columns: 1fr; }
+}`.trim();
+
 const ONBOARDING_RESULT_SCRIPT = `
 (function () {
   'use strict';
@@ -182,28 +253,28 @@ const ONBOARDING_RESULT_SCRIPT = `
       icon: '✓',
       title: 'Azure onboarding completed',
       message: 'Microsoft administrator consent was validated and Bevoac completed the initial Azure subscription discovery.',
-      next: 'Return to the Bevoac workflow where you started onboarding. You can now continue with the authorized audit setup.'
+      next: 'Return to the Azure onboarding page to review or continue the authorized audit setup.'
     }),
     action_required: Object.freeze({
       label: 'Action required',
       icon: '!',
       title: 'Microsoft consent was received',
       message: 'Bevoac completed the consent step, but the Azure connection still requires an additional permission or verification action.',
-      next: 'Return to your Bevoac workflow and complete the requested Azure RBAC or verification step.'
+      next: 'Return to the Azure onboarding page and complete the requested Azure RBAC or verification step.'
     }),
     error: Object.freeze({
       label: 'Onboarding could not be completed',
       icon: '×',
       title: 'We could not complete Azure onboarding',
       message: 'The Microsoft onboarding flow did not complete successfully.',
-      next: 'Return to your Bevoac workflow and start a new onboarding request. If the problem persists, contact your Bevoac administrator.'
+      next: 'Return to the Azure onboarding page and start a new onboarding request. If the problem persists, contact your Bevoac administrator.'
     }),
     unknown: Object.freeze({
       label: 'Onboarding result unavailable',
       icon: 'i',
       title: 'No valid onboarding result was found',
       message: 'This page must be opened from an active Bevoac Azure onboarding flow.',
-      next: 'Return to your Bevoac workflow and start or review the onboarding process there.'
+      next: 'Return to the Azure onboarding page to start or review the onboarding process.'
     })
   });
   const safeReasons = Object.freeze({
@@ -245,12 +316,105 @@ const ONBOARDING_RESULT_SCRIPT = `
 })();
 `.trim();
 
+const ONBOARDING_LANDING_SCRIPT = `
+(function () {
+  'use strict';
+
+  const form = document.getElementById('onboarding-form');
+  const apiKeyInput = document.getElementById('api-key');
+  const startButton = document.getElementById('start-button');
+  const status = document.getElementById('form-status');
+
+  function setStatus(message, state) {
+    status.textContent = message;
+    status.dataset.state = state || '';
+  }
+
+  function referenceFrom(response) {
+    const value = response.headers.get('x-correlation-id');
+    return value && /^[A-Za-z0-9._:-]{8,128}$/.test(value)
+      ? ' Reference: ' + value + '.'
+      : '';
+  }
+
+  form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+
+    if (startButton.disabled) return;
+
+    let apiKey = apiKeyInput.value.trim();
+    apiKeyInput.value = '';
+
+    if (!apiKey) {
+      setStatus('Enter your Bevoac client API key to continue.', 'error');
+      apiKeyInput.focus();
+      return;
+    }
+
+    startButton.disabled = true;
+    setStatus('Creating a secure onboarding session…', 'progress');
+
+    try {
+      const response = await fetch('/v1/onboarding/azure/browser-start', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + apiKey,
+          'Content-Type': 'application/json'
+        },
+        body: '{}',
+        cache: 'no-store',
+        credentials: 'omit',
+        redirect: 'error',
+        referrerPolicy: 'no-referrer'
+      });
+
+      apiKey = '';
+
+      if (!response.ok) {
+        throw new Error(
+          'Unable to start Azure onboarding.' + referenceFrom(response)
+        );
+      }
+
+      const payload = await response.json();
+      if (!payload || typeof payload.authorizationUrl !== 'string') {
+        throw new Error('The onboarding service returned an invalid response.');
+      }
+
+      const authorizationUrl = new URL(payload.authorizationUrl);
+      if (
+        authorizationUrl.protocol !== 'https:' ||
+        authorizationUrl.hostname.toLowerCase() !== 'login.microsoftonline.com' ||
+        !authorizationUrl.pathname.endsWith('/adminconsent')
+      ) {
+        throw new Error('The onboarding service returned an unexpected Microsoft URL.');
+      }
+
+      setStatus('Redirecting to Microsoft…', 'success');
+      window.location.assign(authorizationUrl.toString());
+    } catch (error) {
+      apiKey = '';
+      const message =
+        error instanceof Error && error.message
+          ? error.message
+          : 'Unable to start Azure onboarding.';
+      setStatus(message, 'error');
+      startButton.disabled = false;
+      apiKeyInput.focus();
+    }
+  });
+})();
+`.trim();
+
 function cspSha256(value) {
   return `'sha256-${createHash('sha256').update(value, 'utf8').digest('base64')}'`;
 }
 
 const ONBOARDING_RESULT_STYLE_HASH = cspSha256(ONBOARDING_RESULT_STYLE);
 const ONBOARDING_RESULT_SCRIPT_HASH = cspSha256(ONBOARDING_RESULT_SCRIPT);
+const ONBOARDING_LANDING_STYLE_HASH = cspSha256(ONBOARDING_LANDING_STYLE);
+const ONBOARDING_LANDING_SCRIPT_HASH = cspSha256(ONBOARDING_LANDING_SCRIPT);
+
 const ONBOARDING_RESULT_CSP = [
   "default-src 'none'",
   `style-src ${ONBOARDING_RESULT_STYLE_HASH}`,
@@ -266,11 +430,32 @@ const ONBOARDING_RESULT_CSP = [
   "frame-ancestors 'none'"
 ].join('; ');
 
+const ONBOARDING_LANDING_CSP = [
+  "default-src 'none'",
+  `style-src ${ONBOARDING_LANDING_STYLE_HASH}`,
+  "style-src-attr 'none'",
+  `script-src ${ONBOARDING_LANDING_SCRIPT_HASH}`,
+  "script-src-attr 'none'",
+  "connect-src 'self'",
+  "img-src 'none'",
+  "font-src 'none'",
+  "object-src 'none'",
+  "base-uri 'none'",
+  "form-action 'none'",
+  "frame-ancestors 'none'"
+].join('; ');
+
 module.exports = {
+  ONBOARDING_LANDING_URL,
   ONBOARDING_RESULT_RETURN_URL,
   ONBOARDING_RESULT_STYLE,
   ONBOARDING_RESULT_SCRIPT,
   ONBOARDING_RESULT_STYLE_HASH,
   ONBOARDING_RESULT_SCRIPT_HASH,
-  ONBOARDING_RESULT_CSP
+  ONBOARDING_RESULT_CSP,
+  ONBOARDING_LANDING_STYLE,
+  ONBOARDING_LANDING_SCRIPT,
+  ONBOARDING_LANDING_STYLE_HASH,
+  ONBOARDING_LANDING_SCRIPT_HASH,
+  ONBOARDING_LANDING_CSP
 };

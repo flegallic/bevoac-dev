@@ -35,13 +35,14 @@ resource "azurerm_storage_blob" "frontend_index" {
   type                 = "Block"
   content_type         = "text/html"
   source_content = templatefile("${path.module}/frontend/index.html.tftpl", {
-    brand_name    = var.frontend_brand_name
-    support_email = var.frontend_support_email
-    api_base_url  = var.deploy_container_apps ? local.api_public_base_url_effective : ""
+    onboarding_url = local.onboarding_landing_url
   })
 
   depends_on = [azurerm_storage_account_static_website.frontend]
 
+  # The legacy storage page is not the active controlled-production entrypoint.
+  # Its bytes are updated only by the guarded release controller after the
+  # canonical API-hosted landing page has been promoted successfully.
   lifecycle {
     ignore_changes = [source_content]
   }

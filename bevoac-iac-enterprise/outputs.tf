@@ -42,11 +42,12 @@ output "postgres_fqdn" {
 }
 
 output "frontend_url" {
-  value = var.deploy_onboarding_frontend ? azurerm_storage_account.frontend[0].primary_web_endpoint : null
+  description = "Canonical client-facing Microsoft Azure onboarding entry URL."
+  value       = var.deploy_container_apps ? local.onboarding_landing_url : null
 }
 
 output "api_public_base_url_effective" {
-  description = "Effective public API base URL without path. Use this value in the onboarding frontend API field."
+  description = "Effective technical public API base URL without path."
   value       = var.deploy_container_apps ? local.api_public_base_url_effective : null
 }
 
@@ -56,13 +57,18 @@ output "onboarding_callback_uri_from_generated_aca_fqdn" {
 }
 
 output "onboarding_redirect_uri" {
-  description = "Effective onboarding API base URL without callback path. This intentionally matches onboarding_callback_uri_from_generated_aca_fqdn when api_public_base_url is empty."
-  value       = var.deploy_container_apps ? local.api_public_base_url_effective : null
+  description = "Effective onboarding API base URL without callback path."
+  value       = var.deploy_container_apps ? local.onboarding_public_base_url_effective : null
 }
 
 output "onboarding_redirect_callback_uri" {
-  description = "Full Microsoft Entra redirect URI to register in the App Registration. This is the API base URL plus /v1/onboarding/azure/callback."
+  description = "Full Microsoft Entra redirect URI to register in the App Registration."
   value       = var.deploy_container_apps ? local.onboarding_redirect_callback_uri_effective : null
+}
+
+output "onboarding_entry_url" {
+  description = "Canonical client-facing Azure onboarding landing page."
+  value       = var.deploy_container_apps ? local.onboarding_landing_url : null
 }
 
 output "container_apps_egress_public_ip" {

@@ -4,6 +4,8 @@ const EXEMPT_PATHS = new Set([
   '/v1/health',
   '/v1/health/live',
   '/v1/health/ready',
+  '/v1/onboarding/azure',
+  '/v1/onboarding/azure/browser-start',
   '/v1/onboarding/azure/callback',
   '/v1/onboarding/azure/result'
 ]);

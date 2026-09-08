@@ -63,9 +63,20 @@
 ## Onboarding and frontend clarification
 
 - the Microsoft callback now returns to a credential-free API-hosted result page;
-- the legacy static onboarding page is disabled by default and forbidden in the controlled-production profile;
+- the legacy static onboarding page is disabled by default and forbidden as the active callback result in the controlled-production profile;
 - the legacy static page contains no API-key field, no browser storage, no fetch call and no active onboarding flow;
 - both bundled frontend implementations are explicitly non-contractual DEMO-ONLY artifacts.
+
+## UX-ONB-02 canonical onboarding landing
+
+- the client-facing Azure onboarding entrypoint is `https://onboarding.bevoac.fr/v1/onboarding/azure` and is served directly by the API Container App;
+- the API-hosted landing page is English-only, uses the same Bevoac visual system as the result page and exposes no technical Azure Storage or generated Container Apps hostname;
+- the landing page uses a dedicated same-origin `/v1/onboarding/azure/browser-start` bootstrap endpoint; that endpoint is an explicit APIM-boundary exception but still requires the Bevoac API key, the `onboarding:write` scope and the configured Bevoac onboarding Origin;
+- the existing `/v1/onboarding/azure/start`, `/status`, `/verify` and other business routes remain behind the authenticated APIM backend boundary;
+- the browser API key is used only for the bootstrap request, is cleared from the input immediately, and is never stored in cookies, localStorage, sessionStorage or browser history;
+- the result-page return action points to the canonical onboarding landing page;
+- the retained Azure Storage website becomes a credential-free English compatibility bridge to the canonical onboarding URL and is no longer a client onboarding origin;
+- the `frontend_url` Terraform output now represents the canonical API-hosted onboarding URL rather than the legacy Storage website endpoint.
 
 ## R2.1 dependency security refresh
 

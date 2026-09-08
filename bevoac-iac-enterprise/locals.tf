@@ -9,15 +9,7 @@ locals {
 
   onboarding_result_mode_requested = lower(trimspace(var.onboarding_result_mode))
 
-  frontend_origin           = var.deploy_onboarding_frontend ? trimsuffix(try(azurerm_storage_account.frontend[0].primary_web_endpoint, ""), "/") : ""
-  allowed_origins_effective = distinct(compact(concat(var.allowed_origins, local.frontend_origin != "" ? [local.frontend_origin] : [])))
-  allowed_origins_csv       = join(",", local.allowed_origins_effective)
-
-  onboarding_base_url              = var.frontend_custom_domain != "" ? "https://${var.frontend_custom_domain}" : local.frontend_origin
-  onboarding_legacy_success_url    = local.onboarding_base_url != "" ? "${local.onboarding_base_url}/success.html" : ""
-  onboarding_result_mode_effective = local.onboarding_result_mode_requested == "legacy_static" && local.onboarding_legacy_success_url == "" ? "api" : local.onboarding_result_mode_requested
-  onboarding_success_url           = local.onboarding_result_mode_effective == "legacy_static" ? local.onboarding_legacy_success_url : ""
-  onboarding_result_target         = local.onboarding_result_mode_effective == "api" ? "/v1/onboarding/azure/result" : local.onboarding_legacy_success_url
+  frontend_origin = var.deploy_onboarding_frontend ? trimsuffix(try(azurerm_storage_account.frontend[0].primary_web_endpoint, ""), "/") : ""
 
   # Operator-provided public API base URL.
   # Use only for a stable custom domain, for example https://api-poc.bevoac.fr.
@@ -38,7 +30,7 @@ locals {
     : ""
   )
 
-  # Effective public API base URL used by operators, frontend and onboarding.
+  # Effective public API base URL used by operators and APIM-facing runtime configuration.
   # If api_public_base_url is empty, it is generated automatically from Azure Container Apps.
   api_public_base_url_effective = (
     local.api_public_base_url_configured != ""
@@ -55,6 +47,27 @@ locals {
     ? local.onboarding_public_base_url_configured
     : local.api_public_base_url_effective
   )
+
+  onboarding_landing_url = (
+    local.onboarding_public_base_url_effective != ""
+    ? "${local.onboarding_public_base_url_effective}/v1/onboarding/azure"
+    : ""
+  )
+
+  # The canonical API-hosted landing page is same-origin with its browser bootstrap
+  # endpoint. The legacy Storage static website no longer needs CORS access.
+  allowed_origins_effective = distinct(compact(concat(
+    var.allowed_origins,
+    local.onboarding_public_base_url_effective != "" ? [local.onboarding_public_base_url_effective] : []
+  )))
+  allowed_origins_csv = join(",", local.allowed_origins_effective)
+
+  # Legacy static success URL retained only for rollback compatibility.
+  onboarding_base_url              = var.frontend_custom_domain != "" ? "https://${var.frontend_custom_domain}" : local.frontend_origin
+  onboarding_legacy_success_url    = local.onboarding_base_url != "" ? "${local.onboarding_base_url}/success.html" : ""
+  onboarding_result_mode_effective = local.onboarding_result_mode_requested == "legacy_static" && local.onboarding_legacy_success_url == "" ? "api" : local.onboarding_result_mode_requested
+  onboarding_success_url           = local.onboarding_result_mode_effective == "legacy_static" ? local.onboarding_legacy_success_url : ""
+  onboarding_result_target         = local.onboarding_result_mode_effective == "api" ? "/v1/onboarding/azure/result" : local.onboarding_legacy_success_url
 
   # Full Microsoft Entra redirect URI registered in the App Registration and injected into the API runtime.
   onboarding_redirect_callback_uri_effective = (
