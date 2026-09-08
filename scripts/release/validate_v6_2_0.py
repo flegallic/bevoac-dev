@@ -239,8 +239,12 @@ def validate_runtime(root: Path) -> None:
     )
     require(
         static_onboarding,
-        ["DEMO ONLY", "ne collecte aucune clé API", "controlled_production"],
-        "legacy static onboarding demo-only scope",
+        [
+            "DEMO ONLY",
+            "does not collect or store any API key",
+            "${onboarding_url}",
+        ],
+        "legacy static onboarding compatibility scope",
     )
     for forbidden in ("apiKey", "fetch(", "sessionStorage", "localStorage", "authorization"):
         if forbidden in static_onboarding:
