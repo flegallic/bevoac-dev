@@ -50,6 +50,8 @@ test('canonical onboarding landing is English, branded and does not expose infra
   assert.match(ONBOARDING_LANDING_HTML, /class="brand-mark"[^>]*>B<\/div>/);
   assert.match(ONBOARDING_LANDING_HTML, /Connect Microsoft Azure to Bevoac/);
   assert.match(ONBOARDING_LANDING_HTML, /Start Microsoft admin consent/);
+  assert.match(ONBOARDING_LANDING_HTML, /placeholder="biv_live_/);
+  assert.doesNotMatch(ONBOARDING_LANDING_HTML, /bev_live_/);
   assert.doesNotMatch(ONBOARDING_LANDING_HTML, /securise V3|sécurisé V3|support@bevoac\.fr/i);
   assert.doesNotMatch(ONBOARDING_LANDING_HTML, /stbevoacprodfront|z28\.web\.core\.windows\.net/i);
   assert.doesNotMatch(ONBOARDING_LANDING_HTML, /apiBaseUrl/i);
