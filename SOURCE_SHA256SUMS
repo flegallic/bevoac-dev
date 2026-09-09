@@ -296,7 +296,7 @@ a824995bc8242b2e72f961899f2e57e4c2c12347e50321ba2e623b8661d56f5a  bevoac-worker-
 060c25c1fb70bc1c93bc740b1b0b883fd0d9c26c6145067f20a1f7ba190468bb  bevoac-worker-enterprise/src/lib/resource-graph-rest-client.js
 820aa37f867f40ee31c7ab33d2e640ffbfae021195e659414ceeb6d087462202  bevoac-worker-enterprise/src/lib/resource-graph.js
 59937a4f94dc792556434cf5a6aa5c691ff5da7181e92616010ddfdd15d61b48  bevoac-worker-enterprise/src/lib/resource-preflight.js
-b127811c6149de7c40eee55418448f34ed949a5c44b90c994da880fe7d3490d9  bevoac-worker-enterprise/src/lib/result-sanitizer.js
+b74c222abe2535d0204439869e7cf7a77d9e03f3d531b9b850ec67418dd66da5  bevoac-worker-enterprise/src/lib/result-sanitizer.js
 7640e9f5f0298a8aa2a97a1526420d1d5b17f9c628d62911d2a61bd5a00922d3  bevoac-worker-enterprise/src/lib/retry.js
 97a819670dcdc717644e1f297e10bea11a042cc1b32cc94c650b14e65be6723c  bevoac-worker-enterprise/src/lib/scan-message-version.js
 3eb1e1037eb290241d9e07946e04d2ef5bc34e0498c40103399a8feeba4f6443  bevoac-worker-enterprise/src/lib/servicebus.js
@@ -321,7 +321,7 @@ d3006b2f14ebdbdfbefa767a1423b43e10f90b9cb424282ce4c9fe73823652df  bevoac-worker-
 8337d3ca06785810c7c8048f6516d4c39f9008752c1babe6c9c5c44af9aa6503  bevoac-worker-enterprise/tests/providers/provider-contract.test.js
 457a0e9931e672e6ff164cdd51a47f1984b969df95b33ae775d3985d5898b69f  bevoac-worker-enterprise/tests/resource-graph-pagination-v620.test.js
 48c6ecbce4a3a684b535dfe95127619be0494f55e091ed279cfcdc2bbd0ea09d  bevoac-worker-enterprise/tests/resource-graph-rest-client-r2-1.test.js
-c00b316eba7273e937b494759e14f11042ade705be75a17e82a91cd3417fe1a3  bevoac-worker-enterprise/tests/result-sanitizer-v620.test.js
+0bb163da688d7ab23c8d09017a89a020435fdded91aa4cb747e33074626b540b  bevoac-worker-enterprise/tests/result-sanitizer-v620.test.js
 950e2fa62fd4e0810abbf269d9c1b6e22b755f3ee24ef74b5549224f85cc6694  bevoac-worker-enterprise/tests/scan-store-ownership-v620.test.js
 5dd94c1029b6d3e3a20cbeef3518d5b4eed9b18026aaa00391db678931df1917  bevoac-worker-enterprise/tests/security/dependency-refresh-r2-1.test.js
 7016e7d6bc7c6df6ffbed7d5a2545a26ba8f205bccdddcf977f35a1f8fd0ea71  bevoac-worker-enterprise/tests/status-semantics-v620.test.js

@@ -70,3 +70,90 @@ test('scan result JSON and summary are built from the same sanitized object', as
   assert.equal(storedSummary.error.authorization, '[REDACTED]');
   assert.doesNotMatch(storedSummary.error.message, /super-secret/);
 });
+
+// --- B-10 regression: shared references are not cycles ----------------------
+
+const { coverageKpi, riskCountKpi, buildScanScorecard } = require('../src/lib/kpi-engine');
+
+function buildSharedReferenceResult() {
+  const limitations = ['Coverage limited to the sampled subscription.'];
+  const tls = coverageKpi({ kpiId: 'web.tls', label: 'TLS', domain: 'web', compliant: 1, total: 2, evidenceSource: 'headers', limitations });
+  const admins = riskCountKpi({ kpiId: 'entra.admins', label: 'Admins', domain: 'identity', count: 3, evidenceSource: 'graph', limitations });
+  const finding = { severity: 'HIGH', title: 'Missing HSTS', status: 'FAILED', resourceId: 'https://example.test/' };
+  const result = {
+    webSecurity: { kpis: [tls], findings: [finding] },
+    microsoft_entra: { kpis: [admins], findings: [finding] }
+  };
+  result.kpiScorecard = buildScanScorecard(result);
+  return { result, tls, admins, limitations };
+}
+
+test('shared threshold and limitations references are preserved, not flagged as circular', () => {
+  const { result, tls, admins, limitations } = buildSharedReferenceResult();
+  assert.equal(result.kpiScorecard.kpis[0].threshold, tls.threshold);
+  assert.equal(result.kpiScorecard.kpis[1].limitations, admins.limitations);
+  assert.equal(tls.limitations, limitations);
+
+  const output = sanitizeCustomerResult(result);
+  const json = JSON.stringify(output);
+  assert.doesNotMatch(json, /CIRCULAR_REFERENCE/);
+  assert.deepEqual(output.kpiScorecard.kpis[0].threshold, { warningBelow: 90, criticalBelow: 70 });
+  assert.deepEqual(output.kpiScorecard.kpis[1].threshold, { warningAt: 1, criticalAt: 10 });
+  assert.deepEqual(output.kpiScorecard.kpis[0].limitations, limitations);
+  assert.deepEqual(output.webSecurity.kpis[0].threshold, output.kpiScorecard.kpis[0].threshold);
+});
+
+test('true cycles are still replaced by the circular placeholder', () => {
+  const node = { name: 'root', child: { name: 'child' } };
+  node.child.parent = node;
+  node.self = node;
+  const list = [1];
+  list.push(list);
+  node.list = list;
+
+  const output = sanitizeCustomerResult(node);
+  assert.equal(output.self, '[CIRCULAR_REFERENCE]');
+  assert.equal(output.child.parent, '[CIRCULAR_REFERENCE]');
+  assert.equal(output.list[1], '[CIRCULAR_REFERENCE]');
+  assert.equal(output.child.name, 'child');
+});
+
+test('a shared object first met near the depth limit is fully sanitized on a shallower path', () => {
+  const shared = { inner: { leaf: 'value' } };
+  let deep = shared;
+  for (let i = 0; i < 31; i += 1) deep = { next: deep };
+  const root = { deep, shortcut: shared, again: shared };
+
+  const output = sanitizeCustomerResult(root);
+  assert.deepEqual(output.shortcut, { inner: { leaf: 'value' } });
+  assert.deepEqual(output.again, { inner: { leaf: 'value' } });
+  assert.doesNotMatch(JSON.stringify(output.shortcut), /MAX_DEPTH_REACHED|CIRCULAR_REFERENCE/);
+});
+
+test('saveResult persists a scorecard without circular placeholders in JSON and summary', async () => {
+  const { result } = buildSharedReferenceResult();
+  const calls = [];
+  const client = {
+    async query(text, values) {
+      calls.push({ text: String(text), values });
+      return { rowCount: 1, rows: [] };
+    }
+  };
+
+  await saveResult(client, {
+    scanId: '11111111-1111-4111-8111-111111111111',
+    tenantId: '22222222-2222-4222-8222-222222222222',
+    result,
+    maxResultBytes: 1000000,
+    compressionThresholdBytes: 1000000
+  });
+
+  const insert = calls.find((call) => call.text.includes('INSERT INTO scan_results'));
+  const storedJson = JSON.parse(insert.values[2]);
+  const storedSummary = JSON.parse(insert.values[5]);
+  assert.doesNotMatch(insert.values[2], /CIRCULAR_REFERENCE/);
+  assert.doesNotMatch(insert.values[5], /CIRCULAR_REFERENCE/);
+  assert.deepEqual(storedJson.kpiScorecard.kpis[0].threshold, { warningBelow: 90, criticalBelow: 70 });
+  assert.deepEqual(storedSummary.kpiScorecard.kpis[1].threshold, { warningAt: 1, criticalAt: 10 });
+  assert.equal(storedSummary.findingCount, 1);
+});

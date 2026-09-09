@@ -34,45 +34,58 @@ function sanitizeString(value) {
   return output.slice(0, MAX_STRING_LENGTH);
 }
 
-function sanitizeCustomerResult(value, { depth = 0, seen = new WeakSet() } = {}) {
+function sanitizeScalar(value) {
   if (value == null) return value;
   if (typeof value === 'string') return sanitizeString(value);
   if (typeof value === 'number' || typeof value === 'boolean') return value;
   if (typeof value === 'bigint') return String(value);
   if (Buffer.isBuffer(value)) return '[BINARY_REDACTED]';
   if (value instanceof Date) return value.toISOString();
+  return undefined;
+}
+
+// Cycle detection is path-based: a container is a cycle only when it is one of
+// its own ancestors. Shared references (the same object reachable from several
+// paths, e.g. a KPI threshold reused by the scorecard) are legitimate JSON and
+// are sanitized once, then reused through a memo keyed by the depth at which the
+// clone was produced (a clone built deeper may have been depth-truncated).
+function sanitizeNode(value, depth, state) {
+  const scalar = sanitizeScalar(value);
+  if (scalar !== undefined) return scalar;
+  if (typeof value !== 'object') return sanitizeString(value);
   if (depth >= MAX_DEPTH) return '[MAX_DEPTH_REACHED]';
+  if (state.ancestors.has(value)) return '[CIRCULAR_REFERENCE]';
 
-  if (Array.isArray(value)) {
-    if (seen.has(value)) return '[CIRCULAR_REFERENCE]';
-    seen.add(value);
-    return value.map((item) => sanitizeCustomerResult(item, {
-      depth: depth + 1,
-      seen
-    }));
-  }
+  const cached = state.clones.get(value);
+  if (cached && cached.depth <= depth) return cached.output;
 
-  if (typeof value === 'object') {
-    if (seen.has(value)) return '[CIRCULAR_REFERENCE]';
-    seen.add(value);
-    const output = {};
-    for (const [key, item] of Object.entries(value)) {
-      if (SENSITIVE_KEY.test(key)) {
-        output[key] = '[REDACTED]';
-        continue;
+  state.ancestors.add(value);
+  let output;
+  try {
+    if (Array.isArray(value)) {
+      output = value.map((item) => sanitizeNode(item, depth + 1, state));
+    } else {
+      output = {};
+      for (const [key, item] of Object.entries(value)) {
+        if (SENSITIVE_KEY.test(key)) {
+          output[key] = '[REDACTED]';
+          continue;
+        }
+        if (key === 'stack' || key === 'request' || key === 'response') {
+          continue;
+        }
+        output[key] = sanitizeNode(item, depth + 1, state);
       }
-      if (key === 'stack' || key === 'request' || key === 'response') {
-        continue;
-      }
-      output[key] = sanitizeCustomerResult(item, {
-        depth: depth + 1,
-        seen
-      });
     }
-    return output;
+  } finally {
+    state.ancestors.delete(value);
   }
+  state.clones.set(value, { depth, output });
+  return output;
+}
 
-  return sanitizeString(value);
+function sanitizeCustomerResult(value, { depth = 0 } = {}) {
+  return sanitizeNode(value, depth, { ancestors: new WeakSet(), clones: new WeakMap() });
 }
 
 module.exports = {
